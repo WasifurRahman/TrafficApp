@@ -1,0 +1,28 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context="com.example.washab.trafficapp.PostTypeFragment">
+
+   <RadioGroup
+       android:layout_width="fill_parent"
+       android:layout_height="wrap_content"
+       android:orientation="horizontal">
+
+
+       <RadioButton
+           android:layout_width="0dp"
+           android:layout_height="wrap_content"
+           android:text="ANNOUNCEMENT"
+           android:layout_weight="1"
+           android:id="@+id/postTypeAnnouncementButton"/>
+
+       <RadioButton
+           android:layout_width="0dp"
+           android:layout_height="wrap_content"
+           android:text="DISCUSSION"
+           android:layout_weight="1"
+           android:id="@+id/postTypeDiscussionButton"/>
+   </RadioGroup>
+
+</LinearLayout>

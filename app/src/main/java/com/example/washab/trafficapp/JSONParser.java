@@ -35,10 +35,10 @@ public class JSONParser {
 
     // function get json from url
     // by making HTTP POST or GET mehtod
-    public JSONObject makeHttpRequest(String urlParameter, String method,
+    public JSONObject  makeHttpRequest(String urlParameter, String method,
                                       List<Pair> params) {
 
-        final String BASE_URL = "http://172.16.194.39:80443/trafficapp/v1";
+        final String BASE_URL = "http://172.16.193.173/trafficapp/v1/index.php";
         URL url;
 //        List<Pair> paramaters = new ArrayList<Pair>();
         // Making HTTP request
@@ -46,22 +46,35 @@ public class JSONParser {
 
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
+//            System.setProperty("http.keepAlive", "false");
 
-            url = new URL(BASE_URL + "/register");
+            url = new URL(BASE_URL + urlParameter);
+            Log.d("Test: ", "1");
             urlConnection = (HttpURLConnection) url.openConnection();
+            Log.d("Test: ", "2");
             urlConnection.setRequestMethod(method);
+            Log.d("Test: ", "3");
+            urlConnection.setDoOutput(true);
+            Log.d("Test: ", "4");
 
 //            for(int i=0;i<params.size();i++) {
 //                paramaters.add(new Pair(params.get(i).first, params.get(i).second));
 //            }
             OutputStream os = urlConnection.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, "UTF-8"));
+            Log.d("Test: ", "5");
+
+//            BufferedWriter writer = new BufferedWriter(
+//                    new OutputStreamWriter(os, "UTF-8"));
+//            writer.write(getQuery(params));
+//            writer.flush();
+//            writer.close();
+//            os.close();
+            OutputStreamWriter writer = new OutputStreamWriter(os);
+            Log.d("Test: ", "6");
             writer.write(getQuery(params));
-            writer.flush();
+            Log.d("output params: ",getQuery(params));
             writer.close();
-            os.close();
-            urlConnection.connect();
+//            urlConnection.connect();
 
             is = urlConnection.getInputStream();
             StringBuffer buffer = new StringBuffer();
@@ -77,13 +90,14 @@ public class JSONParser {
                 // buffer for debugging.
                 buffer.append(line + "\n");
             }
-
+            Log.d("the buffer string: ", buffer.length()+"");
             if (buffer.length() == 0) {
                 // Stream was empty.  No point in parsing.
                 return null;
             }
             jsonString = buffer.toString();
             Log.d("Input Stream: ", jsonString);
+            urlConnection.disconnect();
 
 
             // check for request method
@@ -209,6 +223,8 @@ public class JSONParser {
 */
         // try parse the string to a JSON object
         try {
+            System.out.println(jsonString);
+            Log.d("jsonString: ", jsonString);
             jObj = new JSONObject(jsonString);
         } catch (JSONException e) {
             Log.e("JSON Parser", "Error parsing data " + e.toString());

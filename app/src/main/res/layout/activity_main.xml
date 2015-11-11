@@ -25,15 +25,15 @@
         android:id="@+id/situationText"
         android:layout_marginTop="69dp"
         android:layout_below="@+id/welcomeText"
-        android:layout_toLeftOf="@+id/editText"
-        android:layout_toStartOf="@+id/editText" />
+        android:layout_toLeftOf="@+id/emailEditText"
+        android:layout_toStartOf="@+id/emailEditText" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
         android:ems="10"
-        android:id="@+id/editText"
+        android:id="@+id/emailEditText"
         android:layout_alignTop="@+id/situationText"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="false"
@@ -47,7 +47,7 @@
         android:text="Password:  "
         android:id="@+id/timeStampText"
         android:layout_marginTop="48dp"
-        android:layout_below="@+id/editText"
+        android:layout_below="@+id/emailEditText"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
@@ -56,10 +56,10 @@
         android:layout_height="wrap_content"
         android:inputType="textPassword"
         android:ems="10"
-        android:id="@+id/editText2"
+        android:id="@+id/passwordEditText"
         android:layout_alignTop="@+id/timeStampText"
-        android:layout_alignRight="@+id/editText"
-        android:layout_alignEnd="@+id/editText"
+        android:layout_alignRight="@+id/emailEditText"
+        android:layout_alignEnd="@+id/emailEditText"
         android:layout_toRightOf="@+id/timeStampText"
         android:layout_toEndOf="@+id/timeStampText" />
 
@@ -70,9 +70,10 @@
         android:text="@string/logInString"
         android:id="@+id/loginButton"
         android:layout_marginTop="79dp"
-        android:layout_below="@+id/editText2"
-        android:layout_alignLeft="@+id/editText2"
-        android:layout_alignStart="@+id/editText2" />
+        android:layout_below="@+id/passwordEditText"
+        android:layout_alignLeft="@+id/passwordEditText"
+        android:layout_alignStart="@+id/passwordEditText"
+        android:onClick="onLoginButtonClick" />
 
     <Button
         android:layout_width="wrap_content"
@@ -83,4 +84,13 @@
         android:layout_toRightOf="@+id/welcomeText"
         android:layout_toEndOf="@+id/welcomeText"
         android:onClick="onSignUpButtonClick" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/errorTextView"
+        android:layout_below="@+id/loginButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="38dp"
+        android:textColor="#ff1206" />
 </RelativeLayout>

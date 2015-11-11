@@ -6,12 +6,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 
 public class EmailVerification extends AppCompatActivity {
+
+    private int emailVerifyCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        emailVerifyCode=getIntent().getIntExtra("emailVerifyCode",0);
         setContentView(R.layout.activity_email_verification);
     }
 
@@ -41,8 +46,18 @@ public class EmailVerification extends AppCompatActivity {
 
         if(v.getId() == R.id.verifyEmailButton)
         {
-            Intent intent=new Intent(this,Home.class);
-            startActivity(intent);
+
+            int givenVerifyId=Integer.parseInt(((EditText)findViewById(R.id.codeEditText)).getText().toString());
+            if(givenVerifyId==emailVerifyCode){
+
+                Intent returnIntent = getIntent();
+
+                setResult(RESULT_OK,returnIntent);
+                finish();
+            }
+            else{
+                ((TextView)findViewById(R.id.emailVerifyErrorTextView)).setText("Please Enter the correct verification code");
+            }
         }
     }
 }

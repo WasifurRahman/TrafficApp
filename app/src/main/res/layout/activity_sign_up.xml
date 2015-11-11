@@ -54,9 +54,10 @@
             android:text="Male"
             android:id="@+id/maleRadioButton"
             android:checked="true"
-            android:onClick="onMaleRBClick"
+            android:onClick="onRadioButtonClicked"
             android:layout_toLeftOf="@+id/femaleRadioButton"
-            android:layout_toStartOf="@+id/radioGroup" />
+            android:layout_toStartOf="@+id/radioGroup"
+            />
 
         <RadioButton
             android:layout_width="wrap_content"
@@ -65,7 +66,7 @@
             android:id="@+id/femaleRadioButton"
             android:layout_toRightOf="@+id/maleRadioButton"
             android:checked="false"
-            android:onClick="onFemaleRBClick" />
+            android:onClick="onRadioButtonClicked" />
     </RadioGroup>
 
     <TextView
@@ -119,6 +120,14 @@
         android:layout_toRightOf="@+id/usernameTextView"
         android:layout_toEndOf="@+id/usernameTextView" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/errorTextView"
+        android:layout_below="@+id/signupButton"
+        android:layout_alignLeft="@+id/timeStampText"
+        android:layout_alignStart="@+id/timeStampText"
+        android:textColor="#ff0b0b" />
 
 
 </RelativeLayout>

@@ -43,7 +43,7 @@
         android:layout_height="wrap_content"
         android:inputType="number"
         android:ems="10"
-        android:id="@+id/editText6"
+        android:id="@+id/codeEditText"
         android:layout_alignBottom="@+id/codeText"
         android:layout_toRightOf="@+id/codeText"
         android:layout_toEndOf="@+id/codeText" />
@@ -57,5 +57,14 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="79dp"
         android:onClick="onVerifyButtonClick" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/emailVerifyErrorTextView"
+        android:layout_below="@+id/verifyEmailButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textColor="#ff0b24" />
 
 </RelativeLayout>

@@ -13,6 +13,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 
@@ -30,17 +32,30 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SignUp extends AppCompatActivity {
 
-    public String email, username, gender, password;
+    public String email, username, gender, password, errorMessage;
     private RadioGroup genderRadioGroup;
     private RadioButton genderRadioButton;
+    private int emailVerifyCode;
+    TextView errorText;
+    private boolean signUpError;
+    private static int EMAIL_VERIFICATION_REQUEST=1;
+
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+        genderRadioButton=(RadioButton)findViewById(R.id.maleRadioButton);
+        errorText=((TextView)findViewById(R.id.errorTextView));
+        signUpError=false;
+
     }
 
     @Override
@@ -49,6 +64,25 @@ public class SignUp extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_sign_up, menu);
         return true;
     }
+
+
+    public void onRadioButtonClicked(View view) {
+        // Is the button now checked?
+        boolean checked = ((RadioButton) view).isChecked();
+
+        // Check which radio button was clicked
+        switch(view.getId()) {
+            case R.id.maleRadioButton:
+                if (checked)
+                    genderRadioButton=(RadioButton)findViewById(R.id.maleRadioButton);
+                break;
+            case R.id.femaleRadioButton:
+                if (checked)
+                    genderRadioButton=(RadioButton)findViewById(R.id.femaleRadioButton);
+                break;
+        }
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -65,6 +99,17 @@ public class SignUp extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    private boolean showSignUpError(){
+
+
+        if(email.isEmpty() || password.isEmpty() || gender.isEmpty() || username.isEmpty()){
+
+            return true;
+        }
+        return false;
+    }
+
  /*   public boolean onFemaleRBClick(View v) {
 
         if(onMaleRBClick(v)) {
@@ -78,7 +123,25 @@ public class SignUp extends AppCompatActivity {
 
     }
 */
-
+   int randomWithRange(int min, int max)
+    {
+        int range = (max - min) + 1;
+        return (int)(Math.random() * range) + min;
+    }
+   private void sendEmail(String email){
+       emailVerifyCode=randomWithRange(1000,9999);
+       Intent i = new Intent(Intent.ACTION_SEND);
+      // i.setType("message/rfc822");
+       i.putExtra(Intent.EXTRA_EMAIL  , new String[]{email});
+       i.putExtra(Intent.EXTRA_SUBJECT, "Email Address Verification");
+       i.putExtra(Intent.EXTRA_TEXT   , "Your email verification code is: "+ emailVerifyCode);
+       try {
+           startActivity(Intent.createChooser(i, "Send mail..."));
+           Log.d("email sent", "email sent success");
+       } catch (android.content.ActivityNotFoundException ex) {
+           Toast.makeText(SignUp.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+       }
+   }
 
 
     public void onSignUpButtonClick(View v) {
@@ -88,25 +151,64 @@ public class SignUp extends AppCompatActivity {
             email = ((EditText) findViewById(R.id.emailEditText)).getText().toString();
             password = ((EditText) findViewById(R.id.passwordEditText)).getText().toString();
             username = ((EditText) findViewById(R.id.usernameEditText)).getText().toString();
-            genderRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
-            int selectedId = genderRadioGroup.getCheckedRadioButtonId();
-            genderRadioButton = (RadioButton) findViewById(selectedId);
+           // genderRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
+           // int selectedId = genderRadioGroup.getCheckedRadioButtonId();
+            //genderRadioButton = (RadioButton) findViewById(selectedId);
             gender = genderRadioButton.getText().toString();
            // System.out.println("email " + email);
-            Log.e("EMAIL", email+"\n" +password+"\n"+username+"\n"+gender+"\n");
+            if(showSignUpError()){
+                errorText.setText("One or more required fields are missing!\n");
+            }else if(!validate(email)) {
+                errorText.setText("Please enter a valid address.\n");
+            }
+            else
+           {
+                Log.e("EMAIL", email + "\n" + password + "\n" + username + "\n" + gender + "\n");
 
-            SignUpTask signUpTask = new SignUpTask();
-            String params[] = {email, password, username, gender};
 
-            signUpTask.execute(params);
+                SignUpTask signUpTask = new SignUpTask();
+                signUpTask.execute();
+//                if(signUpError){
+//                    errorText.setText(errorMessage);
+//                }
+//               else{
+//                    Intent intent=new Intent(this,Home.class);
+//                    Log.d("Where now?", "Starting Home Activity");
+//                    startActivity(intent);
+//
+//                }
+                //sendEmail(email);
+                //Intent intent = new Intent(this, EmailVerification.class);
+
+                //intent.putExtra("emailVerifyCode",emailVerifyCode);
+                //startActivityForResult(intent, EMAIL_VERIFICATION_REQUEST);
 
 
-            Intent intent=new Intent(this,EmailVerification.class);
-            startActivity(intent);
+            }
         }
     }
 
-    class SignUpTask extends AsyncTask<String[], Void, String> {
+    public static boolean validate(String emailStr) {
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(emailStr);
+        return matcher.find();
+    }
+
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        // Check which request we're responding to
+//        if (requestCode == EMAIL_VERIFICATION_REQUEST) {
+//            // Make sure the request was successful
+//            if (resultCode == RESULT_OK) {
+//
+//                SignUpTask signUpTask = new SignUpTask();
+//                signUpTask.execute();
+//            }
+//            else{
+//
+//            }
+//        }
+//    }
+    class SignUpTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected void onPreExecute() {
@@ -114,18 +216,31 @@ public class SignUp extends AppCompatActivity {
         }
 
 
-        protected String doInBackground(String[]... args) {
+        protected String doInBackground(String... args) {
 
             JSONParser jParser = new JSONParser();
             // Building Parameters
             List<Pair> params = new ArrayList<Pair>();
-
-            params.add(new Pair("email",args[0]));
-            params.add(new Pair("password",args[1]));
-            params.add(new Pair("username",args[2]));
-            params.add(new Pair("gender",args[3]));
+            params.add(new Pair("username",username));
+            params.add(new Pair("gender",gender));
+            params.add(new Pair("email",email));
+            params.add(new Pair("password",password));
             // getting JSON string from URL
-            JSONObject json = jParser.makeHttpRequest("", "POST", params);
+            JSONObject json = jParser.makeHttpRequest("/register", "POST", params);
+
+            try {
+
+
+                Boolean error = json.getBoolean("error");
+                errorMessage = json.getString("message");
+                System.out.println("Error: " + error + "\nMessage: " + errorMessage);
+                Log.d("Error", error.toString());
+                Log.d("Message", errorMessage);
+                if(error)signUpError=true;
+//                return message;
+            }catch(JSONException e){
+                e.printStackTrace();
+            }
 
             // Check your log cat for JSON reponse
             Log.e("All info: ", json.toString());
@@ -178,26 +293,16 @@ public class SignUp extends AppCompatActivity {
              * After completing background task Dismiss the progress dialog
              **/
             protected void onPostExecute (String file_url){
-                // dismiss the dialog after getting all products
-    /*        pDialog.dismiss();
-            // updating UI from Background Thread
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    /**
-                     * Updating parsed JSON data into ListView
-                     * */
-    /*                ListAdapter adapter = new SimpleAdapter(
-                            AllProductsActivity.this, productsList,
-                            R.layout.list_item, new String[]{TAG_PID,
-                            TAG_NAME},
-                            new int[]{R.id.pid, R.id.name});
-                    // updating listview
-                    setListAdapter(adapter);
-                }
-            });
 
-        }
-    }*/
+                if(signUpError){
+                    errorText.setText(errorMessage);
+                }
+                else{
+                    Intent intent=new Intent(SignUp.this,Home.class);
+//                    Log.d("Where now?", "Starting Home Activity");
+                    startActivity(intent);
+
+                }
         }
     }
 }
