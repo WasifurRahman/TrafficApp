@@ -15,6 +15,7 @@
            android:layout_height="wrap_content"
            android:text="ANNOUNCEMENT"
            android:layout_weight="1"
+           android:checked="false"
            android:id="@+id/postTypeAnnouncementButton"/>
 
        <RadioButton
@@ -22,6 +23,7 @@
            android:layout_height="wrap_content"
            android:text="DISCUSSION"
            android:layout_weight="1"
+           android:checked="true"
            android:id="@+id/postTypeDiscussionButton"/>
    </RadioGroup>
 

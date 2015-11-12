@@ -14,11 +14,13 @@ import android.view.View;
 
 public class Home extends AppCompatActivity implements UserUpdates.OnFragmentInteractionListener ,AnnouncementFragment.OnFragmentInteractionListener,
 ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFragment.OnFragmentInteractionListener,RequestFragment.OnFragmentInteractionListener,PostTypeFragment.OnFragmentInteractionListener
-,ChooseAnnouncementOptionsFragment.OnFragmentInteractionListener,ChooseDiscussionOptionsFragment.OnFragmentInteractionListener{
+,ChooseAnnouncementOptionsFragment.OnFragmentInteractionListener,ChooseDiscussionOptionsFragment.OnFragmentInteractionListener,DiscussionFragment.OnFragmentInteractionListener{
 
     private String updatesFragmentTag="UPDATESFRAGMENT";
     private String postsFragmentTag="POSTSFRAGMENT";
     private String requestsFragmentTag="REQUESTSFRAGMENT";
+    private String announcementFragmentTag="ANNOUNCEMENTFRAGMENT";
+    private String discussionFragmentTag="DISCUSSIONFRAGMENT";
     private String chooseUpdateOptionsFragmentsTag="CHOOSEUPDATEOPTIONSFRAGMENT";
     private String chooseRequestOptionsFragmentsTag="CHOOSEREQUESTOPTIONSFRAGMENT";
     private String chooseAnnouncementOptionsFragmentsTag="CHOOSEANNOUNCEMENTOPTIONSFRAGMENT";
@@ -140,19 +142,50 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
         //UserUpdates updatesFragment = new  UserUpdates();
         AnnouncementFragment announcementFragment=new AnnouncementFragment();
 
-        fragmentTransaction.add(R.id.dataFragmentContainer,announcementFragment,postsFragmentTag);
+        fragmentTransaction.add(R.id.dataFragmentContainer,announcementFragment,announcementFragmentTag);
+        fragmentTransaction.commit();
+    }
+
+    private void addDiscussionFragment(){
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        //UserUpdates updatesFragment = new  UserUpdates();
+        DiscussionFragment discussionFragment = new DiscussionFragment();
+
+        fragmentTransaction.add(R.id.dataFragmentContainer,discussionFragment,discussionFragmentTag);
         fragmentTransaction.commit();
     }
 
     private void removeAddedFragment(String exception){
-        Fragment tobeDeleted = getFragmentManager().findFragmentByTag(updatesFragmentTag);
-        if(tobeDeleted!=null) {
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.remove(tobeDeleted);
-            fragmentTransaction.commit();
-        }
+        Fragment updateFragment = getFragmentManager().findFragmentByTag(updatesFragmentTag);
+        Fragment requestFragment = getFragmentManager().findFragmentByTag(requestsFragmentTag);
+        Fragment postsFragment = getFragmentManager().findFragmentByTag(postsFragmentTag);
+        Fragment discussionFragment = getFragmentManager().findFragmentByTag(discussionFragmentTag);
+        Fragment announcementFragment = getFragmentManager().findFragmentByTag(announcementFragmentTag);
+        Fragment chooseUpdateOptionsFragment= getFragmentManager().findFragmentByTag(chooseUpdateOptionsFragmentsTag);
+        Fragment chooseRequestOptionsFragment= getFragmentManager().findFragmentByTag(chooseRequestOptionsFragmentsTag);
+        Fragment chooseAnnouncementOptionsFragment = getFragmentManager().findFragmentByTag(chooseAnnouncementOptionsFragmentsTag);
+        Fragment choosePostTypeFragment = getFragmentManager().findFragmentByTag(choosePostTypeFragmentsTag);
+        Fragment chooseDiscussionOptionsFragment = getFragmentManager().findFragmentByTag(chooseDiscussionOptionsFragmentsTag);
 
+            FragmentManager fragmentManager= getFragmentManager();
+            FragmentTransaction fragmentTransaction= fragmentManager.beginTransaction();
+            if(updateFragment!=null)fragmentTransaction.remove(updateFragment);
+            if(requestFragment!=null)fragmentTransaction.remove(requestFragment);
+            if(postsFragment!=null)fragmentTransaction.remove(postsFragment);
+            if(discussionFragment!=null)fragmentTransaction.remove(discussionFragment);
+            if(announcementFragment!=null)fragmentTransaction.remove(announcementFragment);
+            if(chooseUpdateOptionsFragment!=null)fragmentTransaction.remove(chooseUpdateOptionsFragment);
+            if(chooseRequestOptionsFragment!=null)fragmentTransaction.remove(chooseRequestOptionsFragment);
+            if(exception==null && choosePostTypeFragment!=null)fragmentTransaction.remove(choosePostTypeFragment);
+            if(chooseAnnouncementOptionsFragment!=null)fragmentTransaction.remove(chooseAnnouncementOptionsFragment);
+            if(chooseDiscussionOptionsFragment!=null)fragmentTransaction.remove(chooseDiscussionOptionsFragment);
+
+
+            fragmentTransaction.commit();
+
+
+      /*
         tobeDeleted = getFragmentManager().findFragmentByTag(requestsFragmentTag);
         if(tobeDeleted!=null) {
             FragmentManager fragmentManager = getFragmentManager();
@@ -179,6 +212,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
             fragmentTransaction.commit();
         }
 
+
         tobeDeleted = getFragmentManager().findFragmentByTag(chooseRequestOptionsFragmentsTag);
         if(tobeDeleted!=null) {
             FragmentManager fragmentManager = getFragmentManager();
@@ -203,6 +237,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
             fragmentTransaction.remove(tobeDeleted);
             fragmentTransaction.commit();
         }
+        */
     }
 
 
@@ -273,6 +308,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     public void startDiscussionFragment() {
         removeAddedFragment(choosePostTypeFragmentsTag);
         addChooseDiscussionOptionsFragment();
+        addDiscussionFragment();
        // addAnnouncementFragment();
     }
 

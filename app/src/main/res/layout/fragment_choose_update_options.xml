@@ -22,13 +22,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/updateOptionMostFavouriteButton"
-            android:text="@string/most_favourite"/>
+            android:text="@string/most_favourite"
+            android:checked="false"/>
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/most_recent"
             android:id="@+id/updateOptionMostRecentButton"
+            android:checked="true"
 
             />
 
