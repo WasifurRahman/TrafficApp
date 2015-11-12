@@ -54,6 +54,10 @@
             android:name=".AddAnnouncement"
             android:label="@string/title_activity_add_announcement" >
         </activity>
+        <activity
+            android:name=".AddDiscussion"
+            android:label="@string/title_activity_add_discussion" >
+        </activity>
     </application>
 
 </manifest>

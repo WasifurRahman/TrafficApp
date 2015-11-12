@@ -14,7 +14,7 @@ import android.view.View;
 
 public class Home extends AppCompatActivity implements UserUpdates.OnFragmentInteractionListener ,AnnouncementFragment.OnFragmentInteractionListener,
 ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFragment.OnFragmentInteractionListener,RequestFragment.OnFragmentInteractionListener,PostTypeFragment.OnFragmentInteractionListener
-,ChooseAnnouncementOptionsFragment.OnFragmentInteractionListener{
+,ChooseAnnouncementOptionsFragment.OnFragmentInteractionListener,ChooseDiscussionOptionsFragment.OnFragmentInteractionListener{
 
     private String updatesFragmentTag="UPDATESFRAGMENT";
     private String postsFragmentTag="POSTSFRAGMENT";
@@ -23,6 +23,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     private String chooseRequestOptionsFragmentsTag="CHOOSEREQUESTOPTIONSFRAGMENT";
     private String chooseAnnouncementOptionsFragmentsTag="CHOOSEANNOUNCEMENTOPTIONSFRAGMENT";
     private String choosePostTypeFragmentsTag="CHOOSEPOSTTYPEFRAGMENT";
+    private String chooseDiscussionOptionsFragmentsTag="CHOOSEDISCUSSIONOPTIONSFRAGMENT";
 
 
 
@@ -86,11 +87,21 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-       ChooseAnnouncementOptionsFragment choiceFragment=new ChooseAnnouncementOptionsFragment();
+        ChooseAnnouncementOptionsFragment choiceFragment=new ChooseAnnouncementOptionsFragment();
 
         fragmentTransaction.add(R.id.choiceFragmentContainer,choiceFragment,chooseAnnouncementOptionsFragmentsTag);
         fragmentTransaction.commit();
 
+    }
+
+    private void addChooseDiscussionOptionsFragment() {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+       ChooseDiscussionOptionsFragment choiceFragment =new ChooseDiscussionOptionsFragment();
+
+        fragmentTransaction.add(R.id.choiceFragmentContainer,choiceFragment,chooseDiscussionOptionsFragmentsTag);
+        fragmentTransaction.commit();
     }
 
     private void addPostTypeFragment() {
@@ -228,7 +239,21 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     }
 
     @Override
+    public void startAddDiscussionActivity() {
+           Intent intent =new Intent(Home.this,AddDiscussion.class);
+           startActivity(intent);
+    }
+
+    @Override
+    public void setDiscussionSorting(String sortingCrietaria) {
+
+    }
+
+    @Override
     public void startAddAnnouncementActivity() {
+
+        Intent intent =new Intent(Home.this,AddAnnouncement.class);
+        startActivity(intent);
 
     }
 
@@ -246,8 +271,12 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
 
     @Override
     public void startDiscussionFragment() {
-
+        removeAddedFragment(choosePostTypeFragmentsTag);
+        addChooseDiscussionOptionsFragment();
+       // addAnnouncementFragment();
     }
+
+
 
     @Override
     public void startAddRequestActivity(){
