@@ -5,7 +5,10 @@
 
     <LinearLayout
         android:orientation="horizontal" android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:paddingRight="5dp"
+        android:paddingBottom="30dp">
 
         <TextView
             android:layout_width="0dp"
@@ -45,19 +48,24 @@
 
     <LinearLayout
         android:orientation="horizontal" android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingRight="5dp"
+        android:paddingLeft="10dp"
+        android:paddingBottom="5dp"
+        android:paddingTop="20dp"
+        android:padding="10dp">
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Situation: "
-            android:layout_weight="1.2"
+            android:layout_weight="41"
             android:id="@+id/situationTextView" />
         <Spinner
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/situationSpinner"
-            android:layout_weight="3"
+            android:layout_weight="59"
             android:paddingRight="10dp"
             android:spinnerMode="dropdown" />
 
@@ -65,18 +73,26 @@
 
     <LinearLayout
         android:orientation="horizontal" android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:paddingRight="5dp"
+        android:paddingLeft="10dp"
+        android:paddingBottom="5dp">
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Estimated Time: "
-            android:layout_weight="1.5"
+            android:paddingBottom="5dp"
+            android:layout_weight="2"
             android:id="@+id/estimatedTimeTextView" />
 
         <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:paddingLeft="7dp"
+            android:paddingBottom="5dp"
+            android:phoneNumber="true"
             android:id="@+id/estimatedTimeEditText"
             android:layout_weight="1.5" />
 
@@ -96,24 +112,30 @@
         android:layout_height="wrap_content"
         android:text="How long may it take to cross the place?"
         android:id="@+id/estimatedTimeHelperTextView"
-        android:textSize="13dp"
+        android:textSize="10dp"
+        android:paddingLeft="40dp"
+        android:paddingBottom="5dp"
         android:layout_gravity="right" />
 
     <LinearLayout
         android:orientation="horizontal" android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingRight="5dp"
+        android:paddingLeft="10dp"
+        android:paddingBottom="5dp"
+        android:padding="10dp">
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Timestamp: "
-            android:layout_weight="1.2"
+            android:layout_weight="41"
             android:id="@+id/timestampTextView" />
         <Spinner
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/timestampSpinner"
-            android:layout_weight="3"
+            android:layout_weight="59"
             android:paddingRight="10dp"
             android:spinnerMode="dropdown" />
 
@@ -125,20 +147,24 @@
         android:text="When was this?"
         android:paddingBottom="20dp"
         android:id="@+id/timestampHelperTextView"
-        android:textSize="13dp"
+        android:textSize="10dp"
+        android:paddingLeft="42dp"
         android:layout_gravity="center_horizontal" />
 
 
     <EditText
-            android:id="@+id/descriptionBox"
-            android:paddingTop="1dp"
-            android:layout_width="259dp"
-            android:layout_height="45dp"
-            android:background="@drawable/description_text_box"
-            android:hint="Additional information..."
-            android:paddingLeft="10dp"
-            android:inputType="textVisiblePassword"
-            android:textSize="15dp"
+        android:id="@+id/addUpdateDescriptionBox"
+        android:paddingTop="1dp"
+        android:layout_width="259dp"
+        android:layout_height="80dp"
+        android:background="@drawable/description_text_box"
+        android:hint="Additional information..."
+        android:paddingLeft="10dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="5dp"
+        android:padding="10dp"
+        android:inputType="textShortMessage"
+        android:textSize="15dp"
         android:layout_gravity="right">
 
     </EditText>
@@ -146,9 +172,13 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:paddingLeft="250dp"
+        android:paddingTop="30dp"
+        android:layout_gravity="end"
+
         android:text="@string/add_update_button"
         android:id="@+id/addUpdateButton"
-        android:layout_gravity="right"
         android:onClick="onAddUpdateButtonClick" />
 
 </LinearLayout>

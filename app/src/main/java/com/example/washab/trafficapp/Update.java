@@ -1,27 +1,76 @@
 package com.example.washab.trafficapp;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by Shabab on 11/9/2015.
  */
 public class Update {
-    private int id;
-    private  String locationTo,locationFrom;
+    private int id,updaterId;
+
+    @Override
+    public String toString() {
+        return "Update{" +
+                "description='" + description + '\'' +
+                ", id=" + id +
+                ", updaterId=" + updaterId +
+                ", locationIdFrom=" + locationIdFrom +
+                ", locationIdTo=" + locationIdTo +
+                ", estTimeToCross=" + estTimeToCross +
+                ", situation='" + situation + '\'' +
+                ", timeOfSituation='" + timeOfSituation + '\'' +
+                ", timeOfUpdate='" + timeOfUpdate + '\'' +
+                ", updaterName='" + updaterName + '\'' +
+                ", likeCount=" + likeCount +
+                ", dislikeCount=" + dislikeCount +
+                '}';
+    }
+
+    private  int locationIdFrom;
+
+
+
+    private int locationIdTo;
     private int estTimeToCross;
     private String situation,description,timeOfSituation,timeOfUpdate;
-    private String updater;
+    private String updaterName;
 
-    public Update(String description, int dislikeCount, int estTimeToCross,int id, int likeCount, String locationFrom, String locationTo, String situation, String timeOfSituation, String timeOfUpdate, String updater) {
+
+    public Update(int updaterId, String description, int dislikeCount, int estTimeToCross, int id, int likeCount, int locationIdFrom,int locationIdTo, String situation, String timeOfSituation, String timeOfUpdate, String updaterName) {
+        this.updaterId = updaterId;
         this.description = description;
         this.dislikeCount = dislikeCount;
         this.estTimeToCross = estTimeToCross;
         this.id = id;
         this.likeCount = likeCount;
-        this.locationFrom = locationFrom;
-        this.locationTo = locationTo;
+        this.locationIdFrom = locationIdFrom;
+        this.locationIdTo = locationIdTo;
         this.situation = situation;
         this.timeOfSituation = timeOfSituation;
         this.timeOfUpdate = timeOfUpdate;
-        this.updater = updater;
+        this.updaterName = updaterName;
+    }
+
+    public static Update createUpdate(JSONObject jsonObject) {
+        try {
+             return new Update(jsonObject.getInt("updaterId"),
+                     jsonObject.getString("description"),
+                    jsonObject.getInt("dislikeCount"),
+                    jsonObject.getInt("estTimeToCross"),
+                    jsonObject.getInt("id"),
+                    jsonObject.getInt("likeCount"),
+                    jsonObject.getInt("locationIdFrom"),
+                    jsonObject.getInt("locationIdTo"),
+                    jsonObject.getString("situation"),
+                    jsonObject.getString("timeOfSituation"),
+                    jsonObject.getString("timeOfUpdate"),
+                    jsonObject.getString("updaterName")
+                    );
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private int likeCount,dislikeCount;
@@ -66,21 +115,30 @@ public class Update {
         this.likeCount = likeCount;
     }
 
-    public String getLocationFrom() {
-        return locationFrom;
+    public int getLocationIdFrom() {
+        return locationIdFrom;
     }
 
-    public void setLocationFrom(String locationFrom) {
-        this.locationFrom = locationFrom;
+    public void setLocationIdFrom(int locationIdFrom) {
+        this.locationIdFrom = locationIdFrom;
     }
 
-    public String getLocationTo() {
-        return locationTo;
+    public int getLocationIdTo() {
+        return locationIdTo;
     }
 
-    public void setLocationTo(String locationTo) {
-        this.locationTo = locationTo;
+    public void setLocationIdTo(int locationIdTo) {
+        this.locationIdTo = locationIdTo;
     }
+
+    public int getUpdaterId() {
+        return updaterId;
+    }
+
+    public void setUpdaterId(int updaterId) {
+        this.updaterId = updaterId;
+    }
+
 
     public String getSituation() {
         return situation;
@@ -106,11 +164,11 @@ public class Update {
         this.timeOfUpdate = timeOfUpdate;
     }
 
-    public String getUpdater() {
-        return updater;
+    public String getUpdaterName() {
+        return updaterName;
     }
 
-    public void setUpdater(String updater) {
-        this.updater = updater;
+    public void setUpdaterName(String updaterName) {
+        this.updaterName = updaterName;
     }
 }

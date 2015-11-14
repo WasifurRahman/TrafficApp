@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -80,21 +81,21 @@ public class MainActivity extends AppCompatActivity
         if(v.getId() == R.id.loginButton) {
 
             Log.d(MainActivity.class.getSimpleName(),"loginButtonPressed");
-            Intent intent=new Intent(MainActivity.this,Home.class);
-            startActivity(intent);
+//            Intent intent=new Intent(MainActivity.this,Home.class);
+//            startActivity(intent);
 //            Log.e(MainActivity.class.getSimpleName(),"loginButtonPressed");
 //
-//            email = ((EditText)findViewById(R.id.emailEditText)).getText().toString();
-//            password = ((EditText)findViewById(R.id.passwordEditText)).getText().toString();
-//
-//            if(showSignUpError()){
-//                errorText.setText("One or more required fields are missing!\n");
-//            } else if(!SignUp.validate(email)) {
-//                errorText.setText("Please enter a valid address.\n");
-//            } else {
-//                LoginTask loginTask = new LoginTask();
-//                loginTask.execute();
-//            }
+            email = ((EditText)findViewById(R.id.emailEditText)).getText().toString();
+            password = ((EditText)findViewById(R.id.passwordEditText)).getText().toString();
+
+            if(showSignUpError()){
+                errorText.setText("One or more required fields are missing!\n");
+            } else if(!SignUp.validate(email)) {
+                errorText.setText("Please enter a valid address.\n");
+            } else {
+                LoginTask loginTask = new LoginTask();
+                loginTask.execute();
+            }
 
 
         }
@@ -118,9 +119,35 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    void assignLocations(JSONObject json) {
+
+        try {
+            Boolean invalidResult=json.getBoolean("error");
+
+            if(!invalidResult){
+                JSONArray locationArray=json.getJSONArray("locations");
+
+                for(int i=0;i<locationArray.length();i++){
+                    JSONObject currentLocation=locationArray.getJSONObject(i);
+                    String locationName=currentLocation.getString("locationName");
+                    int locationId=currentLocation.getInt("locationId");
+                    Locations.addLocation(locationName,locationId);
+
+                }
+                Locations.prepareLocationNameArray();
+                Log.d("testing: " , Locations.prepString());
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
 
     class LoginTask extends AsyncTask<String, Void, String> {
+
+        private JSONObject jsonLogin, jsonLocations;
 
         @Override
         protected void onPreExecute() {
@@ -137,15 +164,15 @@ public class MainActivity extends AppCompatActivity
             params.add(new Pair("email",email));
             params.add(new Pair("password",password));
             // getting JSON string from URL
-            JSONObject json = jParser.makeHttpRequest("/login", "POST", params);
-            assignUser(json);
+            jsonLogin = jParser.makeHttpRequest("/login", "POST", params);
+            jsonLocations = jParser.makeHttpRequest("/locations", "GET", null);
 
             try {
-                Boolean error = json.getBoolean("error");
-                errorMessage = json.getString("message");
-                System.out.println("Error: " + error + "\nMessage: " + errorMessage);
-                Log.d("Error", error.toString());
-                Log.d("Message", errorMessage);
+                Boolean error = jsonLogin.getBoolean("error");
+                errorMessage = jsonLogin.getString("message");
+//                System.out.println("Error: " + error + "\nMessage: " + errorMessage);
+//                Log.d("Error", error.toString());
+//                Log.d("Message", errorMessage);
                 if(error)loginError=true;
 //                return message;
             }catch(JSONException e){
@@ -153,7 +180,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             // Check your log cat for JSON reponse
-            Log.e("All info: ", json.toString());
+//            Log.e("All info: ", jsonLogin.toString());
             return null;
 
         }
@@ -167,6 +194,12 @@ public class MainActivity extends AppCompatActivity
                 errorText.setText(errorMessage);
             }
             else{
+                assignUser(jsonLogin);
+                assignLocations(jsonLocations);
+                String s = Utility.CurrentUser.makeString();
+                Log.d("Client User", s);
+
+
                 Intent intent=new Intent(MainActivity.this,Home.class);
 //                    Log.d("Where now?", "Starting Home Activity");
                 startActivity(intent);

@@ -122,7 +122,7 @@ public class ChooseUpdateOptionsFragment extends Fragment implements View.OnClic
             mListener.startAddUpdateActivity();
         }
         else if(v.getId()==R.id.updateOptionMostFavouriteButton){
-            mListener.setUpdateSorting("mostFavourite");
+            mListener.setUpdateSorting("mostPopular");
         }
         else if(v.getId()==R.id.updateOptionMostRecentButton){
             mListener.setUpdateSorting("mostRecent");

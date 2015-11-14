@@ -3,15 +3,24 @@ package com.example.washab.trafficapp;
 import android.app.Activity;
 import android.app.Fragment;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -28,13 +37,15 @@ public class UserUpdates extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    private ArrayList<Update> allUserUpdates=new ArrayList<Update>();
+    private ArrayList<Update> allUserUpdatesArraylist =new ArrayList<Update>();
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private JSONObject jsonUpdatesField;
+    private String sortingCriteria = "mostRecent";
 
     /**
      * Use this factory method to create a new instance of
@@ -59,6 +70,8 @@ public class UserUpdates extends Fragment {
 
     }
 
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,10 +83,25 @@ public class UserUpdates extends Fragment {
     }
 
 
-    private void populateUpdateList(){
+    private void populateUpdateList(JSONObject jsonUpdates){
 
-        allUserUpdates.add(new Update("Smooth as breeze", 0, 15, 0, 5, "Dhanmondi", "New-market", "Mild", "11:15 AM", "11:20 AM", "Shabab"));
-        allUserUpdates.add(new Update("Getting bored", 2, 50, 1, 23, "Mohakhali", "Jahangir Gate", "Extreme", "12:12 AM", "12:30 AM", "Neamul"));
+        try {
+
+            JSONArray allUpdates=jsonUpdates.getJSONArray("updates");
+            allUserUpdatesArraylist.clear();
+            for(int i=0;i<allUpdates.length();i++){
+                JSONObject curObj=allUpdates.getJSONObject(i);
+                //Log.d("in populte: ",curObj.toString());
+                Update curUpdate = Update.createUpdate(curObj);
+                //Log.d("new update",curUpdate.toString());
+                allUserUpdatesArraylist.add(curUpdate);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        //allUserUpdatesArraylist.add(new Update("Smooth as breeze", 0, 15, 0, 5, "Dhanmondi", "New-market", "Mild", "11:15 AM", "11:20 AM", "Shabab"));
+        //allUserUpdatesArraylist.add(new Update("Getting bored", 2, 50, 1, 23, "Mohakhali", "Jahangir Gate", "Extreme", "12:12 AM", "12:30 AM", "Neamul"));
 
     }
 
@@ -85,7 +113,7 @@ public class UserUpdates extends Fragment {
 
     private class MyListAdapter extends ArrayAdapter<Update>{
         public MyListAdapter(){
-            super(getActivity(), R.layout.user_update_item, allUserUpdates);
+            super(getActivity(), R.layout.user_update_item, allUserUpdatesArraylist);
         }
 
         @Override
@@ -98,14 +126,14 @@ public class UserUpdates extends Fragment {
 
 
             //find the update to work with
-            Update currentUpdate=allUserUpdates.get(position);
+            Update currentUpdate= allUserUpdatesArraylist.get(position);
             //fill the view
 
             TextView locFrom = (TextView)itemView.findViewById(R.id.locationFromTextView);
-            locFrom.setText(currentUpdate.getLocationFrom());
+            locFrom.setText(Locations.getLocationName(currentUpdate.getLocationIdFrom()));
 
             TextView locTo = (TextView)itemView.findViewById(R.id.locationToTextView);
-            locTo.setText(currentUpdate.getLocationTo());
+            locTo.setText(Locations.getLocationName(currentUpdate.getLocationIdTo()));
 
             TextView sitDes=(TextView)itemView.findViewById(R.id.situationDesCriptionTextView);
             sitDes.setText(currentUpdate.getSituation());
@@ -114,10 +142,13 @@ public class UserUpdates extends Fragment {
             estTime.setText(""+currentUpdate.getEstTimeToCross());
 
             TextView updatorName=(TextView) itemView.findViewById(R.id.updatorNameTextView);
-            updatorName.setText(currentUpdate.getUpdater());
+            updatorName.setText(currentUpdate.getUpdaterName());
 
             TextView updateTime=(TextView) itemView.findViewById(R.id.updateTimeTextView);
             updateTime.setText(currentUpdate.getTimeOfUpdate());
+
+            EditText description = (EditText) itemView.findViewById(R.id.updateDescriptionBox);
+            description.setText(currentUpdate.getDescription());
 
             TextView likeCnt=(TextView) itemView.findViewById(R.id.likeCountTextView);
             likeCnt.setText(""+currentUpdate.getLikeCount());
@@ -145,8 +176,9 @@ public class UserUpdates extends Fragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        populateUpdateList();
-        populateUpdateListView();
+        new FetchUpdateTask().execute();
+        //populateUpdateList(jsonUpdatesField);
+        //populateUpdateListView();
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -174,6 +206,11 @@ public class UserUpdates extends Fragment {
         mListener = null;
     }
 
+    public void setUpdateSorting (String sortingCriteria) {
+        this.sortingCriteria = sortingCriteria;
+        new FetchUpdateTask().execute();
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -187,6 +224,45 @@ public class UserUpdates extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+    }
+
+
+    class FetchUpdateTask extends AsyncTask<String, Void, String> {
+
+        private JSONObject jsonUpdates;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        protected String doInBackground(String... args) {
+
+            JSONParser jParser = new JSONParser();
+            // Building Parameters
+            List<Pair> params = new ArrayList<Pair>();
+
+            params.add(new Pair("sortType", sortingCriteria));
+            // getting JSON string from URL
+
+            jsonUpdates = jParser.makeHttpRequest("/allupdates", "POST", params);
+
+            // Check your log cat for JSON reponse
+           Log.d("All info: ",jsonUpdates.toString());
+            return null;
+
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         **/
+        protected void onPostExecute (String a){
+
+            //jsonUpdatesField=jsonUpdates;
+            populateUpdateList(jsonUpdates);
+            populateUpdateListView();
+        }
     }
 
 }

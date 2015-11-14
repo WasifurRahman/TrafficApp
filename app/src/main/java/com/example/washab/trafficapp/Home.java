@@ -37,6 +37,9 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        addUpdatesFragment();
+        addChooseUpdateOptionsFragment();
+
     }
 
     @Override
@@ -183,61 +186,6 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
 
 
             fragmentTransaction.commit();
-
-
-      /*
-        tobeDeleted = getFragmentManager().findFragmentByTag(requestsFragmentTag);
-        if(tobeDeleted!=null) {
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.remove(tobeDeleted);
-            fragmentTransaction.commit();
-        }
-
-
-            tobeDeleted = getFragmentManager().findFragmentByTag(postsFragmentTag);
-            if (tobeDeleted != null) {
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.remove(tobeDeleted);
-                fragmentTransaction.commit();
-            }
-
-
-        tobeDeleted = getFragmentManager().findFragmentByTag(chooseUpdateOptionsFragmentsTag);
-        if(tobeDeleted!=null) {
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.remove(tobeDeleted);
-            fragmentTransaction.commit();
-        }
-
-
-        tobeDeleted = getFragmentManager().findFragmentByTag(chooseRequestOptionsFragmentsTag);
-        if(tobeDeleted!=null) {
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.remove(tobeDeleted);
-            fragmentTransaction.commit();
-        }
-        if( exception!=null && exception!=choosePostTypeFragmentsTag) {
-            tobeDeleted = getFragmentManager().findFragmentByTag(choosePostTypeFragmentsTag);
-            if (tobeDeleted != null) {
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.remove(tobeDeleted);
-                fragmentTransaction.commit();
-            }
-        }
-
-        tobeDeleted = getFragmentManager().findFragmentByTag(chooseAnnouncementOptionsFragmentsTag);
-        if(tobeDeleted!=null) {
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.remove(tobeDeleted);
-            fragmentTransaction.commit();
-        }
-        */
     }
 
 
@@ -343,5 +291,9 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     public void setUpdateSorting(String sortingCrietaria) {
         updatesSortingCrieteria=sortingCrietaria;
         Log.d("Srting Crieteria: ",sortingCrietaria);
+
+        UserUpdates updateFragment = (UserUpdates) getFragmentManager().findFragmentByTag(updatesFragmentTag);
+        if(updateFragment!=null)updateFragment.setUpdateSorting(sortingCrietaria);
+
     }
 }

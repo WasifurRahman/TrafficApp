@@ -46,14 +46,14 @@
     </LinearLayout>
 
     <EditText
-        android:id="@+id/descriptionBox"
+        android:id="@+id/addRequestDescriptionBox"
         android:paddingTop="1dp"
         android:layout_width="259dp"
-        android:layout_height="45dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/description_text_box"
         android:hint="Additional information..."
         android:paddingLeft="10dp"
-        android:inputType="textVisiblePassword"
+        android:inputType="textCapSentences|textMultiLine"
         android:textSize="15dp"
         android:layout_gravity="right">
 

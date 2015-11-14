@@ -9,10 +9,12 @@ import java.util.Hashtable;
 public class Locations {
 
     private static Hashtable<String, Integer> locations = new Hashtable<String, Integer>();
+    private static Hashtable<Integer,String> reverseLocations = new Hashtable<Integer,String>();
     private static String[] locationNames;
 
     public static void addLocation (String name, int id) {
         locations.put(name, new Integer (id));
+        reverseLocations.put(new Integer(id),name);
     }
 
     public static String[] getAllLocationNames() {
@@ -34,5 +36,20 @@ public class Locations {
             return new Integer(locations.get(name)).intValue();
         }
         return -1;
+    }
+
+    public static String getLocationName(int id) {
+        if(reverseLocations.containsKey(id)){
+            return reverseLocations.get(id);
+        }
+        return null;
+    }
+
+    public static String prepString() {
+        String ans="";
+        for(int i=0;i<locationNames.length;i++){
+            ans+=locationNames[i];
+        }
+        return ans;
     }
 }

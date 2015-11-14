@@ -38,7 +38,7 @@ public class JSONParser {
     public JSONObject  makeHttpRequest(String urlParameter, String method,
                                       List<Pair> params) {
 
-        final String BASE_URL = "http://172.16.193.173/trafficapp/v1/index.php";
+        final String BASE_URL = "http://192.168.0.100/trafficapp/v1/index.php";
         URL url;
 //        List<Pair> paramaters = new ArrayList<Pair>();
         // Making HTTP request
@@ -48,33 +48,36 @@ public class JSONParser {
             BufferedReader reader = null;
 //            System.setProperty("http.keepAlive", "false");
 
-            url = new URL(BASE_URL + urlParameter);
-            Log.d("Test: ", "1");
-            urlConnection = (HttpURLConnection) url.openConnection();
-            Log.d("Test: ", "2");
-            urlConnection.setRequestMethod(method);
-            Log.d("Test: ", "3");
-            urlConnection.setDoOutput(true);
-            Log.d("Test: ", "4");
+            if (method == "POST") {
+                url = new URL(BASE_URL + urlParameter);
+                Log.d("Test: ", "1");
+                urlConnection = (HttpURLConnection) url.openConnection();
+                Log.d("Test: ", "2");
+                urlConnection.setRequestMethod(method);
+                Log.d("Test: ", "3");
+                urlConnection.setDoOutput(true);
+//                urlConnection.setInstanceFollowRedirects(false);
+                Log.d("Test: ", "4");
 
-//            for(int i=0;i<params.size();i++) {
-//                paramaters.add(new Pair(params.get(i).first, params.get(i).second));
-//            }
-            OutputStream os = urlConnection.getOutputStream();
-            Log.d("Test: ", "5");
+                if(params != null) {
+                    OutputStream os = urlConnection.getOutputStream();
+                    Log.d("Test: ", "5");
+                    OutputStreamWriter writer = new OutputStreamWriter(os);
+                    Log.d("Test: ", "6");
+                    writer.write(getQuery(params));
+                    Log.d("output params: ",getQuery(params));
+                    writer.close();
+                }
+            }
+            else if(method == "GET") {
+                url = new URL(BASE_URL + urlParameter + "?" + getQuery(params));
 
-//            BufferedWriter writer = new BufferedWriter(
-//                    new OutputStreamWriter(os, "UTF-8"));
-//            writer.write(getQuery(params));
-//            writer.flush();
-//            writer.close();
-//            os.close();
-            OutputStreamWriter writer = new OutputStreamWriter(os);
-            Log.d("Test: ", "6");
-            writer.write(getQuery(params));
-            Log.d("output params: ",getQuery(params));
-            writer.close();
-//            urlConnection.connect();
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod(method);
+                urlConnection.setDoInput(true);
+                urlConnection.connect();
+//                urlConnection.setInstanceFollowRedirects(false);
+            }
 
             is = urlConnection.getInputStream();
             StringBuffer buffer = new StringBuffer();
@@ -99,128 +102,12 @@ public class JSONParser {
             Log.d("Input Stream: ", jsonString);
             urlConnection.disconnect();
 
-
-            // check for request method
-//            if(method == "POST") {
-                // request method is POST
-                // defaultHttpClient
-
-
-//                DefaultHttpClient httpClient = new DefaultHttpClient();
-//                HttpPost httpPost = new HttpPost(url);
-//                httpPost.setEntity(new UrlEncodedFormEntity(params));
-//
-//                HttpResponse httpResponse = httpClient.execute(httpPost);
-//                HttpEntity httpEntity = httpResponse.getEntity();
-//                try{
-//                    is = urlConnection.getInputStream();
-//                    StringBuffer buffer = new StringBuffer();
-//                    if (is == null) {
-//                        return null;
-//                    }
-//                    reader = new BufferedReader(new InputStreamReader(inputStream));
-//
-//                    String line;
-//                    while ((line = reader.readLine()) != null) {
-//                        // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-//                        // But it does make debugging a *lot* easier if you print out the completed
-//                        // buffer for debugging.
-//                        buffer.append(line + "\n");
-//                    }
-//
-//                    if (buffer.length() == 0) {
-//                        // Stream was empty.  No point in parsing.
-//                        return null;
-//                    }
-//                    forecastJsonStr = buffer.toString();
-//                } catch (Exception e) {
-//                    Log.e("", "Error ", e);
-//
-//                    return null;
-//                } finally {
-//                    if (urlConnection != null) {
-//                        urlConnection.disconnect();
-//                    }
-//                    if (reader != null) {
-//                        try {
-//                            reader.close();
-//                        } catch (final IOException e) {
-//                            Log.e(LOG_TAG, "Error closing stream", e);
-//                        }
-//                    }
-//                }
-//            }
-//            }else if(method == "GET"){
-//                // request method is GET
-//                DefaultHttpClient httpClient = new DefaultHttpClient();
-//                String paramString = URLEncodedUtils.format(params, "utf-8");
-//                url += "?" + paramString;
-//                HttpGet httpGet = new HttpGet(url);
-//
-//                HttpResponse httpResponse = httpClient.execute(httpGet);
-//                HttpEntity httpEntity = httpResponse.getEntity();
-//                is = httpEntity.getContent();
-//            }
-
         } catch (IOException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-//        try {
-//            // Read the input stream into a String
-//            StringBuffer buffer = new StringBuffer();
-//            if (inputStream == null) {
-//                // Nothing to do.
-//                return null;
-//            }
-//            reader = new BufferedReader(new InputStreamReader(inputStream));
-//
-//            String line;
-//            while ((line = reader.readLine()) != null) {
-//                // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-//                // But it does make debugging a *lot* easier if you print out the completed
-//                // buffer for debugging.
-//                buffer.append(line + "\n");
-//            }
-//
-//            if (buffer.length() == 0) {
-//                // Stream was empty.  No point in parsing.
-//                return null;
-//            }
-//            forecastJsonStr = buffer.toString();
-//        } catch (IOException e) {
-//            Log.e(LOG_TAG, "Error ", e);
-//            // If the code didn't successfully get the weather data, there's no point in attemping
-//            // to parse it.
-//            return null;
-//        } finally {
-//            if (urlConnection != null) {
-//                urlConnection.disconnect();
-//            }
-//            if (reader != null) {
-//                try {
-//                    reader.close();
-//                } catch (final IOException e) {
-//                    Log.e(LOG_TAG, "Error closing stream", e);
-//                }
-//            }
-//        }
-//        }
- /*           BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    is, "iso-8859-1"), 8);
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line + "\n");
-            }
-            is.close();
-            json = sb.toString();
-        } catch (Exception e) {
-            Log.e("Buffer Error", "Error converting result " + e.toString());
-        }
-*/
         // try parse the string to a JSON object
         try {
             System.out.println(jsonString);
@@ -236,6 +123,9 @@ public class JSONParser {
     }
     private String getQuery(List<Pair> params) throws Exception
     {
+        if (params == null)
+            return "";
+
         StringBuilder result = new StringBuilder();
         boolean first = true;
 
