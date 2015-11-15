@@ -29,16 +29,16 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
 
 
 
-    private String updatesSortingCrieteria="mostRecent";
-    private String requestSortingCrieteria="mostRecent";
+    private String updatesSortingCriteria ="mostRecent";
+    private String requestSortingCriteria ="mostRecent";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        addUpdatesFragment();
-        addChooseUpdateOptionsFragment();
+        addRequestsFragment();
+        addChooseRequestOptionsFragment();
 
     }
 
@@ -269,9 +269,12 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     }
 
     @Override
-    public void setRequestSorting(String sortingCrietaria) {
-        requestSortingCrieteria=sortingCrietaria;
-        Log.d("Srting Crieteria: ",sortingCrietaria);
+    public void setRequestSorting(String sortingCriteria) {
+        requestSortingCriteria =sortingCriteria;
+        Log.d("Srting Crieteria: ",sortingCriteria);
+
+        RequestFragment requestFragment = (RequestFragment) getFragmentManager().findFragmentByTag(requestsFragmentTag);
+        if(requestFragment!=null)requestFragment.setRequestSorting(sortingCriteria);
     }
 
     @Override
@@ -289,7 +292,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
 
     @Override
     public void setUpdateSorting(String sortingCrietaria) {
-        updatesSortingCrieteria=sortingCrietaria;
+        updatesSortingCriteria =sortingCrietaria;
         Log.d("Srting Crieteria: ",sortingCrietaria);
 
         UserUpdates updateFragment = (UserUpdates) getFragmentManager().findFragmentByTag(updatesFragmentTag);

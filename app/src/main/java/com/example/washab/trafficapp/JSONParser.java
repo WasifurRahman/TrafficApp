@@ -38,7 +38,7 @@ public class JSONParser {
     public JSONObject  makeHttpRequest(String urlParameter, String method,
                                       List<Pair> params) {
 
-        final String BASE_URL = "http://192.168.0.100/trafficapp/v1/index.php";
+        final String BASE_URL = "http://192.168.0.102/trafficapp/v1/index.php";
         URL url;
 //        List<Pair> paramaters = new ArrayList<Pair>();
         // Making HTTP request

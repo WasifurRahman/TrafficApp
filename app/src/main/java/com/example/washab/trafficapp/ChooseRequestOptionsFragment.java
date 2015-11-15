@@ -122,7 +122,8 @@ public class ChooseRequestOptionsFragment extends Fragment implements  View.OnCl
         }
         else if(v.getId()==R.id.requestOptionMostFavouriteButton){
 
-            mListener.setRequestSorting("mostFavourite");
+            mListener.setRequestSorting("mostPopular");
+            Log.d("SortingTest", "Button Clicked");
         }
         else if(v.getId()==R.id.requestOptionMostRecentButton){
             mListener.setRequestSorting("mostRecent");
