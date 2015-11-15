@@ -2,8 +2,11 @@ package com.example.washab.trafficapp;
 
 import android.app.Activity;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +14,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -34,7 +42,8 @@ public class RequestFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private ArrayList<Request> allRequests =new ArrayList<Request>();
+    private ArrayList<Request> allRequestsArrayList =new ArrayList<Request>();
+    private String sortingCriteria = "mostRecent";
 
     /**
      * Use this factory method to create a new instance of
@@ -77,18 +86,28 @@ public class RequestFragment extends Fragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        populateRequestList();
-        populateRequestListView();
+        new FetchRequestTask().execute();
+//        populateRequestList(JSONObject jsonRequests);
+//        populateRequestListView();
         super.onActivityCreated(savedInstanceState);
     }
 
-    private void populateRequestList(){
+    private void populateRequestList(JSONObject jsonRequests){
 
-        //Request(String extraText, int followerCount, String locationFrom, String locationTo, String requesterName, int requestId, String timeOfRequest)
-        //String description, int dislikeCount, String timeFrom,String timeTo,int id, int likeCount, String locationFrom, String locationTo, String title,  String timeOfUpdate, String updater)
-        allRequests.add(new Request("very urgent", 2,  "Dhanmondi", "New-market", "Sahil",2 ,"12-15 AM"));
+        try {
 
-
+            JSONArray allRequests=jsonRequests.getJSONArray("requests");
+            allRequestsArrayList.clear();
+            for(int i=0;i<allRequests.length();i++){
+                JSONObject curObj=allRequests.getJSONObject(i);
+                //Log.d("in populte: ",curObj.toString());
+                Request curRequest = Request.createRequest(curObj);
+                Log.d("new request",curRequest.toString());
+                allRequestsArrayList.add(curRequest);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -100,7 +119,7 @@ public class RequestFragment extends Fragment {
 
     private class MyListAdapter extends ArrayAdapter<Request>{
         public MyListAdapter(){
-            super(getActivity(), R.layout.user_request_item,allRequests);
+            super(getActivity(), R.layout.user_request_item,allRequestsArrayList);
         }
 
         @Override
@@ -113,25 +132,24 @@ public class RequestFragment extends Fragment {
 
 
             //find the update to work with
-            Request currentRequest= allRequests.get(position);
+            Request currentRequest= allRequestsArrayList.get(position);
             //fill the view
 
 
             TextView locFrom = (TextView)itemView.findViewById(R.id.requestLocationFromTextView);
-            locFrom.setText(currentRequest.getLocationFrom());
+            locFrom.setText(Locations.getLocationName(currentRequest.getLocationIdFrom()));
 
             TextView locTo = (TextView)itemView.findViewById(R.id.requestLocationToTextView);
-            locTo.setText(currentRequest.getLocationTo());
+            locTo.setText(Locations.getLocationName(currentRequest.getLocationIdTo()));
 
+            TextView sitDes=(TextView)itemView.findViewById(R.id.requestDescriptionBox);
+            sitDes.setText(currentRequest.getDescription());
 
+//            TextView requesterName=(TextView) itemView.findViewById(R.id.requesterNameTextView);
+//            requesterName.setText(currentRequest.getRequesterName());
 
-            TextView sitDes=(TextView)itemView.findViewById(R.id.reqestExtraDes);
-            sitDes.setText(currentRequest.getExtraText());
-
-
-
-            TextView updatorName=(TextView) itemView.findViewById(R.id.requestorNameTextView);
-            updatorName.setText(currentRequest.getRequesterName());
+            TextView requesterId=(TextView) itemView.findViewById(R.id.requesterNameTextView);
+            requesterId.setText("" + currentRequest.getRequesterId());
 
             TextView updateTime=(TextView) itemView.findViewById(R.id.requestUpdateTimeTextView);
             updateTime.setText(currentRequest.getTimeOfRequest());
@@ -139,15 +157,8 @@ public class RequestFragment extends Fragment {
             TextView likeCnt=(TextView) itemView.findViewById(R.id.requestFollowerCountTextView);
             likeCnt.setText("" + currentRequest.getFollowerCount());
 
-
-
-
-
             return itemView;
             // return super.getView(position, convertView, parent);
-
-
-
         }
     }
 
@@ -190,4 +201,47 @@ public class RequestFragment extends Fragment {
         public void onFragmentInteraction(Uri uri);
     }
 
+    public void setRequestSorting (String sortingCriteria) {
+        this.sortingCriteria = sortingCriteria;
+        Log.d("Sorting Criteria change", "New Background Thread starts");
+        new FetchRequestTask().execute();
+    }
+
+    class FetchRequestTask extends AsyncTask<String, Void, String> {
+
+        private JSONObject jsonRequests;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        protected String doInBackground(String... args) {
+
+            JSONParser jParser = new JSONParser();
+            // Building Parameters
+            List<Pair> params = new ArrayList<Pair>();
+
+            params.add(new Pair("sortType", sortingCriteria));
+            // getting JSON string from URL
+
+            jsonRequests = jParser.makeHttpRequest("/allrequests", "GET", params);
+
+            // Check your log cat for JSON reponse
+            Log.d("All info: ", jsonRequests.toString());
+            return null;
+
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         **/
+        protected void onPostExecute (String a){
+
+            //jsonUpdatesField=jsonUpdates;
+            populateRequestList(jsonRequests);
+            populateRequestListView();
+        }
+    }
 }

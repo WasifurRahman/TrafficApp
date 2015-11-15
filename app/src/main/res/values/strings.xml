@@ -17,8 +17,8 @@
     <string name="add_request_button">Request</string>
     <string name="add_announcement_button">Announce</string>
     <string name="add_discussion_button">Discuss</string>
-    <string name="most_favourite">Most Favourite</string>
-    <string name="most_recent">Most recent</string>
+    <string name="most_popular">Most Popular</string>
+    <string name="most_recent">Most Recent</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

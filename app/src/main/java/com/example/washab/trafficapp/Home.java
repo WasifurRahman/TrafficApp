@@ -29,10 +29,13 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
 
 
 
-    private String updatesSortingCrieteria="mostRecent";
-    private String requestSortingCrieteria="mostRecent";
-    private String announcementSortingCrietaria="mostRecent";
-    private String discussionSortingCrietaria="mostRecent";
+
+    private String announcementSortingCriteria ="mostRecent";
+    private String discussionSortingCriteria ="mostRecent";
+
+
+    private String updatesSortingCriteria ="mostRecent";
+    private String requestSortingCriteria ="mostRecent";
 
 
     @Override
@@ -40,8 +43,8 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        addUpdatesFragment();
-        addChooseUpdateOptionsFragment();
+        addRequestsFragment();
+        addChooseRequestOptionsFragment();
 
     }
 
@@ -233,7 +236,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     @Override
     public void setDiscussionSorting(String sortingCrietaria) {
 
-        discussionSortingCrietaria=sortingCrietaria;
+        discussionSortingCriteria =sortingCrietaria;
         Log.d("Srting Crieteria: ",sortingCrietaria);
 
         DiscussionFragment discussionFragment = (DiscussionFragment) getFragmentManager().findFragmentByTag(discussionFragmentTag);
@@ -253,7 +256,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     @Override
     public void setAnnouncementSorting(String sortingCrietaria) {
 
-        announcementSortingCrietaria=sortingCrietaria;
+        announcementSortingCriteria =sortingCrietaria;
         Log.d("Srting Crieteria: ",sortingCrietaria);
 
         UserUpdates updateFragment = (UserUpdates) getFragmentManager().findFragmentByTag(updatesFragmentTag);
@@ -286,9 +289,12 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     }
 
     @Override
-    public void setRequestSorting(String sortingCrietaria) {
-        requestSortingCrieteria=sortingCrietaria;
-        Log.d("Srting Crieteria: ",sortingCrietaria);
+    public void setRequestSorting(String sortingCriteria) {
+        requestSortingCriteria =sortingCriteria;
+        Log.d("Srting Crieteria: ",sortingCriteria);
+
+        RequestFragment requestFragment = (RequestFragment) getFragmentManager().findFragmentByTag(requestsFragmentTag);
+        if(requestFragment!=null)requestFragment.setRequestSorting(sortingCriteria);
     }
 
     @Override
@@ -306,7 +312,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
 
     @Override
     public void setUpdateSorting(String sortingCrietaria) {
-        updatesSortingCrieteria=sortingCrietaria;
+        updatesSortingCriteria =sortingCrietaria;
         Log.d("Srting Crieteria: ",sortingCrietaria);
 
         UserUpdates updateFragment = (UserUpdates) getFragmentManager().findFragmentByTag(updatesFragmentTag);

@@ -130,7 +130,7 @@ public class Update {
 
     public static Update createUpdate(JSONObject jsonObject) {
         try {
-             return new Update(jsonObject.getInt("updaterId"),
+             return new Update(jsonObject.getInt("id"),
                      jsonObject.getString("description"),
                     jsonObject.getInt("dislikeCount"),
                     jsonObject.getInt("estTimeToCross"),
