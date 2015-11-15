@@ -2,6 +2,7 @@ package com.example.washab.trafficapp;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,12 +12,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -44,8 +45,16 @@ public class UserUpdates extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
-    private JSONObject jsonUpdatesField;
+
+    private String queryAllUpdates="/allupdates";
+    private String queryAddLike="/addupdatelike";
+
     private String sortingCriteria = "mostRecent";
+    private String query="/allupdates";
+    private int updateToBeLiked=-1;
+    private int likerId=-1;
+    private TextView changeLikeCount;
+
 
     /**
      * Use this factory method to create a new instance of
@@ -86,17 +95,41 @@ public class UserUpdates extends Fragment {
     private void populateUpdateList(JSONObject jsonUpdates){
 
         try {
+            //Log.d("within updates: ",jsonUpdates.toString());
+            allUserUpdatesArraylist.clear();
 
             JSONArray allUpdates=jsonUpdates.getJSONArray("updates");
-            allUserUpdatesArraylist.clear();
-            for(int i=0;i<allUpdates.length();i++){
-                JSONObject curObj=allUpdates.getJSONObject(i);
+            int curIndex=0,N=allUpdates.length();
+
+            while(curIndex<N){
+                JSONObject curObj=allUpdates.getJSONObject(curIndex++);
+
                 //Log.d("in populte: ",curObj.toString());
-                Update curUpdate = Update.createUpdate(curObj);
-                //Log.d("new update",curUpdate.toString());
+                //break;
+                Update curUpdate=Update.createUpdate(curObj);
+                int likeCnt=curUpdate.getLikeCount();
+                //Log.d("likercnt for"+curUpdate.getId(),likeCnt+"");
+                for(int i=0;i<likeCnt;i++){
+                    JSONObject likeObj=allUpdates.getJSONObject(curIndex++);
+                    Liker newLiker = new Liker(likeObj.getInt("likerId"),likeObj.getString("likerName"));
+                    //Log.d("new liker object: ",newLiker.toString());
+                    curUpdate.addLikerInitially(newLiker);
+
+                }
+
+                //Log.d("update object: ",curUpdate.toString());
                 allUserUpdatesArraylist.add(curUpdate);
+
             }
-        } catch (JSONException e) {
+//            allUserUpdatesArraylist.clear();
+//            for(int i=0;i<allUpdates.length();i++){
+//                JSONObject curObj=allUpdates.getJSONObject(i);
+//                //Log.d("in populte: ",curObj.toString());
+//                Update curUpdate = Update.createUpdate(curObj);
+//                //Log.d("new update",curUpdate.toString());
+//
+//            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -117,7 +150,7 @@ public class UserUpdates extends Fragment {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
 
             View itemView=convertView;
             if(itemView==null){
@@ -126,8 +159,12 @@ public class UserUpdates extends Fragment {
 
 
             //find the update to work with
-            Update currentUpdate= allUserUpdatesArraylist.get(position);
+            final Update currentUpdate= allUserUpdatesArraylist.get(position);
+            int currentUserId=Utility.CurrentUser.getId();
+            String currentUserName=Utility.CurrentUser.getName();
+            Liker mayBeLiker=new Liker(currentUserId,currentUserName);
             //fill the view
+            Log.d("checking update changes : ",currentUpdate.toString());
 
             TextView locFrom = (TextView)itemView.findViewById(R.id.locationFromTextView);
             locFrom.setText(Locations.getLocationName(currentUpdate.getLocationIdFrom()));
@@ -150,18 +187,86 @@ public class UserUpdates extends Fragment {
             EditText description = (EditText) itemView.findViewById(R.id.updateDescriptionBox);
             description.setText(currentUpdate.getDescription());
 
-            TextView likeCnt=(TextView) itemView.findViewById(R.id.likeCountTextView);
-            likeCnt.setText(""+currentUpdate.getLikeCount());
+            final TextView likeCnt=(TextView) itemView.findViewById(R.id.likeCountTextView);
+            likeCnt.setText("" + currentUpdate.getLikeCount());
 
             TextView dislikeCnt=(TextView) itemView.findViewById(R.id.dislikeCountTextView);
-            dislikeCnt.setText(""+currentUpdate.getDislikeCount());
+            dislikeCnt.setText("" + currentUpdate.getDislikeCount());
 
+            final Button likeButton=(Button)itemView.findViewById(R.id.updateLikeButton);
+            checkIfAlreadyLikedAndChangeColorAccordingly(mayBeLiker, currentUpdate, likeButton);
+            likeButton.setOnClickListener(new View.OnClickListener() {
 
+                @Override
+                public void onClick(View v) {
+                    if (v.getId() == R.id.updateLikeButton) {
+                        Log.d("like button: ", "update like button pressed");
+                        handleLikeButtonPress(position,likeButton,likeCnt);
+                    }
+                }
+            });
 
             return itemView;
            // return super.getView(position, convertView, parent);
 
 
+
+        }
+    }
+
+    private void checkIfAlreadyLikedAndChangeColorAccordingly(Liker curLiker, Update curUpdate, Button likeButton) {
+        synchronized (curUpdate) {
+            if (curUpdate.hasTHeUserLikedTheUpdate(curLiker) && curUpdate.getLikeCount()>0) {
+
+
+                //likeButton.setText("Liked");
+                //likeButton.setBackgroundColor(Color.CYAN);
+
+            }
+        }
+    }
+
+    private void handleLikeButtonPress(int pos, Button likeButton, TextView likeCount) {
+
+        //Log.d("the pressed like button update: ",allUserUpdatesArraylist.get(pos).toString());
+
+        //check if the user has pressed the like button already.if he had,do not do anything.
+        //else increseLIkeCountBy one
+        Liker curLiker=new Liker(Utility.CurrentUser.getId(),Utility.CurrentUser.getName());
+        Update curUpdate=allUserUpdatesArraylist.get(pos);
+        if(!curUpdate.hasTHeUserLikedTheUpdate(curLiker)){
+            curUpdate.addLiker(curLiker);
+            curUpdate.removeDisliker(curLiker);
+            //Log.d("yes liked ", "for the first time");
+            likeButton.setText("Liked");
+            likeButton.setBackgroundColor(Color.CYAN);
+            //now increase the likeCount by one
+            int curLikeCount=curUpdate.getLikeCount();
+            likeCount.setText("" + curLikeCount);
+            updateToBeLiked=curUpdate.getId();
+            likerId=Utility.CurrentUser.getId();
+            new AddLikerTask().execute();
+
+
+            //populateUpdateListView();
+
+
+        }else{
+            Log.d(" Already liked ","the post");
+        }
+    }
+
+    private void handledislikeButtonPress(int pos,Button dislikeButton) {
+
+        Log.d("the pressed dislike button update: ",allUserUpdatesArraylist.get(pos).toString());
+
+        //check if the user has pressed the like button already.if he had,do not do anything.
+        //else increseLIkeCountBy one
+        Liker curDisliker=new Liker(Utility.CurrentUser.getId(),Utility.CurrentUser.getName());
+        Update curUpdate=allUserUpdatesArraylist.get(pos);
+        if(!curUpdate.hasTHeUserLikedTheUpdate(curDisliker)){
+            curUpdate.addLiker(curDisliker);
+            curUpdate.removeDisliker(curDisliker);
 
         }
     }
@@ -208,6 +313,7 @@ public class UserUpdates extends Fragment {
 
     public void setUpdateSorting (String sortingCriteria) {
         this.sortingCriteria = sortingCriteria;
+
         new FetchUpdateTask().execute();
     }
 
@@ -243,10 +349,13 @@ public class UserUpdates extends Fragment {
             // Building Parameters
             List<Pair> params = new ArrayList<Pair>();
 
-            params.add(new Pair("sortType", sortingCriteria));
-            // getting JSON string from URL
 
-            jsonUpdates = jParser.makeHttpRequest("/allupdates", "POST", params);
+                params.add(new Pair("sortType", sortingCriteria));
+                // getting JSON string from URL
+
+                jsonUpdates = jParser.makeHttpRequest("/allupdates", "POST", params);
+
+
 
             // Check your log cat for JSON reponse
            Log.d("All info: ",jsonUpdates.toString());
@@ -260,8 +369,48 @@ public class UserUpdates extends Fragment {
         protected void onPostExecute (String a){
 
             //jsonUpdatesField=jsonUpdates;
-            populateUpdateList(jsonUpdates);
-            populateUpdateListView();
+
+                populateUpdateList(jsonUpdates);
+                populateUpdateListView();
+
+        }
+    }
+
+
+    class AddLikerTask extends AsyncTask<String, Void, String> {
+
+        private JSONObject jsonAddUpdateLike;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        protected String doInBackground(String... args) {
+
+            JSONParser jParser = new JSONParser();
+            // Building Parameters
+            List<Pair> params = new ArrayList<Pair>();
+
+            params.add(new Pair("updateId",updateToBeLiked));
+            params.add(new Pair("likerId",likerId));
+
+            jsonAddUpdateLike = jParser.makeHttpRequest("/addupdatelike", "POST", params);
+
+            // Check your log cat for JSON reponse
+            // Log.d("All info: ",jsonUpdates.toString());
+            return null;
+
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         **/
+        protected void onPostExecute (String a){
+
+
+
         }
     }
 

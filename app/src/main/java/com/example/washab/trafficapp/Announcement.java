@@ -1,30 +1,34 @@
 package com.example.washab.trafficapp;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by Shabab on 11/9/2015.
  */
 public class Announcement {
     private int id;
-    private  String locationTo,locationFrom;
+    private  int locationIdTo,locationIdFrom;
     private String timeFrom,timeTo;
     private String title,description,timeOfUpdate;
-    private String updater;
-
+    private String posterName;
+    private int posterId;
     private int likeCount,dislikeCount;
 
-    public Announcement(String description, int dislikeCount, String timeFrom,String timeTo,int id, int likeCount, String locationFrom, String locationTo, String title,  String timeOfUpdate, String updater) {
+    public Announcement(String description, int dislikeCount, String timeFrom, String timeTo, int id, int likeCount, int locationIdFrom, int locationIdTo, String title, String timeOfUpdate, String posterName, int posterId) {
         this.description = description;
         this.dislikeCount = dislikeCount;
         this.timeFrom=timeFrom;
         this.timeTo=timeTo;
         this.id = id;
         this.likeCount = likeCount;
-        this.locationFrom = locationFrom;
-        this.locationTo = locationTo;
+        this.locationIdFrom = locationIdFrom;
+        this.locationIdTo = locationIdTo;
         this.title = title;
 
         this.timeOfUpdate = timeOfUpdate;
-        this.updater = updater;
+        this.posterName = posterName;
+        this.posterId = posterId;
     }
 
 
@@ -61,21 +65,7 @@ public class Announcement {
         this.likeCount = likeCount;
     }
 
-    public String getLocationFrom() {
-        return locationFrom;
-    }
 
-    public void setLocationFrom(String locationFrom) {
-        this.locationFrom = locationFrom;
-    }
-
-    public String getLocationTo() {
-        return locationTo;
-    }
-
-    public void setLocationTo(String locationTo) {
-        this.locationTo = locationTo;
-    }
 
     public String getTitle() {
         return title;
@@ -95,12 +85,12 @@ public class Announcement {
         this.timeOfUpdate = timeOfUpdate;
     }
 
-    public String getUpdater() {
-        return updater;
+    public String getPosterName() {
+        return posterName;
     }
 
-    public void setUpdater(String updater) {
-        this.updater = updater;
+    public void setPosterName(String posterName) {
+        this.posterName = posterName;
     }
 
     public String getTimeFrom() {
@@ -117,5 +107,56 @@ public class Announcement {
 
     public void setTimeTo(String timeTo) {
         this.timeTo = timeTo;
+    }
+
+    public static Announcement createAnnouncement(JSONObject jsonObject) {
+
+        //Announcement(String description, int dislikeCount, String timeFrom, String timeTo, int id, int likeCount, String locationFrom, String locationTo, String title, String timeOfUpdate, String posterName, int posterId)
+        //Announcement(String description, int dislikeCount, String timeFrom, String timeTo, int id, int likeCount, int locationIdFrom, int locationIdTo, String title, String timeOfUpdate, String posterName, int posterId) {
+        try {
+            return new Announcement(
+                    jsonObject.getString("description"),
+                    jsonObject.getInt("dislikeCount"),
+                    jsonObject.getString("timeFrom"),
+                    jsonObject.getString("timeTo"),
+                    jsonObject.getInt("id"),
+                    jsonObject.getInt("likeCount"),
+                    jsonObject.getInt("locationIdFrom"),
+                    jsonObject.getInt("locationIdTo"),
+                    jsonObject.getString("title"),
+                    jsonObject.getString("timeOfUpdate"),
+                    jsonObject.getString("posterName"),
+                    jsonObject.getInt("posterId")
+
+
+            );
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public int getPosterId() {
+        return posterId;
+    }
+
+    public void setPosterId(int posterId) {
+        this.posterId = posterId;
+    }
+
+    public int getLocationIdFrom() {
+        return locationIdFrom;
+    }
+
+    public void setLocationIdFrom(int locationIdFrom) {
+        this.locationIdFrom = locationIdFrom;
+    }
+
+    public int getLocationIdTo() {
+        return locationIdTo;
+    }
+
+    public void setLocationIdTo(int locationIdTo) {
+        this.locationIdTo = locationIdTo;
     }
 }

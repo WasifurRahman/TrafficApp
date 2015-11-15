@@ -7,7 +7,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -38,7 +37,7 @@ public class JSONParser {
     public JSONObject  makeHttpRequest(String urlParameter, String method,
                                       List<Pair> params) {
 
-        final String BASE_URL = "http://192.168.0.100/trafficapp/v1/index.php";
+        final String BASE_URL = "http://192.168.0.102/trafficapp/v1/index.php";
         URL url;
 //        List<Pair> paramaters = new ArrayList<Pair>();
         // Making HTTP request
@@ -93,13 +92,13 @@ public class JSONParser {
                 // buffer for debugging.
                 buffer.append(line + "\n");
             }
-            Log.d("the buffer string: ", buffer.length()+"");
+           // Log.d("the buffer string: ", buffer.length()+"");
             if (buffer.length() == 0) {
                 // Stream was empty.  No point in parsing.
                 return null;
             }
             jsonString = buffer.toString();
-            Log.d("Input Stream: ", jsonString);
+            //Log.d("Input Stream: ", jsonString);
             urlConnection.disconnect();
 
         } catch (IOException e) {
@@ -110,8 +109,8 @@ public class JSONParser {
 
         // try parse the string to a JSON object
         try {
-            System.out.println(jsonString);
-            Log.d("jsonString: ", jsonString);
+            //System.out.println(jsonString);
+           // Log.d("jsonString: ", jsonString);
             jObj = new JSONObject(jsonString);
         } catch (JSONException e) {
             Log.e("JSON Parser", "Error parsing data " + e.toString());

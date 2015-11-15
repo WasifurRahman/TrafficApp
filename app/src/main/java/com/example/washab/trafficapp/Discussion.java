@@ -1,24 +1,48 @@
 package com.example.washab.trafficapp;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashSet;
+
 /**
  * Created by Shabab on 11/9/2015.
  */
 public class Discussion{
     private int id;
-    private  String location;
+    private  int locationId;
     private String title,description,timeOfUpdate;
-    private String updater;
+    private int posterId;
+    private String posterName;
     private int likeCount,dislikeCount;
+    private HashSet<Integer> likersId;
+    private HashSet<Integer> dislikersId;
 
-    public Discussion(String description, int dislikeCount, int id, int likeCount, String location, String timeOfUpdate, String title, String updater) {
+    public Discussion(String description, int dislikeCount, int id, int likeCount, int locationId, String timeOfUpdate, String title,int posterId, String posterName,HashSet<Integer> likersId, HashSet<Integer> dislikersId) {
         this.description = description;
         this.dislikeCount = dislikeCount;
         this.id = id;
         this.likeCount = likeCount;
-        this.location = location;
+        this.locationId = locationId;
         this.timeOfUpdate = timeOfUpdate;
         this.title = title;
-        this.updater = updater;
+        this.posterId = posterId;
+        this.likersId = likersId;
+        this.dislikersId = dislikersId;
+    }
+
+    public Discussion(String description, int dislikeCount, int id, int likeCount,int locationId, String timeOfUpdate, String title, int posterId,String posterName) {
+        this.description = description;
+        this.dislikeCount = dislikeCount;
+        this.id = id;
+        this.likeCount = likeCount;
+        this.locationId = locationId;
+        this.timeOfUpdate = timeOfUpdate;
+        this.title = title;
+        this.posterId = posterId;
+        this.posterName=posterName;
+
     }
 
 
@@ -56,13 +80,7 @@ public class Discussion{
         this.likeCount = likeCount;
     }
 
-    public String getLocation() {
-        return location;
-    }
 
-    public void setLocation(String location) {
-        this.location = location;
-    }
 
     public String getTimeOfUpdate() {
         return timeOfUpdate;
@@ -80,12 +98,80 @@ public class Discussion{
         this.title = title;
     }
 
-    public String getUpdater() {
-        return updater;
+
+
+    public static Discussion createDiscussion(JSONObject jsonObject) {
+
+        //Discussion(String description, int dislikeCount, int id, int likeCount, String location, String timeOfUpdate, String title, String updater, HashSet<Integer> likersId, HashSet<Integer> dislikersId)
+        //Discussion(String description, int dislikeCount, int id, int likeCount, int locationId, String timeOfUpdate, String title,int updaterId, HashSet<Integer> likersId, HashSet<Integer> dislikersId)
+        try {
+            return new Discussion(
+                    jsonObject.getString("description"),
+                    jsonObject.getInt("dislikeCount"),
+                    jsonObject.getInt("id"),
+                    jsonObject.getInt("likeCount"),
+                    jsonObject.getInt("locationId"),
+                    jsonObject.getString("timeOfUpdate"),
+                    jsonObject.getString("title"),
+                    jsonObject.getInt("posterId"),
+                    jsonObject.getString("posterName"),
+                    getLikersIdTreeSet(jsonObject.getJSONArray("likers")),
+                    getdislikersIdTreeSet(jsonObject.getJSONArray("dislikers"))
+            );
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    public void setUpdater(String updater) {
-        this.updater = updater;
+    private static HashSet<Integer> getdislikersIdTreeSet(JSONArray dislikers) {
+        return null;
+    }
+
+
+    private static HashSet<Integer> getLikersIdTreeSet(JSONArray likers) {
+
+        return null;
+    }
+
+    public HashSet<Integer> getLikersId() {
+        return likersId;
+    }
+
+    public void setLikersId(HashSet<Integer> likersId) {
+        this.likersId = likersId;
+    }
+
+    public HashSet<Integer> getDislikersId() {
+        return dislikersId;
+    }
+
+    public void setDislikersId(HashSet<Integer> dislikersId) {
+        this.dislikersId = dislikersId;
+    }
+
+    public int getLocationId() {
+        return locationId;
+    }
+
+    public void setLocationId(int locationId) {
+        this.locationId = locationId;
+    }
+
+    public int getPosterId() {
+        return posterId;
+    }
+
+    public void setPosterId(int posterId) {
+        this.posterId = posterId;
+    }
+
+    public String getPosterName() {
+        return posterName;
+    }
+
+    public void setPosterName(String posterName) {
+        this.posterName = posterName;
     }
 }
 

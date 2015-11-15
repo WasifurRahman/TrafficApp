@@ -2,8 +2,11 @@ package com.example.washab.trafficapp;
 
 import android.app.Activity;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +14,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -34,7 +42,9 @@ public class DiscussionFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private ArrayList<Discussion> allDiscussions =new ArrayList<Discussion>();
+    private ArrayList<Discussion> allDiscussionsArrayList =new ArrayList<Discussion>();
+    private JSONObject jsonDiscussionsField;
+    private String sortingCriteria = "mostRecent";
 
     /**
      * Use this factory method to create a new instance of
@@ -99,17 +109,32 @@ public class DiscussionFragment extends Fragment {
     }
 
     public void onActivityCreated(Bundle savedInstanceState) {
-        populateDiscussionList();
+        populateDiscussionList(jsonDiscussionsField);
         populateDiscussionListView();
         super.onActivityCreated(savedInstanceState);
     }
 
 
-    private void populateDiscussionList(){
+    private void populateDiscussionList(JSONObject jsonDiscussions){
+
+        try {
+
+            JSONArray allDiscussions=jsonDiscussions.getJSONArray("discussions");
+            allDiscussionsArrayList.clear();
+            for(int i=0;i<allDiscussions.length();i++){
+                JSONObject curObj=allDiscussions.getJSONObject(i);
+                //Log.d("in populte: ",curObj.toString());
+                Discussion curDiscussion = Discussion.createDiscussion(curObj);
+                //Log.d("new update",curUpdate.toString());
+                allDiscussionsArrayList.add(curDiscussion);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         //Discussion(String description, int dislikeCount, int id, int likeCount, String location, String timeOfUpdate, String title, String updater)
         //String description, int dislikeCount, String timeFrom,String timeTo,int id, int likeCount, String locationFrom, String locationTo, String title,  String timeOfUpdate, String updater)
-        allDiscussions.add(new Discussion("this road needs to be fixed quickly", 5,2, 25, "Dhanmondi", "11:15 AM","road is broken", "Shabab"));
+        //allDiscussionsArrayList.add(new Discussion("this road needs to be fixed quickly", 5,2, 25, "Dhanmondi", "11:15 AM","road is broken", "Shabab"));
 
 
     }
@@ -122,7 +147,7 @@ public class DiscussionFragment extends Fragment {
 
     private class MyListAdapter extends ArrayAdapter<Discussion>{
         public MyListAdapter(){
-            super(getActivity(), R.layout.user_discussion_item,allDiscussions);
+            super(getActivity(), R.layout.user_discussion_item, allDiscussionsArrayList);
         }
 
         @Override
@@ -135,13 +160,13 @@ public class DiscussionFragment extends Fragment {
 
 
             //find the update to work with
-           Discussion currentDiscussion= allDiscussions.get(position);
+           Discussion currentDiscussion= allDiscussionsArrayList.get(position);
             //fill the view
             TextView title = (TextView)itemView.findViewById(R.id.discussionTitleTextView);
             title.setText(currentDiscussion.getTitle());
 
             TextView locFrom = (TextView)itemView.findViewById(R.id.discssuionLocationTextView);
-            locFrom.setText(currentDiscussion.getLocation());
+            locFrom.setText(Locations.getLocationName(currentDiscussion.getLocationId()));
 
 
 
@@ -156,7 +181,7 @@ public class DiscussionFragment extends Fragment {
 
 
             TextView updatorName=(TextView) itemView.findViewById(R.id.discussionUpdatorNameTextView);
-            updatorName.setText(currentDiscussion.getUpdater());
+            updatorName.setText(currentDiscussion.getPosterName());
 
 
             TextView likeCnt=(TextView) itemView.findViewById(R.id.discussionLikeCountTextView);
@@ -175,6 +200,12 @@ public class DiscussionFragment extends Fragment {
         }
     }
 
+    public void setDiscussionSorting (String sortingCriteria) {
+        this.sortingCriteria = sortingCriteria;
+        new FetchDiscussionTask().execute();
+    }
+
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -188,6 +219,47 @@ public class DiscussionFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+    }
+
+
+
+
+    class FetchDiscussionTask extends AsyncTask<String, Void, String> {
+
+        private JSONObject jsonDiscussions;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        protected String doInBackground(String... args) {
+
+            JSONParser jParser = new JSONParser();
+            // Building Parameters
+            List<Pair> params = new ArrayList<Pair>();
+
+            params.add(new Pair("sortType", sortingCriteria));
+            // getting JSON string from URL
+
+            jsonDiscussions = jParser.makeHttpRequest("/alldiscussions", "POST", params);
+
+            // Check your log cat for JSON reponse
+            Log.d("All info: ", jsonDiscussions.toString());
+            return null;
+
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         **/
+        protected void onPostExecute (String a){
+
+            //jsonUpdatesField=jsonDiscussions;
+            populateDiscussionList(jsonDiscussions);
+            populateDiscussionListView();
+        }
     }
 
 }

@@ -2,8 +2,11 @@ package com.example.washab.trafficapp;
 
 import android.app.Activity;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +14,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -34,8 +42,9 @@ public class AnnouncementFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private ArrayList<Announcement> allAnnouncements=new ArrayList<Announcement>();
-
+    private ArrayList<Announcement> allAnnouncementsArrayList =new ArrayList<Announcement>();
+    private String sortingCriteria = "mostRecent";
+    JSONObject jsonAnnouncements;
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -100,20 +109,45 @@ public class AnnouncementFragment extends Fragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        populateAnnouncementList();
+        populateAnnouncementList(jsonAnnouncements);
         populateAnnouncementListView();
         super.onActivityCreated(savedInstanceState);
     }
 
-    private void populateAnnouncementList(){
+//  private void populateAnnouncementList(){
+//
+//
+//        //String description, int dislikeCount, String timeFrom,String timeTo,int id, int likeCount, String locationFrom, String locationTo, String title,  String timeOfUpdate, String updater)
+//        allAnnouncementsArrayList.add(new Announcement("good luck", 2, "12-30 AM", "1:15 PM", 5, 25, "Dhanmondi", "New-market", "Serious blockade", "11:15 AM", "Shabab"));
+//        allAnnouncementsArrayList.add(new Announcement("good luck", 3, "12-40 AM", "1:55 PM", 53, 25, "science-lab", "New-market", "PM going", "11:35 AM", "khan"));
+//
+//
+//    }
 
+    private void populateAnnouncementList(JSONObject jsonAnnouncements){
 
+        try {
+
+            JSONArray allAnnouncements=jsonAnnouncements.getJSONArray("announcements");
+            allAnnouncementsArrayList.clear();
+            for(int i=0;i<allAnnouncements.length();i++){
+                JSONObject curObj=allAnnouncements.getJSONObject(i);
+                //Log.d("in populte: ",curObj.toString());
+                Announcement curAnnouncment = Announcement.createAnnouncement(curObj);
+                //Log.d("new update",curUpdate.toString());
+               allAnnouncementsArrayList.add(curAnnouncment);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        //Discussion(String description, int dislikeCount, int id, int likeCount, String location, String timeOfUpdate, String title, String updater)
         //String description, int dislikeCount, String timeFrom,String timeTo,int id, int likeCount, String locationFrom, String locationTo, String title,  String timeOfUpdate, String updater)
-        allAnnouncements.add(new Announcement("good luck", 2, "12-30 AM", "1:15 PM", 5,25, "Dhanmondi", "New-market", "Serious blockade", "11:15 AM", "Shabab"));
-        allAnnouncements.add(new Announcement("good luck", 3, "12-40 AM", "1:55 PM", 53,25, "science-lab", "New-market", "PM going", "11:35 AM", "khan"));
+        //allDiscussionsArrayList.add(new Discussion("this road needs to be fixed quickly", 5,2, 25, "Dhanmondi", "11:15 AM","road is broken", "Shabab"));
 
 
     }
+
 
     private void populateAnnouncementListView(){
         ArrayAdapter<Announcement> adapter = new MyListAdapter();
@@ -123,7 +157,7 @@ public class AnnouncementFragment extends Fragment {
 
     private class MyListAdapter extends ArrayAdapter<Announcement>{
         public MyListAdapter(){
-            super(getActivity(), R.layout.user_announcement_item, allAnnouncements);
+            super(getActivity(), R.layout.user_announcement_item, allAnnouncementsArrayList);
         }
 
         @Override
@@ -136,16 +170,16 @@ public class AnnouncementFragment extends Fragment {
 
 
             //find the update to work with
-            Announcement currentAnnouncement=allAnnouncements.get(position);
+            Announcement currentAnnouncement= allAnnouncementsArrayList.get(position);
             //fill the view
             TextView title = (TextView)itemView.findViewById(R.id.announcementTitleTextView);
             title.setText(currentAnnouncement.getTitle());
 
             TextView locFrom = (TextView)itemView.findViewById(R.id.announcementLocationFromTextView);
-            locFrom.setText(currentAnnouncement.getLocationFrom());
+            locFrom.setText(currentAnnouncement.getLocationIdFrom());
 
             TextView locTo = (TextView)itemView.findViewById(R.id.announcementLocationToTextView);
-            locTo.setText(currentAnnouncement.getLocationTo());
+            locTo.setText(currentAnnouncement.getLocationIdTo());
 
             TextView timeFrom = (TextView)itemView.findViewById(R.id.announcementTimeFromTextView);
             timeFrom.setText(currentAnnouncement.getTimeFrom());
@@ -159,7 +193,7 @@ public class AnnouncementFragment extends Fragment {
 
 
             TextView updatorName=(TextView) itemView.findViewById(R.id.announcementUpdatorNameTextView);
-            updatorName.setText(currentAnnouncement.getUpdater());
+            updatorName.setText(currentAnnouncement.getPosterName());
 
             TextView updateTime=(TextView) itemView.findViewById(R.id.announcementUpdateTimeTextView);
             updateTime.setText(currentAnnouncement.getTimeOfUpdate());
@@ -180,6 +214,12 @@ public class AnnouncementFragment extends Fragment {
         }
     }
 
+
+    public void setAnnouncementSorting (String sortingCriteria) {
+        this.sortingCriteria = sortingCriteria;
+        new FetchAnnouncementTask().execute();
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -193,6 +233,46 @@ public class AnnouncementFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onAnnouncementFragmentInteraction(Uri uri);
+    }
+
+
+
+    class FetchAnnouncementTask extends AsyncTask<String, Void, String> {
+
+        private JSONObject jsonUpdates;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        protected String doInBackground(String... args) {
+
+            JSONParser jParser = new JSONParser();
+            // Building Parameters
+            List<Pair> params = new ArrayList<Pair>();
+
+            params.add(new Pair("sortType", sortingCriteria));
+            // getting JSON string from URL
+
+            jsonAnnouncements= jParser.makeHttpRequest("/allannouncements", "POST", params);
+
+            // Check your log cat for JSON reponse
+            Log.d("All info: ", jsonUpdates.toString());
+            return null;
+
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         **/
+        protected void onPostExecute (String a){
+
+            //jsonUpdatesField=jsonUpdates;
+            populateAnnouncementList(jsonAnnouncements);
+            populateAnnouncementListView();
+        }
     }
 
 }

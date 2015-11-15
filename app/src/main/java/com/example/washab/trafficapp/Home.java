@@ -31,6 +31,9 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
 
     private String updatesSortingCrieteria="mostRecent";
     private String requestSortingCrieteria="mostRecent";
+    private String announcementSortingCrietaria="mostRecent";
+    private String discussionSortingCrietaria="mostRecent";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -230,6 +233,13 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     @Override
     public void setDiscussionSorting(String sortingCrietaria) {
 
+        discussionSortingCrietaria=sortingCrietaria;
+        Log.d("Srting Crieteria: ",sortingCrietaria);
+
+        DiscussionFragment discussionFragment = (DiscussionFragment) getFragmentManager().findFragmentByTag(discussionFragmentTag);
+        if(discussionFragment!=null)discussionFragment.setDiscussionSorting(sortingCrietaria);
+
+
     }
 
     @Override
@@ -242,6 +252,13 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
 
     @Override
     public void setAnnouncementSorting(String sortingCrietaria) {
+
+        announcementSortingCrietaria=sortingCrietaria;
+        Log.d("Srting Crieteria: ",sortingCrietaria);
+
+        UserUpdates updateFragment = (UserUpdates) getFragmentManager().findFragmentByTag(updatesFragmentTag);
+        AnnouncementFragment announcementFragment=(AnnouncementFragment)getFragmentManager().findFragmentByTag(announcementFragmentTag);
+        if(announcementFragment!=null)announcementFragment.setAnnouncementSorting(sortingCrietaria);
 
     }
 
