@@ -29,10 +29,10 @@ import java.util.List;
  * Activities that contain this fragment must implement the
  * {@link OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link UserUpdates#newInstance} factory method to
+ * Use the {@link UpdateFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class UserUpdates extends Fragment {
+public class UpdateFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -62,11 +62,11 @@ public class UserUpdates extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment UserUpdates.
+     * @return A new instance of fragment UpdateFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static UserUpdates newInstance(String param1, String param2) {
-        UserUpdates fragment = new UserUpdates();
+    public static UpdateFragment newInstance(String param1, String param2) {
+        UpdateFragment fragment = new UpdateFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -74,7 +74,7 @@ public class UserUpdates extends Fragment {
         return fragment;
     }
 
-    public UserUpdates() {
+    public UpdateFragment() {
         // Required empty public constructor
 
     }
@@ -88,7 +88,6 @@ public class UserUpdates extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
     }
 
 
@@ -164,7 +163,7 @@ public class UserUpdates extends Fragment {
             String currentUserName=Utility.CurrentUser.getName();
             Liker mayBeLiker=new Liker(currentUserId,currentUserName);
             //fill the view
-            Log.d("checking update changes : ",currentUpdate.toString());
+            Log.d("check update changes : ",currentUpdate.toString());
 
             TextView locFrom = (TextView)itemView.findViewById(R.id.locationFromTextView);
             locFrom.setText(Locations.getLocationName(currentUpdate.getLocationIdFrom()));
@@ -258,7 +257,7 @@ public class UserUpdates extends Fragment {
 
     private void handledislikeButtonPress(int pos,Button dislikeButton) {
 
-        Log.d("the pressed dislike button update: ",allUserUpdatesArraylist.get(pos).toString());
+        Log.d("pressed dislike button update: ",allUserUpdatesArraylist.get(pos).toString());
 
         //check if the user has pressed the like button already.if he had,do not do anything.
         //else increseLIkeCountBy one
