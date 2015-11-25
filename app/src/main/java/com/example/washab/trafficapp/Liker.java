@@ -54,7 +54,7 @@ public class Liker {
     }
 
     private int likerId;
-    private String likerName;
+    private String likerName = "" ;
 
 
 }

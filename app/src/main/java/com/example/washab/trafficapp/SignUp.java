@@ -210,6 +210,8 @@ public class SignUp extends AppCompatActivity {
 //    }
     class SignUpTask extends AsyncTask<String, Void, String> {
 
+        private JSONObject jsonSignUp, jsonLocations;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -226,78 +228,39 @@ public class SignUp extends AppCompatActivity {
             params.add(new Pair("email",email));
             params.add(new Pair("password",password));
             // getting JSON string from URL
-            JSONObject json = jParser.makeHttpRequest("/register", "POST", params);
+            jsonSignUp = jParser.makeHttpRequest("/register", "POST", params);
+            jsonLocations = jParser.makeHttpRequest("/locations", "GET", null);
 
-            try {
-
-
-                Boolean error = json.getBoolean("error");
-                errorMessage = json.getString("message");
-                System.out.println("Error: " + error + "\nMessage: " + errorMessage);
-                Log.d("Error", error.toString());
-                Log.d("Message", errorMessage);
-                if(error)signUpError=true;
-//                return message;
-            }catch(JSONException e){
-                e.printStackTrace();
-            }
-
-            // Check your log cat for JSON reponse
-            Log.e("All info: ", json.toString());
-/*
-            try {
-                // Checking for SUCCESS TAG
-                int success = json.getInt(TAG_SUCCESS);
-
-                if (success == 1) {
-                    // products found
-                    // Getting Array of Products
-                    products = json.getJSONArray(TAG_PRODUCTS);
-
-                    // looping through All Products
-                    for (int i = 0; i < products.length(); i++) {
-                        JSONObject c = products.getJSONObject(i);
-
-                        // Storing each json item in variable
-                        String id = c.getString(TAG_PID);
-                        String name = c.getString(TAG_NAME);
-
-                        // creating new HashMap
-                        HashMap<String, String> map = new HashMap<String, String>();
-
-                        // adding each child node to HashMap key => value
-                        map.put(TAG_PID, id);
-                        map.put(TAG_NAME, name);
-
-                        // adding HashList to ArrayList
-                        productsList.add(map);
-                    }
-                } else {
-                    // no products found
-                    // Launch Add New product Activity
-                    Intent i = new Intent(getApplicationContext(),
-                            NewProductActivity.class);
-                    // Closing all previous activities
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(i);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-*/
             return null;
-
         }
 
             /**
              * After completing background task Dismiss the progress dialog
              **/
             protected void onPostExecute (String file_url){
+                if(jsonSignUp == null) {
+                    Utility.CurrentUser.showConnectionError(getApplicationContext());
+                    return;
+                }
+
+                try {
+                    Boolean error = jsonSignUp.getBoolean("error");
+                    errorMessage = jsonSignUp.getString("message");
+                    System.out.println("Error: " + error + "\nMessage: " + errorMessage);
+                    Log.d("Error", error.toString());
+                    Log.d("Message", errorMessage);
+                    if(error)signUpError=true;
+//                return message;
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
 
                 if(signUpError){
                     errorText.setText(errorMessage);
                 }
                 else{
+                    MainActivity.assignUser(jsonSignUp);
+                    MainActivity.assignLocations(jsonLocations);
                     Intent intent=new Intent(SignUp.this,Home.class);
 //                    Log.d("Where now?", "Starting Home Activity");
                     startActivity(intent);

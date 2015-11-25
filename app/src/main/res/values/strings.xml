@@ -16,7 +16,7 @@
     <string name="add_update_button">Update</string>
     <string name="add_request_button">Request</string>
     <string name="add_announcement_button">Announce</string>
-    <string name="add_discussion_button">Discuss</string>
+    <string name="add_discussion_button">Post</string>
     <string name="most_popular">Most Popular</string>
     <string name="most_recent">Most Recent</string>
 

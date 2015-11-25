@@ -12,37 +12,35 @@ import java.util.HashSet;
 public class Discussion{
     private int id;
     private  int locationId;
-    private String title,description,timeOfUpdate;
+    private String title,description, timeOfPost;
     private int posterId;
     private String posterName;
     private int likeCount,dislikeCount;
     private HashSet<Integer> likersId;
     private HashSet<Integer> dislikersId;
 
-    public Discussion(String description, int dislikeCount, int id, int likeCount, int locationId, String timeOfUpdate, String title,int posterId, String posterName,HashSet<Integer> likersId, HashSet<Integer> dislikersId) {
+//    public Discussion(String description, int dislikeCount, int id, int likeCount, int locationId, String timeOfPost, String title,int posterId, String posterName,HashSet<Integer> likersId, HashSet<Integer> dislikersId) {
+//        this.description = description;
+//        this.dislikeCount = dislikeCount;
+//        this.id = id;
+//        this.likeCount = likeCount;
+//        this.locationId = locationId;
+//        this.timeOfPost = timeOfPost;
+//        this.title = title;
+//        this.posterId = posterId;
+//        this.likersId = likersId;
+//        this.dislikersId = dislikersId;
+//    }
+
+    public Discussion(String description, int dislikeCount, int id, int likeCount,int locationId, String timeOfPost, int posterId,String posterName) {
         this.description = description;
         this.dislikeCount = dislikeCount;
         this.id = id;
         this.likeCount = likeCount;
         this.locationId = locationId;
-        this.timeOfUpdate = timeOfUpdate;
-        this.title = title;
+        this.timeOfPost = timeOfPost;
         this.posterId = posterId;
-        this.likersId = likersId;
-        this.dislikersId = dislikersId;
-    }
-
-    public Discussion(String description, int dislikeCount, int id, int likeCount,int locationId, String timeOfUpdate, String title, int posterId,String posterName) {
-        this.description = description;
-        this.dislikeCount = dislikeCount;
-        this.id = id;
-        this.likeCount = likeCount;
-        this.locationId = locationId;
-        this.timeOfUpdate = timeOfUpdate;
-        this.title = title;
-        this.posterId = posterId;
-        this.posterName=posterName;
-
+        this.posterName = posterName;
     }
 
 
@@ -82,12 +80,12 @@ public class Discussion{
 
 
 
-    public String getTimeOfUpdate() {
-        return timeOfUpdate;
+    public String getTimeOfPost() {
+        return timeOfPost;
     }
 
-    public void setTimeOfUpdate(String timeOfUpdate) {
-        this.timeOfUpdate = timeOfUpdate;
+    public void setTimeOfPost(String timeOfPost) {
+        this.timeOfPost = timeOfPost;
     }
 
     public String getTitle() {
@@ -102,8 +100,8 @@ public class Discussion{
 
     public static Discussion createDiscussion(JSONObject jsonObject) {
 
-        //Discussion(String description, int dislikeCount, int id, int likeCount, String location, String timeOfUpdate, String title, String updater, HashSet<Integer> likersId, HashSet<Integer> dislikersId)
-        //Discussion(String description, int dislikeCount, int id, int likeCount, int locationId, String timeOfUpdate, String title,int updaterId, HashSet<Integer> likersId, HashSet<Integer> dislikersId)
+        //Discussion(String description, int dislikeCount, int id, int likeCount, String location, String timeOfPost, String title, String updater, HashSet<Integer> likersId, HashSet<Integer> dislikersId)
+        //Discussion(String description, int dislikeCount, int id, int likeCount, int locationId, String timeOfPost, String title,int updaterId, HashSet<Integer> likersId, HashSet<Integer> dislikersId)
         try {
             return new Discussion(
                     jsonObject.getString("description"),
@@ -111,12 +109,9 @@ public class Discussion{
                     jsonObject.getInt("id"),
                     jsonObject.getInt("likeCount"),
                     jsonObject.getInt("locationId"),
-                    jsonObject.getString("timeOfUpdate"),
-                    jsonObject.getString("title"),
+                    jsonObject.getString("timeOfPost"),
                     jsonObject.getInt("posterId"),
-                    jsonObject.getString("posterName"),
-                    getLikersIdTreeSet(jsonObject.getJSONArray("likers")),
-                    getdislikersIdTreeSet(jsonObject.getJSONArray("dislikers"))
+                    jsonObject.getString("posterName")
             );
         } catch (JSONException e) {
             e.printStackTrace();

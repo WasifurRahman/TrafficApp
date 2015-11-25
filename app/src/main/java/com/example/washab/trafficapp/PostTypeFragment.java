@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,13 +70,13 @@ public class PostTypeFragment extends Fragment implements View.OnClickListener{
 
         View view =  inflater.inflate(R.layout.fragment_post_type, container, false);
 
-        addListernerForAll(view);
+        addListenerForAll(view);
 
         return view;
 
     }
 
-    private void addListernerForAll(View view) {
+    private void addListenerForAll(View view) {
 
        chooseAnnouncementButton=(RadioButton)view.findViewById(R.id.postTypeAnnouncementButton);
        chooseAnnouncementButton.setOnClickListener(this);

@@ -217,11 +217,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Like"
-        android:id="@+id/updateLikeButton"/>
+    <!--<Button-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Like"-->
+        <!--android:id="@+id/updateLikeButton"-->
+        <!--android:background="#64ff34" />-->
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Like"
+            android:id="@+id/updateLikeButton"/>
 
     <Button
         android:layout_width="wrap_content"

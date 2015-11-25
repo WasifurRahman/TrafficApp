@@ -44,7 +44,7 @@ public class Update {
     private HashSet<Liker> dislikersId=new HashSet<Liker>();
     private int likeCount,dislikeCount;
 
-    public boolean hasTHeUserLikedTheUpdate(Liker liker){
+    public boolean hasTheUserLikedTheUpdate(Liker liker){
         return likersId.contains(liker);
     }
 
@@ -280,7 +280,4 @@ public class Update {
     public void setUpdaterName(String updaterName) {
         this.updaterName = updaterName;
     }
-
-
-
 }

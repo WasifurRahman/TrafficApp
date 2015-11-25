@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-
+<!--
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
 
     </LinearLayout>
 
-
+-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -50,16 +50,24 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/discssuionLocationTextView"
+            android:id="@+id/discussionLocationTextView"
             />
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
+    <EditText
+        android:id="@+id/discussionDescriptionBox"
+        android:paddingTop="1dp"
+        android:layout_width="259dp"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/discussionExtraDes"/>
+        android:background="@drawable/description_text_box"
+        android:paddingLeft="10dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="5dp"
+        android:padding="10dp"
+        android:editable="false"
+        android:textSize="15dp"
+        android:layout_gravity="fill_horizontal"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -81,7 +89,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="2.5"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/discussionUpdatorNameTextView"
+            android:id="@+id/discussionPosterNameTextView"
             android:text="Large"/>
 
         <TextView

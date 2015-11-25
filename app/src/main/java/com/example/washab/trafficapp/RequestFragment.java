@@ -224,12 +224,10 @@ public class RequestFragment extends Fragment {
             List<Pair> params = new ArrayList<Pair>();
 
             params.add(new Pair("sortType", sortingCriteria));
-            // getting JSON string from URL
 
+            // getting JSON string from URL
             jsonRequests = jParser.makeHttpRequest("/allrequests", "GET", params);
 
-            // Check your log cat for JSON reponse
-            Log.d("All info: ", jsonRequests.toString());
             return null;
 
         }
@@ -238,6 +236,11 @@ public class RequestFragment extends Fragment {
          * After completing background task Dismiss the progress dialog
          **/
         protected void onPostExecute (String a){
+
+            if(jsonRequests == null) {
+                Utility.CurrentUser.showConnectionError(getActivity());
+                return;
+            }
 
             //jsonUpdatesField=jsonUpdates;
             populateRequestList(jsonRequests);

@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,14 +12,16 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
-public class Home extends AppCompatActivity implements UserUpdates.OnFragmentInteractionListener ,AnnouncementFragment.OnFragmentInteractionListener,
+public class Home extends AppCompatActivity implements UpdateFragment.OnFragmentInteractionListener ,AnnouncementFragment.OnFragmentInteractionListener,
 ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFragment.OnFragmentInteractionListener,RequestFragment.OnFragmentInteractionListener,PostTypeFragment.OnFragmentInteractionListener
-,ChooseAnnouncementOptionsFragment.OnFragmentInteractionListener,ChooseDiscussionOptionsFragment.OnFragmentInteractionListener,DiscussionFragment.OnFragmentInteractionListener{
+,ChooseAnnouncementOptionsFragment.OnFragmentInteractionListener,ChooseDiscussionOptionsFragment.OnFragmentInteractionListener,DiscussionFragment.OnFragmentInteractionListener, NotificationsFragment.OnFragmentInteractionListener{
 
     private String updatesFragmentTag="UPDATESFRAGMENT";
     private String postsFragmentTag="POSTSFRAGMENT";
     private String requestsFragmentTag="REQUESTSFRAGMENT";
+    private String notifsFragmentTag = "NOTIFSFRAGMENT";
     private String announcementFragmentTag="ANNOUNCEMENTFRAGMENT";
     private String discussionFragmentTag="DISCUSSIONFRAGMENT";
     private String chooseUpdateOptionsFragmentsTag="CHOOSEUPDATEOPTIONSFRAGMENT";
@@ -27,15 +30,18 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     private String choosePostTypeFragmentsTag="CHOOSEPOSTTYPEFRAGMENT";
     private String chooseDiscussionOptionsFragmentsTag="CHOOSEDISCUSSIONOPTIONSFRAGMENT";
 
+    private static final int UPDATES = 1;
+    private static final int POSTS = 2;
+    private static final int REQUESTS = 3;
+    private static final int NOTIFS = 4;
 
-
-
-    private String announcementSortingCriteria ="mostRecent";
-    private String discussionSortingCriteria ="mostRecent";
-
-
-    private String updatesSortingCriteria ="mostRecent";
-    private String requestSortingCriteria ="mostRecent";
+//
+//    private String announcementSortingCriteria ="mostRecent";
+//    private String discussionSortingCriteria ="mostRecent";
+//
+//
+//    private String updatesSortingCriteria ="mostRecent";
+//    private String requestSortingCriteria ="mostRecent";
 
 
     @Override
@@ -43,13 +49,39 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        addRequestsFragment();
-        addChooseRequestOptionsFragment();
+        if(Utility.CurrentUser.getDisplayPage() == 0) {
+            Utility.CurrentUser.setDisplayPage(UPDATES);
+        }
+
+        switch(Utility.CurrentUser.getDisplayPage()) {
+            case UPDATES:
+//                Log.d("inside the switch", "testing");
+                ((TextView)findViewById(R.id.updatesButton)).setTextColor(Color.parseColor("#A5DF00"));
+                addUpdatesFragment();
+                addChooseUpdateOptionsFragment();
+                break;
+            case POSTS:
+                ((TextView)findViewById(R.id.postsButton)).setTextColor(Color.parseColor("#A5DF00"));
+                addPostTypeFragment();
+//                addChoosePostTypeOptionsFragment();
+                addDiscussionFragment();
+                addChooseDiscussionOptionsFragment();
+                break;
+            case REQUESTS:
+                ((TextView)findViewById(R.id.requestsButton)).setTextColor(Color.parseColor("#A5DF00"));
+                addRequestsFragment();
+                addChooseRequestOptionsFragment();
+                break;
+            case NOTIFS:
+                ((TextView)findViewById(R.id.notifsButton)).setTextColor(Color.parseColor("#A5DF00"));
+                addNotifsFragment();
+                break;
+        }
 
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu){
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_home, menu);
         return true;
@@ -130,7 +162,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     private void addUpdatesFragment(){
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        UserUpdates updatesFragment = new  UserUpdates();
+        UpdateFragment updatesFragment = new UpdateFragment();
 
         fragmentTransaction.add(R.id.dataFragmentContainer, updatesFragment,updatesFragmentTag);
         fragmentTransaction.commit();
@@ -148,7 +180,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     private void addAnnouncementFragment(){
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        //UserUpdates updatesFragment = new  UserUpdates();
+        //UpdateFragment updatesFragment = new  UpdateFragment();
         AnnouncementFragment announcementFragment=new AnnouncementFragment();
 
         fragmentTransaction.add(R.id.dataFragmentContainer,announcementFragment,announcementFragmentTag);
@@ -158,10 +190,19 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     private void addDiscussionFragment(){
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        //UserUpdates updatesFragment = new  UserUpdates();
+        //UpdateFragment updatesFragment = new  UpdateFragment();
         DiscussionFragment discussionFragment = new DiscussionFragment();
 
         fragmentTransaction.add(R.id.dataFragmentContainer,discussionFragment,discussionFragmentTag);
+        fragmentTransaction.commit();
+    }
+
+    private void addNotifsFragment(){
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        NotificationsFragment notifFragment = new NotificationsFragment();
+
+        fragmentTransaction.add(R.id.dataFragmentContainer, notifFragment, notifsFragmentTag);
         fragmentTransaction.commit();
     }
 
@@ -171,6 +212,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
         Fragment postsFragment = getFragmentManager().findFragmentByTag(postsFragmentTag);
         Fragment discussionFragment = getFragmentManager().findFragmentByTag(discussionFragmentTag);
         Fragment announcementFragment = getFragmentManager().findFragmentByTag(announcementFragmentTag);
+        Fragment notifsFragment = getFragmentManager().findFragmentByTag(notifsFragmentTag);
         Fragment chooseUpdateOptionsFragment= getFragmentManager().findFragmentByTag(chooseUpdateOptionsFragmentsTag);
         Fragment chooseRequestOptionsFragment= getFragmentManager().findFragmentByTag(chooseRequestOptionsFragmentsTag);
         Fragment chooseAnnouncementOptionsFragment = getFragmentManager().findFragmentByTag(chooseAnnouncementOptionsFragmentsTag);
@@ -184,6 +226,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
             if(postsFragment!=null)fragmentTransaction.remove(postsFragment);
             if(discussionFragment!=null)fragmentTransaction.remove(discussionFragment);
             if(announcementFragment!=null)fragmentTransaction.remove(announcementFragment);
+            if(notifsFragment!=null)fragmentTransaction.remove(notifsFragment);
             if(chooseUpdateOptionsFragment!=null)fragmentTransaction.remove(chooseUpdateOptionsFragment);
             if(chooseRequestOptionsFragment!=null)fragmentTransaction.remove(chooseRequestOptionsFragment);
             if(exception==null && choosePostTypeFragment!=null)fragmentTransaction.remove(choosePostTypeFragment);
@@ -198,6 +241,22 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
 
     public void onUpdatesButtonClick(View v){
         if(v.getId()==R.id.updatesButton){
+            switch (Utility.CurrentUser.getDisplayPage()) {
+                case UPDATES:
+                    break;
+                case POSTS:
+                    ((TextView)findViewById(R.id.postsButton)).setTextColor(Color.BLACK);
+                    break;
+                case REQUESTS:
+                    ((TextView)findViewById(R.id.requestsButton)).setTextColor(Color.BLACK);
+                    break;
+                case NOTIFS:
+                    ((TextView)findViewById(R.id.notifsButton)).setTextColor(Color.BLACK);
+                    break;
+            }
+            Utility.CurrentUser.setDisplayPage(UPDATES);
+            ((TextView)findViewById(R.id.updatesButton)).setTextColor(Color.parseColor("#A5DF00"));
+
             removeAddedFragment(null);
             addUpdatesFragment();
             addChooseUpdateOptionsFragment();
@@ -206,17 +265,72 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
 
     public void onPostsButtonClick(View v){
         if(v.getId()==R.id.postsButton){
+            switch (Utility.CurrentUser.getDisplayPage()) {
+                case UPDATES:
+                    ((TextView)findViewById(R.id.updatesButton)).setTextColor(Color.BLACK);
+                    break;
+                case POSTS:
+                    break;
+                case REQUESTS:
+                    ((TextView)findViewById(R.id.requestsButton)).setTextColor(Color.BLACK);
+                    break;
+                case NOTIFS:
+                    ((TextView)findViewById(R.id.notifsButton)).setTextColor(Color.BLACK);
+                    break;
+            }
+            Utility.CurrentUser.setDisplayPage(POSTS);
+            ((TextView)findViewById(R.id.postsButton)).setTextColor(Color.parseColor("#A5DF00"));
             removeAddedFragment(null);
             addPostTypeFragment();
-
+            addDiscussionFragment();
+            addChooseDiscussionOptionsFragment();
         }
     }
 
     public void onRequestsButtonClick(View v){
         if(v.getId()==R.id.requestsButton){
+            switch (Utility.CurrentUser.getDisplayPage()) {
+                case UPDATES:
+                    ((TextView)findViewById(R.id.updatesButton)).setTextColor(Color.BLACK);
+                    break;
+                case POSTS:
+                    ((TextView)findViewById(R.id.postsButton)).setTextColor(Color.BLACK);
+                    break;
+                case REQUESTS:
+                    break;
+                case NOTIFS:
+                    ((TextView)findViewById(R.id.notifsButton)).setTextColor(Color.BLACK);
+                    break;
+            }
+            Utility.CurrentUser.setDisplayPage(REQUESTS);
+            ((TextView)findViewById(R.id.requestsButton)).setTextColor(Color.parseColor("#A5DF00"));
             removeAddedFragment(null);
             addChooseRequestOptionsFragment();
             addRequestsFragment();
+        }
+    }
+
+    public void onNotifsButtonClick(View v){
+        Log.d("inside notifs button click", "yes");
+        if(v.getId()==R.id.notifsButton){
+            switch (Utility.CurrentUser.getDisplayPage()) {
+                case UPDATES:
+                    ((TextView)findViewById(R.id.updatesButton)).setTextColor(Color.BLACK);
+                    break;
+                case POSTS:
+                    ((TextView)findViewById(R.id.postsButton)).setTextColor(Color.BLACK);
+                    break;
+                case REQUESTS:
+                    ((TextView)findViewById(R.id.requestsButton)).setTextColor(Color.BLACK);
+                    break;
+                case NOTIFS:
+                    break;
+            }
+            Utility.CurrentUser.setDisplayPage(NOTIFS);
+            ((TextView)findViewById(R.id.notifsButton)).setTextColor(Color.parseColor("#A5DF00"));
+
+            removeAddedFragment(null);
+            addNotifsFragment();
         }
     }
 
@@ -236,7 +350,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     @Override
     public void setDiscussionSorting(String sortingCrietaria) {
 
-        discussionSortingCriteria =sortingCrietaria;
+//        discussionSortingCriteria =sortingCrietaria;
         Log.d("Srting Crieteria: ",sortingCrietaria);
 
         DiscussionFragment discussionFragment = (DiscussionFragment) getFragmentManager().findFragmentByTag(discussionFragmentTag);
@@ -256,10 +370,10 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     @Override
     public void setAnnouncementSorting(String sortingCrietaria) {
 
-        announcementSortingCriteria =sortingCrietaria;
+//        announcementSortingCriteria =sortingCrietaria;
         Log.d("Srting Crieteria: ",sortingCrietaria);
 
-        UserUpdates updateFragment = (UserUpdates) getFragmentManager().findFragmentByTag(updatesFragmentTag);
+//        UpdateFragment updateFragment = (UpdateFragment) getFragmentManager().findFragmentByTag(updatesFragmentTag);
         AnnouncementFragment announcementFragment=(AnnouncementFragment)getFragmentManager().findFragmentByTag(announcementFragmentTag);
         if(announcementFragment!=null)announcementFragment.setAnnouncementSorting(sortingCrietaria);
 
@@ -290,7 +404,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
 
     @Override
     public void setRequestSorting(String sortingCriteria) {
-        requestSortingCriteria =sortingCriteria;
+//        requestSortingCriteria =sortingCriteria;
         Log.d("Srting Crieteria: ",sortingCriteria);
 
         RequestFragment requestFragment = (RequestFragment) getFragmentManager().findFragmentByTag(requestsFragmentTag);
@@ -312,10 +426,10 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
 
     @Override
     public void setUpdateSorting(String sortingCrietaria) {
-        updatesSortingCriteria =sortingCrietaria;
+//        updatesSortingCriteria =sortingCrietaria;
         Log.d("Srting Crieteria: ",sortingCrietaria);
 
-        UserUpdates updateFragment = (UserUpdates) getFragmentManager().findFragmentByTag(updatesFragmentTag);
+        UpdateFragment updateFragment = (UpdateFragment) getFragmentManager().findFragmentByTag(updatesFragmentTag);
         if(updateFragment!=null)updateFragment.setUpdateSorting(sortingCrietaria);
 
     }

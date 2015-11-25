@@ -101,7 +101,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    void assignUser(JSONObject jObj){
+
+
+    static void assignUser(JSONObject jObj){
         int userId=0;
         String userName=" ",apiKey=" ";
 
@@ -119,7 +121,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    void assignLocations(JSONObject json) {
+    static void assignLocations(JSONObject json) {
 
         try {
             Boolean invalidResult=json.getBoolean("error");
@@ -167,6 +169,21 @@ public class MainActivity extends AppCompatActivity
             jsonLogin = jParser.makeHttpRequest("/login", "POST", params);
             jsonLocations = jParser.makeHttpRequest("/locations", "GET", null);
 
+            // Check your log cat for JSON reponse
+//            Log.e("All info: ", jsonLogin.toString());
+            return null;
+
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         **/
+        protected void onPostExecute (String a){
+
+            if(jsonLogin == null) {
+                Utility.CurrentUser.showConnectionError(getApplicationContext());
+                return;
+            }
             try {
                 Boolean error = jsonLogin.getBoolean("error");
                 errorMessage = jsonLogin.getString("message");
@@ -178,17 +195,6 @@ public class MainActivity extends AppCompatActivity
             }catch(JSONException e){
                 e.printStackTrace();
             }
-
-            // Check your log cat for JSON reponse
-//            Log.e("All info: ", jsonLogin.toString());
-            return null;
-
-        }
-
-        /**
-         * After completing background task Dismiss the progress dialog
-         **/
-        protected void onPostExecute (String a){
 
             if(loginError){
                 errorText.setText(errorMessage);

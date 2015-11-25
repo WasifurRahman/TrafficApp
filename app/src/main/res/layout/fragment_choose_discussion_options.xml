@@ -16,12 +16,12 @@
     <RadioGroup
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/discussionOptionMostFavouriteButton"
+            android:id="@+id/discussionOptionMostPopularButton"
             android:text="@string/most_popular"
             android:checked="false"/>
 
