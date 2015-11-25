@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -45,6 +46,8 @@ public class AnnouncementFragment extends Fragment {
     private ArrayList<Announcement> allAnnouncementsArrayList =new ArrayList<Announcement>();
     private String sortingCriteria = "mostRecent";
     JSONObject jsonAnnouncements;
+    LinearLayout progressLayout;
+    ListView customAnnouncementListView;
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -109,8 +112,10 @@ public class AnnouncementFragment extends Fragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        populateAnnouncementList(jsonAnnouncements);
-        populateAnnouncementListView();
+
+        progressLayout = (LinearLayout) getActivity().findViewById(R.id.progressbar_view);
+        customAnnouncementListView =(ListView)getActivity().findViewById(R.id.userAnnouncementListView);
+        new FetchAnnouncementTask().execute();
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -126,16 +131,27 @@ public class AnnouncementFragment extends Fragment {
 
     private void populateAnnouncementList(JSONObject jsonAnnouncements){
 
+
+
+
         try {
 
-            JSONArray allAnnouncements=jsonAnnouncements.getJSONArray("announcements");
+            JSONArray allDiscussionsJSONArray =jsonAnnouncements.getJSONArray("posts");
             allAnnouncementsArrayList.clear();
-            for(int i=0;i<allAnnouncements.length();i++){
-                JSONObject curObj=allAnnouncements.getJSONObject(i);
-                //Log.d("in populte: ",curObj.toString());
+
+            int curIndex = 0, N = allDiscussionsJSONArray.length();
+
+            while (curIndex < N) {
+                JSONObject curObj = allDiscussionsJSONArray.getJSONObject(curIndex++);
                 Announcement curAnnouncment = Announcement.createAnnouncement(curObj);
-                //Log.d("new update",curUpdate.toString());
-               allAnnouncementsArrayList.add(curAnnouncment);
+                //int likeCnt = curPost.getLikeCount();
+//                for (int i = 0; i < likeCnt; i++) {
+//                    JSONObject likeObj = allDiscussionsJSONArray.getJSONObject(curIndex++);
+//                    Liker newLiker = new Liker(likeObj.getInt("likerId"), likeObj.getString("likerName"));
+//                    curPost.addLikerInitially(newLiker);
+//                }
+                allAnnouncementsArrayList.add(curAnnouncment);
+
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -175,17 +191,15 @@ public class AnnouncementFragment extends Fragment {
             TextView title = (TextView)itemView.findViewById(R.id.announcementTitleTextView);
             title.setText(currentAnnouncement.getTitle());
 
-            TextView locFrom = (TextView)itemView.findViewById(R.id.announcementLocationFromTextView);
-            locFrom.setText(currentAnnouncement.getLocationIdFrom());
+            TextView location = (TextView)itemView.findViewById(R.id.announcementLocationTextView);
+            location.setText(Locations.getLocationName(currentAnnouncement.getLocationId()));
 
-            TextView locTo = (TextView)itemView.findViewById(R.id.announcementLocationToTextView);
-            locTo.setText(currentAnnouncement.getLocationIdTo());
 
-            TextView timeFrom = (TextView)itemView.findViewById(R.id.announcementTimeFromTextView);
-            timeFrom.setText(currentAnnouncement.getTimeFrom());
 
-            TextView timeTo = (TextView)itemView.findViewById(R.id.announcementTimeToTextView);
-            timeTo.setText(currentAnnouncement.getTimeTo());
+            TextView source=(TextView)itemView.findViewById(R.id.announcementSourcetextView);
+            source.setText(currentAnnouncement.getSource());
+
+
 
             TextView sitDes=(TextView)itemView.findViewById(R.id.announcementExtraDes);
             sitDes.setText(currentAnnouncement.getDescription());
@@ -243,6 +257,9 @@ public class AnnouncementFragment extends Fragment {
 
         @Override
         protected void onPreExecute() {
+            progressLayout.setVisibility(View.VISIBLE);
+            customAnnouncementListView.setVisibility(View.GONE);
+
             super.onPreExecute();
         }
 
@@ -254,12 +271,13 @@ public class AnnouncementFragment extends Fragment {
             List<Pair> params = new ArrayList<Pair>();
 
             params.add(new Pair("sortType", sortingCriteria));
+            params.add(new Pair("postType", "announcement"));
             // getting JSON string from URL
 
-            jsonAnnouncements= jParser.makeHttpRequest("/allannouncements", "POST", params);
+            jsonAnnouncements =jParser.makeHttpRequest("/allposts", "GET", params);
 
             // Check your log cat for JSON reponse
-            Log.d("All info: ", jsonUpdates.toString());
+            Log.d("All info: ", jsonAnnouncements.toString());
             return null;
 
         }
@@ -270,6 +288,9 @@ public class AnnouncementFragment extends Fragment {
         protected void onPostExecute (String a){
 
             //jsonUpdatesField=jsonUpdates;
+            progressLayout.setVisibility(View.GONE);
+            customAnnouncementListView.setVisibility(View.VISIBLE);
+
             populateAnnouncementList(jsonAnnouncements);
             populateAnnouncementListView();
         }

@@ -2,7 +2,10 @@ package com.example.washab.trafficapp;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,15 +17,16 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeSet;
 
 
 /**
@@ -47,6 +51,8 @@ public class UpdateFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    private static Context context;
+
     private String queryAllUpdates="/allupdates";
     private String queryAddLike="/addupdatelike";
 
@@ -55,9 +61,10 @@ public class UpdateFragment extends Fragment {
     private int updateToBeLiked=-1;
     private int likerId=-1;
     private TextView changeLikeCount;
-    //private ArrayList<Integer> updatesAlreadyColorChanged=new ArrayList<Integer>();
-    private TreeSet<Integer> updatesAlreadyColorChanged=new TreeSet<Integer>();
     private int locationIdToSearch=0;
+    LinearLayout progressLayout;
+    ListView customUpdateList;
+
 
 
     /**
@@ -92,6 +99,8 @@ public class UpdateFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        UpdateFragment.context = this.getActivity();
     }
 
 
@@ -100,50 +109,24 @@ public class UpdateFragment extends Fragment {
         try {
             //Log.d("within updates: ",jsonUpdates.toString());
             allUserUpdatesArraylist.clear();
-            updatesAlreadyColorChanged.clear();
 
-            JSONArray allUpdates=jsonUpdates.getJSONArray("updates");
-
-            int curIndex=0,N=allUpdates.length();
+            JSONArray allUpdatesJSONArray=jsonUpdates.getJSONArray("updates");
+            int curIndex=0, N=allUpdatesJSONArray.length();
 
             while(curIndex<N){
-                JSONObject curObj=allUpdates.getJSONObject(curIndex++);
-                Log.d("Update objects json: ",curObj.toString());
-
-               // Log.d("in populate: ",curObj.toString());
-                //break;
+                JSONObject curObj=allUpdatesJSONArray.getJSONObject(curIndex++);
                 Update curUpdate=Update.createUpdate(curObj);
-                //Log.d("Update objects: ",curUpdate.toString());
                 int likeCnt=curUpdate.getLikeCount();
-                //Log.d("likercnt for"+curUpdate.getId(),likeCnt+"");
                 for(int i=0;i<likeCnt;i++){
-                    JSONObject likeObj=allUpdates.getJSONObject(curIndex++);
-                    Log.d("Update objects likers: ",likeObj.toString());
+                    JSONObject likeObj=allUpdatesJSONArray.getJSONObject(curIndex++);
                     Liker newLiker = new Liker(likeObj.getInt("likerId"),likeObj.getString("likerName"));
-                    //Log.d("new liker object: ",newLiker.toString());
                     curUpdate.addLikerInitially(newLiker);
-
                 }
-
-                Log.d("update objects : ",curUpdate.toString());
                 allUserUpdatesArraylist.add(curUpdate);
-
             }
-//            allUserUpdatesArraylist.clear();
-//            for(int i=0;i<allUpdates.length();i++){
-//                JSONObject curObj=allUpdates.getJSONObject(i);
-//                //Log.d("in populte: ",curObj.toString());
-//                Update curUpdate = Update.createUpdate(curObj);
-//                //Log.d("new update",curUpdate.toString());
-//
-//            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        //allUserUpdatesArraylist.add(new Update("Smooth as breeze", 0, 15, 0, 5, "Dhanmondi", "New-market", "Mild", "11:15 AM", "11:20 AM", "Shabab"));
-        //allUserUpdatesArraylist.add(new Update("Getting bored", 2, 50, 1, 23, "Mohakhali", "Jahangir Gate", "Extreme", "12:12 AM", "12:30 AM", "Neamul"));
-
     }
 
     private void populateUpdateListView(){
@@ -151,6 +134,8 @@ public class UpdateFragment extends Fragment {
         ListView list=(ListView)getView().findViewById(R.id.userUpdatesListView);
         list.setAdapter(adapter);
     }
+
+
 
     private class MyListAdapter extends ArrayAdapter<Update>{
         public MyListAdapter(){
@@ -172,7 +157,7 @@ public class UpdateFragment extends Fragment {
             String currentUserName=Utility.CurrentUser.getName();
             Liker mayBeLiker=new Liker(currentUserId,currentUserName);
             //fill the view
-            Log.d("check update changes : ",currentUpdate.toString());
+            Log.d("check update changes : ", currentUpdate.toString());
 
             TextView locFrom = (TextView)itemView.findViewById(R.id.locationFromTextView);
             locFrom.setText(Locations.getLocationName(currentUpdate.getLocationIdFrom()));
@@ -202,9 +187,10 @@ public class UpdateFragment extends Fragment {
             dislikeCnt.setText("" + currentUpdate.getDislikeCount());
 
             final Button likeButton=(Button)itemView.findViewById(R.id.updateLikeButton);
-           if(currentUpdate.getLikeCount()>0){
-               checkIfAlreadyLikedAndChangeColorAccordingly(mayBeLiker, currentUpdate, likeButton,position);
-           }
+//            ColorDrawable buttonColor = (ColorDrawable) likeButton.getBackground();
+//            Log.d("Button Colour before check", "" + buttonColor.getColor());
+            checkIfAlreadyLikedAndChangeColorAccordingly(mayBeLiker, currentUpdate, likeButton);
+//            Log.d("Button Colour after check", "" + buttonColor.getColor());
             likeButton.setOnClickListener(new View.OnClickListener() {
 
                 @Override
@@ -217,27 +203,30 @@ public class UpdateFragment extends Fragment {
             });
 
             return itemView;
-           // return super.getView(position, convertView, parent);
+            // return super.getView(position, convertView, parent);
 
 
 
         }
     }
 
-    private void checkIfAlreadyLikedAndChangeColorAccordingly(Liker curLiker, Update curUpdate, Button likeButton,int position) {
-            Log.d("color change: ","in");
-            if (curUpdate.hasTHeUserLikedTheUpdate(curLiker) && curUpdate.getLikeCount()>0 && !updatesAlreadyColorChanged.contains(position)) {
-                updatesAlreadyColorChanged.add(position);
-                Log.d("color change: ", " nothing");
-                Log.d("color change update: ",curUpdate.toString());
-                Log.d("color change liker: ",curLiker.toString());
-                Log.d("color change position: ",position+" ");
+    private void checkIfAlreadyLikedAndChangeColorAccordingly(Liker curLiker, Update curUpdate, Button likeButton) {
+        synchronized (curUpdate) {
+           // Log.d("UpdateId-LikerId-LikeCount", curUpdate.getId() + "-" + curLiker.getLikerId() + "-" + curUpdate.getLikeCount());
+//            Log.d("");
+            if (curUpdate.hasTheUserLikedTheUpdate(curLiker)) {
 
+                Log.d("Inside likeButton Color", "Yes");
                 likeButton.setText("Liked");
                 likeButton.setBackgroundColor(Color.CYAN);
+                likeButton.setWidth(50);
 
+            }else{
+                likeButton.setText("Like");
+                likeButton.setBackgroundColor(Color.LTGRAY);
+                likeButton.setWidth(20);
             }
-
+        }
     }
 
     private void handleLikeButtonPress(int pos, Button likeButton, TextView likeCount) {
@@ -248,7 +237,7 @@ public class UpdateFragment extends Fragment {
         //else increseLIkeCountBy one
         Liker curLiker=new Liker(Utility.CurrentUser.getId(),Utility.CurrentUser.getName());
         Update curUpdate=allUserUpdatesArraylist.get(pos);
-        if(!curUpdate.hasTHeUserLikedTheUpdate(curLiker)){
+        if(!curUpdate.hasTheUserLikedTheUpdate(curLiker)){
             curUpdate.addLiker(curLiker);
             curUpdate.removeDisliker(curLiker);
             //Log.d("yes liked ", "for the first time");
@@ -260,7 +249,6 @@ public class UpdateFragment extends Fragment {
             updateToBeLiked=curUpdate.getId();
             likerId=Utility.CurrentUser.getId();
             new AddLikerTask().execute();
-
 
             //populateUpdateListView();
 
@@ -278,7 +266,7 @@ public class UpdateFragment extends Fragment {
         //else increseLIkeCountBy one
         Liker curDisliker=new Liker(Utility.CurrentUser.getId(),Utility.CurrentUser.getName());
         Update curUpdate=allUserUpdatesArraylist.get(pos);
-        if(!curUpdate.hasTHeUserLikedTheUpdate(curDisliker)){
+        if(!curUpdate.hasTheUserLikedTheUpdate(curDisliker)){
             curUpdate.addLiker(curDisliker);
             curUpdate.removeDisliker(curDisliker);
 
@@ -290,11 +278,15 @@ public class UpdateFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
+
         return inflater.inflate(R.layout.fragment_user_updates, container, false);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        progressLayout = (LinearLayout) getActivity().findViewById(R.id.progressbar_view);
+        customUpdateList=(ListView)getActivity().findViewById(R.id.userUpdatesListView);
+
         new FetchUpdateTask().execute();
         //populateUpdateList(jsonUpdatesField);
         //populateUpdateListView();
@@ -331,9 +323,8 @@ public class UpdateFragment extends Fragment {
         new FetchUpdateTask().execute();
     }
 
-    public void setUpdatesLocation (int locationIdToSearch) {
+    public void setUpdatesLocation(int locationIdToSearch) {
         this.locationIdToSearch=locationIdToSearch;
-        Log.d("fragment alive",""+locationIdToSearch);
         new FetchUpdateTask().execute();
     }
 
@@ -359,6 +350,8 @@ public class UpdateFragment extends Fragment {
 
         @Override
         protected void onPreExecute() {
+            progressLayout.setVisibility(View.VISIBLE);
+            customUpdateList.setVisibility(View.GONE);
             super.onPreExecute();
         }
 
@@ -370,26 +363,15 @@ public class UpdateFragment extends Fragment {
             List<Pair> params = new ArrayList<Pair>();
 
 
-                params.add(new Pair("sortType", sortingCriteria));
+            params.add(new Pair("sortType", sortingCriteria));
+            // getting JSON string from URL
 
-                // getting JSON string from URL
+            if(locationIdToSearch==0)jsonUpdates = jParser.makeHttpRequest("/allupdates", "GET", params);
+            else{
+                params.add(new Pair("locationId", locationIdToSearch));
+                jsonUpdates = jParser.makeHttpRequest("/updatesfromlocation", "GET", params);
+            }
 
-                if(locationIdToSearch==0){
-                    jsonUpdates = jParser.makeHttpRequest("/allupdates", "GET", params);
-                    Log.d("Updates all: ",jsonUpdates.toString());
-                }
-                else {
-                    params.add(new Pair("locationId",locationIdToSearch));
-                    jsonUpdates = jParser.makeHttpRequest("/updatesfromlocation", "GET", params);
-                    Log.d("Updates singular: ",jsonUpdates.toString());
-                }
-
-
-
-
-            // Check your log cat for JSON reponse
-              //Log.d("Updates: ",jsonUpdates.toString());
-              //Log.d("Updates: ","A new update has arrived");
             return null;
 
         }
@@ -400,10 +382,19 @@ public class UpdateFragment extends Fragment {
         protected void onPostExecute (String a){
 
             //jsonUpdatesField=jsonUpdates;
+            progressLayout.setVisibility(View.GONE);
+            customUpdateList.setVisibility(View.VISIBLE);
+
+            if(jsonUpdates == null) {
+                Utility.CurrentUser.showConnectionError(UpdateFragment.context);
+            }
+            else {
+                // Check log cat for JSON reponse
+                Log.d("All info: ",jsonUpdates.toString());
 
                 populateUpdateList(jsonUpdates);
                 populateUpdateListView();
-
+            }
         }
     }
 
@@ -439,9 +430,9 @@ public class UpdateFragment extends Fragment {
          * After completing background task Dismiss the progress dialog
          **/
         protected void onPostExecute (String a){
-
-
-
+            if(jsonAddUpdateLike == null) {
+                Utility.CurrentUser.showConnectionError(UpdateFragment.context);
+            }
         }
     }
 

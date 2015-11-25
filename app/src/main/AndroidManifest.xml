@@ -40,7 +40,8 @@
             android:name=".Home"
             android:configChanges="orientation"
             android:label="@string/title_activity_home"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:parentActivityName=".Home">
         </activity>
         <activity
             android:name=".AddUpdate"
@@ -75,6 +76,10 @@
             android:configChanges="orientation"
             android:label="@string/title_activity_add_discussion"
             android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".AddPreferredLocationActivity"
+            android:label="@string/title_activity_add_preferred_location" >
         </activity>
     </application>
 

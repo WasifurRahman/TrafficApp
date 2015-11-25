@@ -1,8 +1,6 @@
 package com.example.washab.trafficapp;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -27,7 +25,7 @@ public class ChooseUpdateOptionsFragment extends Fragment implements View.OnClic
     private static final String ARG_PARAM2 = "param2";
 
     private Button addUpdateButton;
-    private RadioButton mostFavouriteButton,mostRecentButton;
+    private RadioButton mostPopularButton,mostRecentButton;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -73,18 +71,18 @@ public class ChooseUpdateOptionsFragment extends Fragment implements View.OnClic
 
         View view =  inflater.inflate(R.layout.fragment_choose_update_options, container, false);
 
-        addListernerForAll(view);
+        addListenerForAll(view);
 
         return view;
 
     }
 
-    private void addListernerForAll(View view){
+    private void addListenerForAll(View view){
         addUpdateButton = (Button) view.findViewById(R.id.startAddingUpdateButton);
         addUpdateButton.setOnClickListener(this);
 
-        mostFavouriteButton=(RadioButton)view.findViewById(R.id.updateOptionMostFavouriteButton);
-        mostFavouriteButton.setOnClickListener(this);
+        mostPopularButton =(RadioButton)view.findViewById(R.id.updateOptionMostFavouriteButton);
+        mostPopularButton.setOnClickListener(this);
 
         mostRecentButton=(RadioButton)view.findViewById(R.id.updateOptionMostRecentButton);
         mostRecentButton.setOnClickListener(this);

@@ -8,22 +8,23 @@ import org.json.JSONObject;
  */
 public class Announcement {
     private int id;
-    private  int locationIdTo,locationIdFrom;
-    private String timeFrom,timeTo;
-    private String title,description,timeOfUpdate;
+    private  int locationId;
+
+    private String title,description,timeOfUpdate,source;
     private String posterName;
     private int posterId;
     private int likeCount,dislikeCount;
 
-    public Announcement(String description, int dislikeCount, String timeFrom, String timeTo, int id, int likeCount, int locationIdFrom, int locationIdTo, String title, String timeOfUpdate, String posterName, int posterId) {
+    public Announcement(String description, int dislikeCount,int id, int likeCount,int locationId, String title, String timeOfUpdate, String posterName, int posterId,String source) {
         this.description = description;
         this.dislikeCount = dislikeCount;
-        this.timeFrom=timeFrom;
-        this.timeTo=timeTo;
+        this.source=source;
+
+
         this.id = id;
         this.likeCount = likeCount;
-        this.locationIdFrom = locationIdFrom;
-        this.locationIdTo = locationIdTo;
+
+        this.locationId = locationId;
         this.title = title;
 
         this.timeOfUpdate = timeOfUpdate;
@@ -93,40 +94,27 @@ public class Announcement {
         this.posterName = posterName;
     }
 
-    public String getTimeFrom() {
-        return timeFrom;
-    }
 
-    public void setTimeFrom(String timeFrom) {
-        this.timeFrom = timeFrom;
-    }
 
-    public String getTimeTo() {
-        return timeTo;
-    }
-
-    public void setTimeTo(String timeTo) {
-        this.timeTo = timeTo;
-    }
 
     public static Announcement createAnnouncement(JSONObject jsonObject) {
-
+        //Announcement(String description, int dislikeCount,int id, int likeCount,int locationId, String title, String timeOfUpdate, String posterName, int posterId) {
         //Announcement(String description, int dislikeCount, String timeFrom, String timeTo, int id, int likeCount, String locationFrom, String locationTo, String title, String timeOfUpdate, String posterName, int posterId)
         //Announcement(String description, int dislikeCount, String timeFrom, String timeTo, int id, int likeCount, int locationIdFrom, int locationIdTo, String title, String timeOfUpdate, String posterName, int posterId) {
         try {
             return new Announcement(
                     jsonObject.getString("description"),
                     jsonObject.getInt("dislikeCount"),
-                    jsonObject.getString("timeFrom"),
-                    jsonObject.getString("timeTo"),
+
                     jsonObject.getInt("id"),
                     jsonObject.getInt("likeCount"),
-                    jsonObject.getInt("locationIdFrom"),
-                    jsonObject.getInt("locationIdTo"),
+                    jsonObject.getInt("locationId"),
+
                     jsonObject.getString("title"),
-                    jsonObject.getString("timeOfUpdate"),
+                    jsonObject.getString("timeOfPost"),
                     jsonObject.getString("posterName"),
-                    jsonObject.getInt("posterId")
+                    jsonObject.getInt("posterId"),
+                    jsonObject.getString("source")
 
 
             );
@@ -144,19 +132,21 @@ public class Announcement {
         this.posterId = posterId;
     }
 
-    public int getLocationIdFrom() {
-        return locationIdFrom;
+
+
+    public int getLocationId() {
+        return locationId;
     }
 
-    public void setLocationIdFrom(int locationIdFrom) {
-        this.locationIdFrom = locationIdFrom;
+    public void setLocationId(int locationIdTo) {
+        this.locationId = locationIdTo;
     }
 
-    public int getLocationIdTo() {
-        return locationIdTo;
+    public String getSource() {
+        return source;
     }
 
-    public void setLocationIdTo(int locationIdTo) {
-        this.locationIdTo = locationIdTo;
+    public void setSource(String source) {
+        this.source = source;
     }
 }

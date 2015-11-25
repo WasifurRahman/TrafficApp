@@ -8,13 +8,6 @@
     android:layout_marginBottom="20dp"
     android:paddingBottom="15dp">
 
-    <TextView
-        android:padding="5dp"
-        android:paddingBottom="15dp"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="#707070" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -50,13 +43,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/notifOnTextView"
+            android:id="@+id/notifAboutTextView"
             android:text="notifOn"/>
 
     </LinearLayout>
 
-
-
+    <TextView
+        android:paddingTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#707070" />
 
 
 </LinearLayout>

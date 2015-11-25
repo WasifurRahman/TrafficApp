@@ -2,11 +2,23 @@ package com.example.washab.trafficapp;
 
 import android.app.Activity;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -22,6 +34,8 @@ public class NotificationsFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    private ArrayList<Notification> allNotifsArraylist = new ArrayList<Notification>();
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -67,12 +81,82 @@ public class NotificationsFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_notifications, container, false);
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        new FetchNotificationsTask().execute();
+        super.onActivityCreated(savedInstanceState);
+    }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
     }
+
+    private void populateNotifList(JSONObject jsonNotifs){
+
+        try {
+            //Log.d("within updates: ",jsonUpdates.toString());
+            allNotifsArraylist.clear();
+
+            JSONArray allNotifsJSONArray=jsonNotifs.getJSONArray("notifications");
+            int curIndex=0, N=allNotifsJSONArray.length();
+
+            while(curIndex<N){
+                JSONObject curObj=allNotifsJSONArray.getJSONObject(curIndex++);
+                Notification curNotif=Notification.createNotification(curObj);
+                allNotifsArraylist.add(curNotif);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void populateNotifListView(){
+        ArrayAdapter<Notification> adapter = new MyListAdapter();
+        ListView list=(ListView)getView().findViewById(R.id.userNotifsListView);
+        list.setAdapter(adapter);
+    }
+
+    private class MyListAdapter extends ArrayAdapter<Notification>{
+        public MyListAdapter(){
+            super(getActivity(), R.layout.user_notif_item, allNotifsArraylist);
+        }
+
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+
+            View itemView=convertView;
+            if(itemView==null){
+                itemView=getActivity().getLayoutInflater().inflate(R.layout.user_notif_item,parent,false);
+            }
+
+
+            //find the update to work with
+            final Notification currentNotif = allNotifsArraylist.get(position);
+            int currentUserId=Utility.CurrentUser.getId();
+
+            //fill the view
+
+            TextView notifFromUsername = (TextView)itemView.findViewById(R.id.notifFromUsernameTextView);
+            notifFromUsername.setText(currentNotif.getNotifFromUsername());
+
+            TextView notifType = (TextView)itemView.findViewById(R.id.notifTypeTextView);
+            notifType.setText(" " + currentNotif.getNotifType() + "d ");
+
+            TextView notifAbout = (TextView)itemView.findViewById(R.id.notifAboutTextView);
+            notifAbout.setText(currentNotif.getNotifAbout() + ".");
+
+            return itemView;
+            // return super.getView(position, convertView, parent);
+
+
+
+        }
+    }
+
+
 
     @Override
     public void onAttach(Activity activity) {
@@ -105,5 +189,47 @@ public class NotificationsFragment extends Fragment {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
+
+    class FetchNotificationsTask extends AsyncTask<String, Void, String> {
+
+        private JSONObject jsonNotifs;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        protected String doInBackground(String... args) {
+
+            JSONParser jParser = new JSONParser();
+
+            List<Pair> params = new ArrayList<Pair>();
+            params.add(new Pair("userId", Utility.CurrentUser.getId()));
+
+            // getting JSON string from URL
+
+            jsonNotifs = jParser.makeHttpRequest("/allnotifications", "GET", params);
+
+            return null;
+
+        }
+
+        /**
+         * After completing background task
+         **/
+        protected void onPostExecute (String a){
+
+            if(jsonNotifs == null) {
+                Utility.CurrentUser.showConnectionError(getActivity());
+                return;
+            }
+
+            populateNotifList(jsonNotifs);
+            populateNotifListView();
+
+        }
+    }
+
 
 }

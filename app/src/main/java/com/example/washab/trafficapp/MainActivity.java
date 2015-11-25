@@ -3,18 +3,13 @@ package com.example.washab.trafficapp;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.view.MenuCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -108,7 +103,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    void assignUser(JSONObject jObj){
+
+
+    static void assignUser(JSONObject jObj){
         int userId=0;
         String userName=" ",apiKey=" ";
 
@@ -126,7 +123,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    void assignLocations(JSONObject json) {
+    static void assignLocations(JSONObject json) {
 
         try {
             Boolean invalidResult=json.getBoolean("error");
@@ -174,6 +171,21 @@ public class MainActivity extends AppCompatActivity
             jsonLogin = jParser.makeHttpRequest("/login", "POST", params);
             jsonLocations = jParser.makeHttpRequest("/locations", "GET", null);
 
+            // Check your log cat for JSON reponse
+//            Log.e("All info: ", jsonLogin.toString());
+            return null;
+
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         **/
+        protected void onPostExecute (String a){
+
+            if(jsonLogin == null) {
+                Utility.CurrentUser.showConnectionError(getApplicationContext());
+                return;
+            }
             try {
                 Boolean error = jsonLogin.getBoolean("error");
                 errorMessage = jsonLogin.getString("message");
@@ -185,17 +197,6 @@ public class MainActivity extends AppCompatActivity
             }catch(JSONException e){
                 e.printStackTrace();
             }
-
-            // Check your log cat for JSON reponse
-//            Log.e("All info: ", jsonLogin.toString());
-            return null;
-
-        }
-
-        /**
-         * After completing background task Dismiss the progress dialog
-         **/
-        protected void onPostExecute (String a){
 
             if(loginError){
                 errorText.setText(errorMessage);

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +31,8 @@ public class PostTypeFragment extends Fragment implements View.OnClickListener{
     private OnFragmentInteractionListener mListener;
 
     private RadioButton chooseDiscussionButton,chooseAnnouncementButton;
+    private static final int DISCUSSIONS = 5;
+    private static final int ANNOUNCEMENTS= 6;
 
     /**
      * Use this factory method to create a new instance of
@@ -71,13 +72,13 @@ public class PostTypeFragment extends Fragment implements View.OnClickListener{
 
         View view =  inflater.inflate(R.layout.fragment_post_type, container, false);
 
-        addListernerForAll(view);
+        addListenerForAll(view);
 
         return view;
 
     }
 
-    private void addListernerForAll(View view) {
+    private void addListenerForAll(View view) {
 
        chooseAnnouncementButton=(RadioButton)view.findViewById(R.id.postTypeAnnouncementButton);
        chooseAnnouncementButton.setOnClickListener(this);
@@ -115,10 +116,12 @@ public class PostTypeFragment extends Fragment implements View.OnClickListener{
 
         if(v.getId()==R.id.postTypeAnnouncementButton){
             mListener.startAnnouncementFragment();
+            mListener.setPostTypeToShow(ANNOUNCEMENTS);
         }
 
         else if(v.getId()==R.id.postTypeDiscussionButton){
             mListener.startDiscussionFragment();
+            mListener.setPostTypeToShow(DISCUSSIONS);
         }
 
     }
@@ -138,6 +141,7 @@ public class PostTypeFragment extends Fragment implements View.OnClickListener{
         public void onFragmentInteraction(Uri uri);
         public void startAnnouncementFragment();
         public void startDiscussionFragment();
+        public void setPostTypeToShow(int postTypeToShow);
     }
 
 }

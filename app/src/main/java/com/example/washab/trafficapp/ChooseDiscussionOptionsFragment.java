@@ -32,7 +32,7 @@ public class ChooseDiscussionOptionsFragment extends Fragment implements  View.O
     private OnFragmentInteractionListener mListener;
 
     private Button addDiscussionButton;
-    private RadioButton mostFavouriteButton,mostRecentButton;
+    private RadioButton mostPopularButton,mostRecentButton;
 
     /**
      * Use this factory method to create a new instance of
@@ -72,18 +72,18 @@ public class ChooseDiscussionOptionsFragment extends Fragment implements  View.O
 
         View view =  inflater.inflate(R.layout.fragment_choose_discussion_options, container, false);
 
-        addListernerForAll(view);
+        addListenerForAll(view);
 
         return view;
     }
 
-    private void addListernerForAll(View view) {
+    private void addListenerForAll(View view) {
 
         addDiscussionButton = (Button) view.findViewById(R.id.startAddingDiscussionButton);
         addDiscussionButton.setOnClickListener(this);
 
-        mostFavouriteButton=(RadioButton)view.findViewById(R.id.discussionOptionMostFavouriteButton);
-        mostFavouriteButton.setOnClickListener(this);
+        mostPopularButton =(RadioButton)view.findViewById(R.id.discussionOptionMostPopularButton);
+        mostPopularButton.setOnClickListener(this);
 
         mostRecentButton=(RadioButton)view.findViewById(R.id.discussionOptionMostRecentButton);
         mostRecentButton.setOnClickListener(this);
@@ -119,9 +119,9 @@ public class ChooseDiscussionOptionsFragment extends Fragment implements  View.O
         if(v.getId()==R.id.startAddingDiscussionButton){
             mListener.startAddDiscussionActivity();
         }
-        else if(v.getId()==R.id.discussionOptionMostFavouriteButton){
+        else if(v.getId()==R.id.discussionOptionMostPopularButton){
 
-            mListener.setDiscussionSorting("mostFavourite");
+            mListener.setDiscussionSorting("mostPopular");
         }
         else if(v.getId()==R.id.discussionOptionMostRecentButton){
             mListener.setDiscussionSorting("mostRecent");

@@ -10,4 +10,17 @@
         myapp:actionViewClass="android.widget.Spinner"
         />
 
+    <item
+        android:id="@+id/addPreferredLocation"
+
+        myapp:showAsAction="collapseActionView"
+        android:title="Add Location" />
+
+
+    <item
+        android:id="@+id/logoutButton"
+
+        myapp:showAsAction="collapseActionView"
+        android:title="LogOut" />
+
 </menu>

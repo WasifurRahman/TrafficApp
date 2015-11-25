@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -44,6 +45,8 @@ public class RequestFragment extends Fragment {
 
     private ArrayList<Request> allRequestsArrayList =new ArrayList<Request>();
     private String sortingCriteria = "mostRecent";
+    LinearLayout progressLayout;
+    ListView customRequestListView;
 
     /**
      * Use this factory method to create a new instance of
@@ -86,9 +89,13 @@ public class RequestFragment extends Fragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        progressLayout = (LinearLayout) getActivity().findViewById(R.id.progressbar_view);
+        customRequestListView=(ListView)getActivity().findViewById(R.id.userRequestListView);
+        
         new FetchRequestTask().execute();
 //        populateRequestList(JSONObject jsonRequests);
 //        populateRequestListView();
+
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -213,6 +220,8 @@ public class RequestFragment extends Fragment {
 
         @Override
         protected void onPreExecute() {
+            progressLayout.setVisibility(View.VISIBLE);
+            customRequestListView.setVisibility(View.GONE);
             super.onPreExecute();
         }
 
@@ -224,12 +233,10 @@ public class RequestFragment extends Fragment {
             List<Pair> params = new ArrayList<Pair>();
 
             params.add(new Pair("sortType", sortingCriteria));
-            // getting JSON string from URL
 
+            // getting JSON string from URL
             jsonRequests = jParser.makeHttpRequest("/allrequests", "GET", params);
 
-            // Check your log cat for JSON reponse
-            Log.d("All info: ", jsonRequests.toString());
             return null;
 
         }
@@ -238,6 +245,13 @@ public class RequestFragment extends Fragment {
          * After completing background task Dismiss the progress dialog
          **/
         protected void onPostExecute (String a){
+            progressLayout.setVisibility(View.GONE);
+            customRequestListView.setVisibility(View.VISIBLE);
+
+            if(jsonRequests == null) {
+                Utility.CurrentUser.showConnectionError(getActivity());
+                return;
+            }
 
             //jsonUpdatesField=jsonUpdates;
             populateRequestList(jsonRequests);
