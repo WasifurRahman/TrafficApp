@@ -11,6 +11,7 @@ public class Locations {
     private static Hashtable<String, Integer> locations = new Hashtable<String, Integer>();
     private static Hashtable<Integer,String> reverseLocations = new Hashtable<Integer,String>();
     private static String[] locationNames;
+    private static String[] locationNamesForSearch;
 
     public static void addLocation (String name, int id) {
         locations.put(name, new Integer (id));
@@ -24,10 +25,13 @@ public class Locations {
     public static void prepareLocationNameArray() {
         Enumeration names = locations.keys();
         locationNames=new String[locations.size()];
+        locationNamesForSearch=new String[locations.size()+1];
+        locationNamesForSearch[0]="All Locations";
         int curInd=0;
         while (names.hasMoreElements()) {
             String temp = (String) names.nextElement();
             locationNames[curInd++]=temp;
+            locationNamesForSearch[curInd]=temp;
         }
     }
 
@@ -51,5 +55,9 @@ public class Locations {
             ans+=locationNames[i];
         }
         return ans;
+    }
+
+    public static String[] getAllLocationNamesForSearch() {
+        return locationNamesForSearch;
     }
 }

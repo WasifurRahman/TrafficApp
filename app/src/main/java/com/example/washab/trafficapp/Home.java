@@ -6,13 +6,17 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
-public class Home extends AppCompatActivity implements UserUpdates.OnFragmentInteractionListener ,AnnouncementFragment.OnFragmentInteractionListener,
+public class Home extends AppCompatActivity implements UpdateFragment.OnFragmentInteractionListener ,AnnouncementFragment.OnFragmentInteractionListener,
 ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFragment.OnFragmentInteractionListener,RequestFragment.OnFragmentInteractionListener,PostTypeFragment.OnFragmentInteractionListener
 ,ChooseAnnouncementOptionsFragment.OnFragmentInteractionListener,ChooseDiscussionOptionsFragment.OnFragmentInteractionListener,DiscussionFragment.OnFragmentInteractionListener{
 
@@ -26,6 +30,8 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     private String chooseAnnouncementOptionsFragmentsTag="CHOOSEANNOUNCEMENTOPTIONSFRAGMENT";
     private String choosePostTypeFragmentsTag="CHOOSEPOSTTYPEFRAGMENT";
     private String chooseDiscussionOptionsFragmentsTag="CHOOSEDISCUSSIONOPTIONSFRAGMENT";
+    private String[] locationChoices;
+    private int locationIdToSearch;
 
 
 
@@ -45,13 +51,50 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
 
         addRequestsFragment();
         addChooseRequestOptionsFragment();
+        locationChoices=Locations.getAllLocationNamesForSearch();
+        // add all locations at the start of the location names
+
+        //locationIdToSearch=Locations.getLocationId(locationChoices[0]);
 
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_home, menu);
+        getMenuInflater().inflate(R.menu.definedmenu, menu);
+
+        MenuItem item=menu.findItem(R.id.searchSpinner);
+        Spinner searchSpinner= (Spinner) MenuItemCompat.getActionView(item);
+        if(searchSpinner==null)Log.d("null error: ","searchspinner is null");
+        if(searchSpinner!=null) {
+            searchSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    //the first postion is for all updates,so nothing to change here
+                    if(position==0)return;
+
+                    locationIdToSearch=Locations.getLocationId(locationChoices[position]);
+                    String activeFragmentTag=currentLoadedFragmentTag();
+                    Fragment activeFragment = getFragmentManager().findFragmentByTag(activeFragmentTag);
+                    if(activeFragment.getClass()==UpdateFragment.class){
+                        Log.d("fragment alive","update frgment new");
+                        ((UpdateFragment)activeFragment).setUpdatesLocation(locationIdToSearch);
+                    }
+
+
+
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
+
+            // Application of the Array to the Spinner
+            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, locationChoices);
+            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+            searchSpinner.setAdapter(spinnerArrayAdapter);
+        }
         return true;
     }
 
@@ -68,6 +111,37 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private String currentLoadedFragmentTag(){
+        Fragment updateFragment = getFragmentManager().findFragmentByTag(updatesFragmentTag);
+        if(updateFragment!=null){
+            //Log.d("fragment alive","update frgment");
+            return updatesFragmentTag;
+        }
+        Fragment requestFragment = getFragmentManager().findFragmentByTag(requestsFragmentTag);
+        if(requestFragment!=null){
+            return requestsFragmentTag;
+            //Log.d("fragment alive","request frgment");
+        }
+        Fragment postsFragment = getFragmentManager().findFragmentByTag(postsFragmentTag);
+        if(postsFragment!=null){
+            //Log.d("fragment alive","post frgment");
+            return postsFragmentTag;
+        }
+        Fragment discussionFragment = getFragmentManager().findFragmentByTag(discussionFragmentTag);
+        if(discussionFragment!=null){
+            return discussionFragmentTag;
+            //Log.d("fragment alive","discussion frgment");
+
+        }
+        Fragment announcementFragment = getFragmentManager().findFragmentByTag(announcementFragmentTag);
+        if(announcementFragment!=null){
+            return announcementFragmentTag;
+            //Log.d("fragment alive","announcement frgment");
+        }
+        return null;
+
     }
 
     private void addChooseUpdateOptionsFragment(){
@@ -130,7 +204,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     private void addUpdatesFragment(){
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        UserUpdates updatesFragment = new  UserUpdates();
+        UpdateFragment updatesFragment = new UpdateFragment();
 
         fragmentTransaction.add(R.id.dataFragmentContainer, updatesFragment,updatesFragmentTag);
         fragmentTransaction.commit();
@@ -259,7 +333,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
         announcementSortingCriteria =sortingCrietaria;
         Log.d("Srting Crieteria: ",sortingCrietaria);
 
-        UserUpdates updateFragment = (UserUpdates) getFragmentManager().findFragmentByTag(updatesFragmentTag);
+        UpdateFragment updateFragment = (UpdateFragment) getFragmentManager().findFragmentByTag(updatesFragmentTag);
         AnnouncementFragment announcementFragment=(AnnouncementFragment)getFragmentManager().findFragmentByTag(announcementFragmentTag);
         if(announcementFragment!=null)announcementFragment.setAnnouncementSorting(sortingCrietaria);
 
@@ -315,7 +389,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
         updatesSortingCriteria =sortingCrietaria;
         Log.d("Srting Crieteria: ",sortingCrietaria);
 
-        UserUpdates updateFragment = (UserUpdates) getFragmentManager().findFragmentByTag(updatesFragmentTag);
+        UpdateFragment updateFragment = (UpdateFragment) getFragmentManager().findFragmentByTag(updatesFragmentTag);
         if(updateFragment!=null)updateFragment.setUpdateSorting(sortingCrietaria);
 
     }
