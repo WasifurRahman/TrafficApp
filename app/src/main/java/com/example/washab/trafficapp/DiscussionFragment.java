@@ -47,6 +47,8 @@ public class DiscussionFragment extends Fragment {
 //    private JSONObject jsonDiscussionsField;
     private String sortingCriteria = "mostRecent";
 
+    FetchDiscussionTask fetchDiscussionTask = new FetchDiscussionTask();
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -110,7 +112,7 @@ public class DiscussionFragment extends Fragment {
     }
 
     public void onActivityCreated(Bundle savedInstanceState) {
-        new FetchDiscussionTask().execute();
+        fetchDiscussionTask.execute();
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -213,6 +215,16 @@ public class DiscussionFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();  // Always call the superclass method first
+
+        // Release the Camera because we don't need it when paused
+        // and other activities might need to use it.
+        Log.d("inside pause", "yes");
+        fetchDiscussionTask.cancel(true);
     }
 
 
