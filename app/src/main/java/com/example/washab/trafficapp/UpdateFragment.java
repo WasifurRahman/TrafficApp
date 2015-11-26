@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,6 +61,10 @@ public class UpdateFragment extends Fragment {
     private int updateToBeLiked=-1;
     private int likerId=-1;
     private TextView changeLikeCount;
+    private int locationIdToSearch=0;
+    LinearLayout progressLayout;
+    ListView customUpdateList;
+
 
 
     /**
@@ -130,6 +135,8 @@ public class UpdateFragment extends Fragment {
         list.setAdapter(adapter);
     }
 
+
+
     private class MyListAdapter extends ArrayAdapter<Update>{
         public MyListAdapter(){
             super(getActivity(), R.layout.user_update_item, allUserUpdatesArraylist);
@@ -196,7 +203,7 @@ public class UpdateFragment extends Fragment {
             });
 
             return itemView;
-           // return super.getView(position, convertView, parent);
+            // return super.getView(position, convertView, parent);
 
 
 
@@ -205,14 +212,19 @@ public class UpdateFragment extends Fragment {
 
     private void checkIfAlreadyLikedAndChangeColorAccordingly(Liker curLiker, Update curUpdate, Button likeButton) {
         synchronized (curUpdate) {
-            Log.d("UpdateId-LikerId-LikeCount", curUpdate.getId() + "-" + curLiker.getLikerId() + "-" + curUpdate.getLikeCount());
+           // Log.d("UpdateId-LikerId-LikeCount", curUpdate.getId() + "-" + curLiker.getLikerId() + "-" + curUpdate.getLikeCount());
 //            Log.d("");
             if (curUpdate.hasTheUserLikedTheUpdate(curLiker)) {
 
                 Log.d("Inside likeButton Color", "Yes");
-//                likeButton.setText("Liked");
-//                likeButton.setBackgroundColor(Color.CYAN);
+                likeButton.setText("Liked");
+                likeButton.setBackgroundColor(Color.CYAN);
+                likeButton.setWidth(50);
 
+            }else{
+                likeButton.setText("Like");
+                likeButton.setBackgroundColor(Color.LTGRAY);
+                likeButton.setWidth(20);
             }
         }
     }
@@ -266,11 +278,15 @@ public class UpdateFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
+
         return inflater.inflate(R.layout.fragment_user_updates, container, false);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        progressLayout = (LinearLayout) getActivity().findViewById(R.id.progressbar_view);
+        customUpdateList=(ListView)getActivity().findViewById(R.id.userUpdatesListView);
+
         new FetchUpdateTask().execute();
         //populateUpdateList(jsonUpdatesField);
         //populateUpdateListView();
@@ -307,6 +323,11 @@ public class UpdateFragment extends Fragment {
         new FetchUpdateTask().execute();
     }
 
+    public void setUpdatesLocation(int locationIdToSearch) {
+        this.locationIdToSearch=locationIdToSearch;
+        new FetchUpdateTask().execute();
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -329,6 +350,8 @@ public class UpdateFragment extends Fragment {
 
         @Override
         protected void onPreExecute() {
+            progressLayout.setVisibility(View.VISIBLE);
+            customUpdateList.setVisibility(View.GONE);
             super.onPreExecute();
         }
 
@@ -340,10 +363,14 @@ public class UpdateFragment extends Fragment {
             List<Pair> params = new ArrayList<Pair>();
 
 
-                params.add(new Pair("sortType", sortingCriteria));
-                // getting JSON string from URL
+            params.add(new Pair("sortType", sortingCriteria));
+            // getting JSON string from URL
 
-                jsonUpdates = jParser.makeHttpRequest("/allupdates", "GET", params);
+            if(locationIdToSearch==0)jsonUpdates = jParser.makeHttpRequest("/allupdates", "GET", params);
+            else{
+                params.add(new Pair("locationId", locationIdToSearch));
+                jsonUpdates = jParser.makeHttpRequest("/updatesfromlocation", "GET", params);
+            }
 
             return null;
 
@@ -355,6 +382,8 @@ public class UpdateFragment extends Fragment {
         protected void onPostExecute (String a){
 
             //jsonUpdatesField=jsonUpdates;
+            progressLayout.setVisibility(View.GONE);
+            customUpdateList.setVisibility(View.VISIBLE);
 
             if(jsonUpdates == null) {
                 Utility.CurrentUser.showConnectionError(UpdateFragment.context);

@@ -12,12 +12,22 @@ public class Utility {
 
         private static int id, displayPage = 0;
         private static String apiKey,username;
+        private static boolean valid=false;
 
         public static void setUser(int i,String uName,String apikey){
             id=i;
             username=uName;
             apiKey=apikey;
+            valid=true;
 
+        }
+
+        public static void invalidate(){
+            valid=false;
+        }
+
+        public static  boolean isTheUserValid(){
+            return valid;
         }
 
         public static int getId(){return id;}

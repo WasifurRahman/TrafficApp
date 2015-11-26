@@ -1,10 +1,10 @@
 package com.example.washab.trafficapp;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -46,6 +47,8 @@ public class DiscussionFragment extends Fragment {
     private ArrayList<Discussion> allDiscussionsArrayList =new ArrayList<Discussion>();
 //    private JSONObject jsonDiscussionsField;
     private String sortingCriteria = "mostRecent";
+    LinearLayout progressLayout;
+    ListView customDiscussionListView;
 
     FetchDiscussionTask fetchDiscussionTask = new FetchDiscussionTask();
 
@@ -112,7 +115,10 @@ public class DiscussionFragment extends Fragment {
     }
 
     public void onActivityCreated(Bundle savedInstanceState) {
+        progressLayout = (LinearLayout) getActivity().findViewById(R.id.progressbar_view);
+        customDiscussionListView =(ListView)getActivity().findViewById(R.id.userDiscussionListView);
         fetchDiscussionTask.execute();
+
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -145,12 +151,14 @@ public class DiscussionFragment extends Fragment {
 
     private void populateDiscussionListView(){
         ArrayAdapter<Discussion> adapter = new MyListAdapter();
+
         ListView list=(ListView)getView().findViewById(R.id.userDiscussionListView);
         list.setAdapter(adapter);
     }
 
     private class MyListAdapter extends ArrayAdapter<Discussion>{
         public MyListAdapter(){
+
             super(getActivity(), R.layout.user_discussion_item, allDiscussionsArrayList);
         }
 
@@ -235,7 +243,11 @@ public class DiscussionFragment extends Fragment {
         private JSONObject jsonDiscussions;
 
         @Override
-        protected void onPreExecute() {
+        protected void onPreExecute()
+        {
+            progressLayout.setVisibility(View.VISIBLE);
+            customDiscussionListView.setVisibility(View.GONE);
+
             super.onPreExecute();
         }
 
@@ -260,6 +272,8 @@ public class DiscussionFragment extends Fragment {
          * After completing background task Dismiss the progress dialog
          **/
         protected void onPostExecute (String a){
+            progressLayout.setVisibility(View.GONE);
+            customDiscussionListView.setVisibility(View.VISIBLE);
 
             if(jsonDiscussions == null) {
                 Utility.CurrentUser.showConnectionError(getActivity());

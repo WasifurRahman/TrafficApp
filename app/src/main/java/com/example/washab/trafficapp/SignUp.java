@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
@@ -17,19 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
-
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -37,7 +25,7 @@ import java.util.regex.Pattern;
 
 public class SignUp extends AppCompatActivity {
 
-    public String email, username, gender, password, errorMessage;
+    public String email, username, gender, password, errorMessage,repeatPassword;
     private RadioGroup genderRadioGroup;
     private RadioButton genderRadioButton;
     private int emailVerifyCode;
@@ -151,6 +139,7 @@ public class SignUp extends AppCompatActivity {
             email = ((EditText) findViewById(R.id.emailEditText)).getText().toString();
             password = ((EditText) findViewById(R.id.passwordEditText)).getText().toString();
             username = ((EditText) findViewById(R.id.usernameEditText)).getText().toString();
+            repeatPassword= ((EditText) findViewById(R.id.repeatPasswordEditText)).getText().toString();
            // genderRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
            // int selectedId = genderRadioGroup.getCheckedRadioButtonId();
             //genderRadioButton = (RadioButton) findViewById(selectedId);
@@ -160,6 +149,9 @@ public class SignUp extends AppCompatActivity {
                 errorText.setText("One or more required fields are missing!\n");
             }else if(!validate(email)) {
                 errorText.setText("Please enter a valid address.\n");
+            }
+            else if(passwordMissMatch()){
+                errorText.setText("password mismatch.\n");
             }
             else
            {
@@ -186,6 +178,13 @@ public class SignUp extends AppCompatActivity {
 
             }
         }
+    }
+
+    private boolean passwordMissMatch() {
+        //Log.d("signupcheck",password +" "+repeatPassword);
+        if(password.equals(repeatPassword))return false;
+        return true;
+
     }
 
     public static boolean validate(String emailStr) {

@@ -1,0 +1,35 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:orientation="vertical"
+
+    tools:context="com.example.washab.trafficapp.AddPreferredLocationActivity">
+
+    <LinearLayout
+        android:orientation="horizontal" android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="location"
+            android:layout_weight="1.2"
+            />
+        <Spinner
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/preferedLocationSelectionSpinner"
+            android:layout_weight="3"
+            android:paddingRight="10dp"
+            android:spinnerMode="dropdown" />
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:text="Add To Prefered List"
+        android:id="@+id/addingPreferredLocationButton"/>
+
+</LinearLayout>

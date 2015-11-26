@@ -11,9 +11,9 @@
         android:theme="@style/Theme.AppCompat.Light" >
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name"
             android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,59 +22,64 @@
         </activity>
         <activity
             android:name=".SignUp"
-            android:label="@string/title_activity_sign_up"
             android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:label="@string/title_activity_sign_up"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".EmailVerification"
-            android:label="@string/title_activity_email_verification"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".SignUp" >
+            android:label="@string/title_activity_email_verification"
+            android:parentActivityName=".SignUp"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.washab.trafficapp.SignUp" />
         </activity>
         <activity
             android:name=".Home"
-            android:label="@string/title_activity_home"
             android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:label="@string/title_activity_home"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".Home">
         </activity>
         <activity
             android:name=".AddUpdate"
+            android:configChanges="orientation"
             android:label="@string/title_activity_add_update"
             android:parentActivityName=".Home"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.washab.trafficapp.Home" />
         </activity>
         <activity
             android:name=".SampleUpdate"
-            android:label="@string/title_activity_sample_update"
             android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:label="@string/title_activity_sample_update"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".AddRequest"
-            android:label="@string/title_activity_add_request"
             android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:label="@string/title_activity_add_request"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".AddAnnouncement"
-            android:label="@string/title_activity_add_announcement"
             android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:label="@string/title_activity_add_announcement"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".AddDiscussion"
-            android:label="@string/title_activity_add_discussion"
             android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:label="@string/title_activity_add_discussion"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".AddPreferredLocationActivity"
+            android:label="@string/title_activity_add_preferred_location" >
         </activity>
     </application>
 

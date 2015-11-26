@@ -31,6 +31,8 @@ public class PostTypeFragment extends Fragment implements View.OnClickListener{
     private OnFragmentInteractionListener mListener;
 
     private RadioButton chooseDiscussionButton,chooseAnnouncementButton;
+    private static final int DISCUSSIONS = 5;
+    private static final int ANNOUNCEMENTS= 6;
 
     /**
      * Use this factory method to create a new instance of
@@ -114,10 +116,12 @@ public class PostTypeFragment extends Fragment implements View.OnClickListener{
 
         if(v.getId()==R.id.postTypeAnnouncementButton){
             mListener.startAnnouncementFragment();
+            mListener.setPostTypeToShow(ANNOUNCEMENTS);
         }
 
         else if(v.getId()==R.id.postTypeDiscussionButton){
             mListener.startDiscussionFragment();
+            mListener.setPostTypeToShow(DISCUSSIONS);
         }
 
     }
@@ -137,6 +141,7 @@ public class PostTypeFragment extends Fragment implements View.OnClickListener{
         public void onFragmentInteraction(Uri uri);
         public void startAnnouncementFragment();
         public void startDiscussionFragment();
+        public void setPostTypeToShow(int postTypeToShow);
     }
 
 }

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_margin="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,8 +27,6 @@
             android:id="@+id/announcementTitleTextView"
             android:layout_gravity="center_horizontal" />
 
-
-
     </LinearLayout>
 
 
@@ -50,26 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/announcementLocationFromTextView"
-             />
-
-
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            
-            android:text="-"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/announcementLocationToTextView"
-            />
+            android:id="@+id/announcementLocationTextView"/>
 
     </LinearLayout>
 
@@ -84,7 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="During: "
+            android:text="Source "
             android:id="@+id/Stub4"
             android:layout_gravity="left" />
 
@@ -93,31 +73,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/announcementTimeFromTextView"
+            android:id="@+id/announcementSourcetextView"
             />
-
-
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/stub5"
-            android:text="-"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/announcementTimeToTextView"
-            />
-
-
-
-
     </LinearLayout>
+
 
     <TextView
         android:layout_width="match_parent"

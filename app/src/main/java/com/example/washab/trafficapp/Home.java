@@ -7,12 +7,18 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
+
 
 public class Home extends AppCompatActivity implements UpdateFragment.OnFragmentInteractionListener ,AnnouncementFragment.OnFragmentInteractionListener,
 ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFragment.OnFragmentInteractionListener,RequestFragment.OnFragmentInteractionListener,PostTypeFragment.OnFragmentInteractionListener
@@ -29,11 +35,16 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     private String chooseAnnouncementOptionsFragmentsTag="CHOOSEANNOUNCEMENTOPTIONSFRAGMENT";
     private String choosePostTypeFragmentsTag="CHOOSEPOSTTYPEFRAGMENT";
     private String chooseDiscussionOptionsFragmentsTag="CHOOSEDISCUSSIONOPTIONSFRAGMENT";
+    private String[] locationChoices;
+    private int locationIdToSearch;
+    private int currentPostTypeToShow=DISCUSSIONS;
 
     private static final int UPDATES = 1;
     private static final int POSTS = 2;
     private static final int REQUESTS = 3;
     private static final int NOTIFS = 4;
+    private static final int DISCUSSIONS = 5;
+    private static final int ANNOUNCEMENTS= 6;
 
 //
 //    private String announcementSortingCriteria ="mostRecent";
@@ -48,6 +59,13 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+
+
+        locationChoices=Locations.getAllLocationNamesForSearch();
+        // add all locations at the start of the location names
+
+        //locationIdToSearch=Locations.getLocationId(locationChoices[0]);
 
         if(Utility.CurrentUser.getDisplayPage() == 0) {
             Utility.CurrentUser.setDisplayPage(UPDATES);
@@ -78,13 +96,67 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
                 break;
         }
 
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_home, menu);
+        getMenuInflater().inflate(R.menu.definedmenu, menu);
+
+        MenuItem item=menu.findItem(R.id.searchSpinner);
+        Spinner searchSpinner= (Spinner) MenuItemCompat.getActionView(item);
+        if(searchSpinner==null)Log.d("null error: ","searchspinner is null");
+        if(searchSpinner!=null) {
+            searchSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    //the first postion is for all updates,so nothing to change here
+                    if(position==0)return;
+
+                    locationIdToSearch=Locations.getLocationId(locationChoices[position]);
+                    String activeFragmentTag=currentLoadedFragmentTag();
+                    Fragment activeFragment = getFragmentManager().findFragmentByTag(activeFragmentTag);
+                    if(activeFragment.getClass()==UpdateFragment.class){
+                        Log.d("fragment alive","update frgment new");
+                        ((UpdateFragment)activeFragment).setUpdatesLocation(locationIdToSearch);
+                    }
+
+
+
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
+
+            // Application of the Array to the Spinner
+            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, locationChoices);
+            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+            searchSpinner.setAdapter(spinnerArrayAdapter);
+        }
         return true;
+    }
+
+    @Override
+    protected void onPostResume() {
+        if(Utility.CurrentUser.isTheUserValid()==false){
+            Intent intent=new Intent(Home.this,MainActivity.class);
+            startActivity(intent);
+        }
+        super.onPostResume();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if(keyCode == KeyEvent.KEYCODE_BACK)
+        {
+
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -98,8 +170,51 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
         if (id == R.id.action_settings) {
             return true;
         }
+        else if(id==R.id.logoutButton){
+            Utility.CurrentUser.invalidate();
+            Intent intent=new Intent(Home.this,MainActivity.class);
+            startActivity(intent);
+
+        }
+        else if(id==R.id.addPreferredLocation){
+
+            Intent intent=new Intent(Home.this,MainActivity.class);
+            startActivity(intent);
+
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private String currentLoadedFragmentTag(){
+        Fragment updateFragment = getFragmentManager().findFragmentByTag(updatesFragmentTag);
+        if(updateFragment!=null){
+            //Log.d("fragment alive","update frgment");
+            return updatesFragmentTag;
+        }
+        Fragment requestFragment = getFragmentManager().findFragmentByTag(requestsFragmentTag);
+        if(requestFragment!=null){
+            return requestsFragmentTag;
+            //Log.d("fragment alive","request frgment");
+        }
+        Fragment postsFragment = getFragmentManager().findFragmentByTag(postsFragmentTag);
+        if(postsFragment!=null){
+            //Log.d("fragment alive","post frgment");
+            return postsFragmentTag;
+        }
+        Fragment discussionFragment = getFragmentManager().findFragmentByTag(discussionFragmentTag);
+        if(discussionFragment!=null){
+            return discussionFragmentTag;
+            //Log.d("fragment alive","discussion frgment");
+
+        }
+        Fragment announcementFragment = getFragmentManager().findFragmentByTag(announcementFragmentTag);
+        if(announcementFragment!=null){
+            return announcementFragmentTag;
+            //Log.d("fragment alive","announcement frgment");
+        }
+        return null;
+
     }
 
     private void addChooseUpdateOptionsFragment(){
@@ -278,12 +393,13 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
                     ((TextView)findViewById(R.id.notifsButton)).setTextColor(Color.BLACK);
                     break;
             }
+
             Utility.CurrentUser.setDisplayPage(POSTS);
             ((TextView)findViewById(R.id.postsButton)).setTextColor(Color.parseColor("#A5DF00"));
             removeAddedFragment(null);
             addPostTypeFragment();
-            addDiscussionFragment();
-            addChooseDiscussionOptionsFragment();
+            startDiscussionFragment();
+
         }
     }
 
@@ -373,7 +489,11 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
 //        announcementSortingCriteria =sortingCrietaria;
         Log.d("Srting Crieteria: ",sortingCrietaria);
 
+
+        UpdateFragment updateFragment = (UpdateFragment) getFragmentManager().findFragmentByTag(updatesFragmentTag);
+
 //        UpdateFragment updateFragment = (UpdateFragment) getFragmentManager().findFragmentByTag(updatesFragmentTag);
+
         AnnouncementFragment announcementFragment=(AnnouncementFragment)getFragmentManager().findFragmentByTag(announcementFragmentTag);
         if(announcementFragment!=null)announcementFragment.setAnnouncementSorting(sortingCrietaria);
 
@@ -394,6 +514,12 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
        // addAnnouncementFragment();
     }
 
+    @Override
+    public void setPostTypeToShow(int postTypeToShow) {
+        this.currentPostTypeToShow=postTypeToShow;
+        //if(currentPostTypeToShow==DISCUSSIONS)Log.d("chosen fragment","discussions");
+       // if(currentPostTypeToShow==ANNOUNCEMENTS)Log.d("chosen fragment","announcement");
+    }
 
 
     @Override
