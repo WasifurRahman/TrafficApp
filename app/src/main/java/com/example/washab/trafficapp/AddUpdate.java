@@ -2,9 +2,8 @@ package com.example.washab.trafficapp;
 
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
@@ -15,18 +14,16 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
-public class AddUpdate extends AppCompatActivity {
+public class AddUpdate extends AppCompatActivity implements Interfaces.WhoIsCallingUpdateInterface{
 
     int fromLocationIndex, toLocationIndex, situationIndex, timestampIndex;
 
@@ -38,15 +35,69 @@ public class AddUpdate extends AppCompatActivity {
     private String situation, timestamp;
     private int fromLocationId, toLocationId, estimatedTime;
     private boolean addUpdateButtonPressed = false;
+    private String fromLocationName,toLocationName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_update);
+
+        int callingFrom=getIntent().getIntExtra("calling_from",0);
+        switch(callingFrom){
+            case Interfaces.WhoIsCallingUpdateInterface.ADD_UPDATE_WILLINGLY:
+                handleNormalUpdate();
+                Log.d("update","normal");
+                break;
+            case Interfaces.WhoIsCallingUpdateInterface.ADD_UPDATE_TO_RESPOND_TO_REQUEST:
+                handleResponseUpdate();
+                Log.d("update","response");
+                break;
+        }
+
+    }
+
+    private void handleNormalUpdate(){
         initiateFromLocation();
         initiateToLocation();
         initiateTimestamp();
         initiateSituation();
+
+    }
+
+    private void handleResponseUpdate(){
+        initiateFromLocationForResponse();
+        initiateToLocationForResponse();
+        initiateTimestamp();
+        initiateSituation();
+
+    }
+
+    public void initiateFromLocationForResponse() {
+        Spinner spinner = (Spinner) findViewById(R.id.fromLocationSpinner);
+        fromLocationName=Locations.getLocationName(getIntent().getIntExtra("location_from",0));
+
+
+
+        // Application of the Array to the Spinner
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item,new String[]{fromLocationName});
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        spinner.setAdapter(spinnerArrayAdapter);
+
+
+    }
+
+
+    public void initiateToLocationForResponse() {
+        Spinner spinner = (Spinner) findViewById(R.id.toLocationSpinner);
+        toLocationName=Locations.getLocationName(getIntent().getIntExtra("location_to",0));
+
+
+        // Application of the Array to the Spinner
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item, new String[]{toLocationName});
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        spinner.setAdapter(spinnerArrayAdapter);
+
+
     }
 
     public void initiateFromLocation() {
@@ -56,6 +107,7 @@ public class AddUpdate extends AppCompatActivity {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
                     fromLocationIndex = position;
+                    fromLocationName=locationChoices[fromLocationIndex];
                 }
 
                 @Override
@@ -79,6 +131,7 @@ public class AddUpdate extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
                 toLocationIndex = position;
+                toLocationName=locationChoices[toLocationIndex];
             }
 
             @Override
@@ -161,8 +214,8 @@ public class AddUpdate extends AppCompatActivity {
 
         if(v.getId()==R.id.addUpdateButton && addUpdateButtonPressed==false){
             addUpdateButtonPressed = true;
-            fromLocationId=Locations.getLocationId(locationChoices[fromLocationIndex]);
-            toLocationId=Locations.getLocationId(locationChoices[toLocationIndex]);
+            fromLocationId=Locations.getLocationId(fromLocationName);
+            toLocationId=Locations.getLocationId(toLocationName);
             situation=situationChoices[situationIndex];
             int timeToSubtract=timeToDeduct[timestampIndex];
 

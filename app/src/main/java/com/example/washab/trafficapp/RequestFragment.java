@@ -1,6 +1,7 @@
 package com.example.washab.trafficapp;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -31,7 +33,7 @@ import java.util.List;
  * Use the {@link RequestFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RequestFragment extends Fragment {
+public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallingUpdateInterface {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -47,6 +49,7 @@ public class RequestFragment extends Fragment {
     private String sortingCriteria = "mostRecent";
     LinearLayout progressLayout;
     ListView customRequestListView;
+
 
     /**
      * Use this factory method to create a new instance of
@@ -139,7 +142,7 @@ public class RequestFragment extends Fragment {
 
 
             //find the update to work with
-            Request currentRequest= allRequestsArrayList.get(position);
+            final Request currentRequest= allRequestsArrayList.get(position);
             //fill the view
 
 
@@ -163,6 +166,21 @@ public class RequestFragment extends Fragment {
 
             TextView likeCnt=(TextView) itemView.findViewById(R.id.requestFollowerCountTextView);
             likeCnt.setText("" + currentRequest.getFollowerCount());
+
+            Button respondButton=(Button)itemView.findViewById(R.id.respondButton);
+            respondButton.setOnClickListener(new View.OnClickListener(){
+
+                @Override
+                public void onClick(View v) {
+                    if(v.getId()==R.id.respondButton){
+                        Intent intent=new Intent(getActivity(),AddUpdate.class);
+                        intent.putExtra("calling_from", Interfaces.WhoIsCallingUpdateInterface.ADD_UPDATE_TO_RESPOND_TO_REQUEST);
+                        intent.putExtra("location_from",currentRequest.getLocationIdFrom()).
+                                putExtra("location_to",currentRequest.getLocationIdTo());
+                        startActivity(intent);
+                    }
+                }
+            });
 
             return itemView;
             // return super.getView(position, convertView, parent);
