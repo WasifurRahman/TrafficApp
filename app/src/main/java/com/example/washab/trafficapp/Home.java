@@ -22,7 +22,7 @@ import android.widget.TextView;
 
 public class Home extends AppCompatActivity implements UpdateFragment.OnFragmentInteractionListener ,AnnouncementFragment.OnFragmentInteractionListener,
 ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFragment.OnFragmentInteractionListener,RequestFragment.OnFragmentInteractionListener,PostTypeFragment.OnFragmentInteractionListener
-,ChooseAnnouncementOptionsFragment.OnFragmentInteractionListener,ChooseDiscussionOptionsFragment.OnFragmentInteractionListener,DiscussionFragment.OnFragmentInteractionListener, NotificationsFragment.OnFragmentInteractionListener{
+,ChooseAnnouncementOptionsFragment.OnFragmentInteractionListener,ChooseDiscussionOptionsFragment.OnFragmentInteractionListener,DiscussionFragment.OnFragmentInteractionListener, NotificationsFragment.OnFragmentInteractionListener,Interfaces.WhoIsCallingUpdateInterface{
 
     private String updatesFragmentTag="UPDATESFRAGMENT";
     private String postsFragmentTag="POSTSFRAGMENT";
@@ -112,9 +112,9 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     //the first postion is for all updates,so nothing to change here
-                    if(position==0)return;
+                    if(position==0)locationIdToSearch=0;
 
-                    locationIdToSearch=Locations.getLocationId(locationChoices[position]);
+                    else locationIdToSearch=Locations.getLocationId(locationChoices[position]);
                     String activeFragmentTag=currentLoadedFragmentTag();
                     Fragment activeFragment = getFragmentManager().findFragmentByTag(activeFragmentTag);
                     if(activeFragment.getClass()==UpdateFragment.class){
@@ -178,7 +178,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
         }
         else if(id==R.id.addPreferredLocation){
 
-            Intent intent=new Intent(Home.this,MainActivity.class);
+            Intent intent=new Intent(Home.this,AddPreferredLocationActivity.class);
             startActivity(intent);
 
         }
@@ -545,7 +545,8 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     @Override
     public void startAddUpdateActivity() {
 
-        Intent intent =new Intent(this,AddUpdate.class);
+        //normal AddUpdate calling
+        Intent intent =new Intent(this,AddUpdate.class).putExtra("calling_from", Interfaces.WhoIsCallingUpdateInterface.ADD_UPDATE_WILLINGLY);
         startActivity(intent);
 
     }

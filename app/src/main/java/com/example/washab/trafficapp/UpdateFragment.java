@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,7 +18,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -37,7 +34,7 @@ import java.util.List;
  * Use the {@link UpdateFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class UpdateFragment extends Fragment {
+public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCallingUpdateInterface{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -366,11 +363,16 @@ public class UpdateFragment extends Fragment {
             params.add(new Pair("sortType", sortingCriteria));
             // getting JSON string from URL
 
-            if(locationIdToSearch==0)jsonUpdates = jParser.makeHttpRequest("/allupdates", "GET", params);
+            if(locationIdToSearch==0){
+                jsonUpdates = jParser.makeHttpRequest("/allupdates", "GET", params);
+                Log.d("specific: ","all locationsearch");
+            }
             else{
                 params.add(new Pair("locationId", locationIdToSearch));
                 jsonUpdates = jParser.makeHttpRequest("/updatesfromlocation", "GET", params);
+                Log.d("specific: ",Locations.getLocationName(locationIdToSearch));
             }
+            //Log.d("specific: ",jsonUpdates.toString());
 
             return null;
 
