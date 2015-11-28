@@ -3,6 +3,8 @@ package com.example.washab.trafficapp;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashSet;
+
 /**
  * Created by Shabab on 11/10/2015.
  */
@@ -14,6 +16,7 @@ public class Request {
     private int locationIdFrom,locationIdTo;
     private String timeOfRequest, description, requestStatus;
     private int followerCount;
+    private HashSet<Follower>followers=new HashSet<Follower>();
 
     public Request(int requesterId, String description, int followerCount, int locationIdFrom, int locationIdTo, String status, int requestId, String timeOfRequest) {
         this.requesterId = requesterId;
@@ -26,6 +29,7 @@ public class Request {
         this.timeOfRequest = timeOfRequest;
         this.requestStatus = status;
     }
+
 
     public static Request createRequest(JSONObject jsonObject) {
         try {
@@ -42,6 +46,22 @@ public class Request {
             e.printStackTrace();
         }
         return null;
+    }
+    public boolean hasTHeUserFollowedTheRequest(Follower follower){
+        return followers.contains(follower);
+    }
+
+    public void addFollowerInitially(Follower follower){
+        if(!followers.contains(follower)){
+            followers.add(follower);
+        }
+    }
+
+    public void addFollower(Follower follower){
+        if(!followers.contains(follower)){
+            followers.add(follower);
+            followerCount++;
+        }
     }
 
     public String getDescription() {

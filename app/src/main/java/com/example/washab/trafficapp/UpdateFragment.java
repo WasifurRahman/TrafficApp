@@ -100,7 +100,9 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         }
 
         UpdateFragment.context = this.getActivity();
+        setHasOptionsMenu(true);
     }
+
 
 
     private void populateUpdateList(JSONObject jsonUpdates){
@@ -122,7 +124,7 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
                     Liker newLiker = new Liker(likeObj.getInt("likerId"),likeObj.getString("likerName"));
                     curUpdate.addLikerInitially(newLiker);
                 }
-                for(int i=0;i<likeCnt;i++){
+                for(int i=0;i<dislikeCount;i++){
                     JSONObject dislikeObj=allUpdatesJSONArray.getJSONObject(curIndex++);
 //                    Liker newLiker = new Liker(likeObj.getInt("dislikerId"),likeObj.getString("dislikerName"));
 //                    curUpdate.addLikerInitially(newLiker);

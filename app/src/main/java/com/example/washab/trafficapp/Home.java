@@ -46,6 +46,8 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     private static final int DISCUSSIONS = 5;
     private static final int ANNOUNCEMENTS= 6;
 
+    private Menu menu;
+
 //
 //    private String announcementSortingCriteria ="mostRecent";
 //    private String discussionSortingCriteria ="mostRecent";
@@ -103,6 +105,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     public boolean onCreateOptionsMenu(Menu menu){
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.definedmenu, menu);
+        this.menu=menu;
 
         MenuItem item=menu.findItem(R.id.searchSpinner);
         Spinner searchSpinner= (Spinner) MenuItemCompat.getActionView(item);
@@ -117,9 +120,22 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
                     else locationIdToSearch=Locations.getLocationId(locationChoices[position]);
                     String activeFragmentTag=currentLoadedFragmentTag();
                     Fragment activeFragment = getFragmentManager().findFragmentByTag(activeFragmentTag);
+
                     if(activeFragment.getClass()==UpdateFragment.class){
-                        Log.d("fragment alive","update frgment new");
+                        Log.d("fragment alive","update fragment new");
                         ((UpdateFragment)activeFragment).setUpdatesLocation(locationIdToSearch);
+                    }
+                    else if(activeFragment.getClass()==RequestFragment.class){
+                        Log.d("fragment alive","request fragment new");
+                        ((RequestFragment)activeFragment).setRequestSearchLocation(locationIdToSearch);
+                    }
+                    else if(activeFragment.getClass()==AnnouncementFragment.class){
+                        Log.d("fragment alive","announcement fragment new");
+                        ((AnnouncementFragment)activeFragment).setAnnouncementSearchLocation(locationIdToSearch);
+                    }
+                    else if(activeFragment.getClass()==DiscussionFragment.class){
+                        Log.d("fragment alive","discussion fragment new");
+                        ((DiscussionFragment)activeFragment).setDiscussionSearchLocation(locationIdToSearch);
                     }
 
 
@@ -138,6 +154,9 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
         }
         return true;
     }
+
+
+
 
     @Override
     protected void onPostResume() {
@@ -186,6 +205,12 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
         return super.onOptionsItemSelected(item);
     }
 
+    private void setTheLocationInTitlebarToAllLocations(){
+        MenuItem item=menu.findItem(R.id.searchSpinner);
+        Spinner searchSpinner= (Spinner) MenuItemCompat.getActionView(item);
+        searchSpinner.setSelection(0);
+    }
+
     private String currentLoadedFragmentTag(){
         Fragment updateFragment = getFragmentManager().findFragmentByTag(updatesFragmentTag);
         if(updateFragment!=null){
@@ -198,10 +223,10 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
             //Log.d("fragment alive","request frgment");
         }
         Fragment postsFragment = getFragmentManager().findFragmentByTag(postsFragmentTag);
-        if(postsFragment!=null){
-            //Log.d("fragment alive","post frgment");
-            return postsFragmentTag;
-        }
+//        if(postsFragment!=null){
+//            //Log.d("fragment alive","post frgment");
+//            return postsFragmentTag;
+//        }
         Fragment discussionFragment = getFragmentManager().findFragmentByTag(discussionFragmentTag);
         if(discussionFragment!=null){
             return discussionFragmentTag;
@@ -356,6 +381,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
 
     public void onUpdatesButtonClick(View v){
         if(v.getId()==R.id.updatesButton){
+            setTheLocationInTitlebarToAllLocations();
             switch (Utility.CurrentUser.getDisplayPage()) {
                 case UPDATES:
                     break;
@@ -380,6 +406,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
 
     public void onPostsButtonClick(View v){
         if(v.getId()==R.id.postsButton){
+            setTheLocationInTitlebarToAllLocations();
             switch (Utility.CurrentUser.getDisplayPage()) {
                 case UPDATES:
                     ((TextView)findViewById(R.id.updatesButton)).setTextColor(Color.BLACK);
@@ -405,6 +432,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
 
     public void onRequestsButtonClick(View v){
         if(v.getId()==R.id.requestsButton){
+            setTheLocationInTitlebarToAllLocations();
             switch (Utility.CurrentUser.getDisplayPage()) {
                 case UPDATES:
                     ((TextView)findViewById(R.id.updatesButton)).setTextColor(Color.BLACK);
@@ -429,6 +457,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     public void onNotifsButtonClick(View v){
         Log.d("inside notifs button click", "yes");
         if(v.getId()==R.id.notifsButton){
+            setTheLocationInTitlebarToAllLocations();
             switch (Utility.CurrentUser.getDisplayPage()) {
                 case UPDATES:
                     ((TextView)findViewById(R.id.updatesButton)).setTextColor(Color.BLACK);
@@ -501,6 +530,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
 
     @Override
     public void startAnnouncementFragment() {
+          setTheLocationInTitlebarToAllLocations();
           removeAddedFragment(choosePostTypeFragmentsTag);
           addChooseAnnouncementOptionsFragment();
           addAnnouncementFragment();
@@ -508,6 +538,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
 
     @Override
     public void startDiscussionFragment() {
+        setTheLocationInTitlebarToAllLocations();
         removeAddedFragment(choosePostTypeFragmentsTag);
         addChooseDiscussionOptionsFragment();
         addDiscussionFragment();
