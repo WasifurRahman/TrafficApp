@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -144,14 +145,37 @@ public class NotificationsFragment extends Fragment {
 
             //fill the view
 
-            TextView notifFromUsername = (TextView)itemView.findViewById(R.id.notifFromUsernameTextView);
-            notifFromUsername.setText(currentNotif.getNotifFromUsername());
+//            TextView notifFromUsername = (TextView)itemView.findViewById(R.id.notifFromUsernameTextView);
+//            notifFromUsername.setText(currentNotif.getNotifFromUsername());
 
-            TextView notifType = (TextView)itemView.findViewById(R.id.notifTypeTextView);
-            notifType.setText(" " + currentNotif.getNotifType() + "d ");
+//            TextView notifType = (TextView)itemView.findViewById(R.id.notifTypeTextView);
+//            notifType.setText(" " + currentNotif.getNotifType() + "d ");
 
-            TextView notifAbout = (TextView)itemView.findViewById(R.id.notifAboutTextView);
-            notifAbout.setText(currentNotif.getNotifAbout() + ".");
+//            TextView notifAbout = (TextView)itemView.findViewById(R.id.notifAboutTextView);
+//            notifAbout.setText(currentNotif.getNotifAbout() + ".");
+
+            TextView notifText = (TextView)itemView.findViewById(R.id.notifText);
+
+            String notifType = currentNotif.getNotifType();
+            String notifFromUsername = currentNotif.getNotifFromUsername();
+            String notifAbout = currentNotif.getNotifAbout();
+//            Log.d("notifType", notifType);
+            if(notifType.equals("like")) {
+//                Log.d("inside notifType", "like");
+                notifText.setText(notifFromUsername + " liked your " + notifAbout + ".");
+            }
+            else if(notifType.equals("follow")) {
+                notifText.setText(notifFromUsername + " followed your " + notifAbout + ".");
+            }
+            else if(notifType.equals("request")) {
+                notifText.setText(notifFromUsername + " requested an update on a location you are following.");
+            }
+            else if(notifType.equals("requestResponse")) {
+                notifText.setText(notifFromUsername + " responded to your " + notifAbout + ".");
+            }
+            else if(notifType.equals("followResponse")) {
+                notifText.setText(notifFromUsername + " responded to a " + notifAbout + " you are following.");
+            }
 
             return itemView;
             // return super.getView(position, convertView, parent);

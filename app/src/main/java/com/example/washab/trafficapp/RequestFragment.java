@@ -106,13 +106,19 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
 
         try {
 
-            JSONArray allRequests=jsonRequests.getJSONArray("requests");
+            JSONArray allRequestsJSONArray=jsonRequests.getJSONArray("requests");
             allRequestsArrayList.clear();
-            for(int i=0;i<allRequests.length();i++){
-                JSONObject curObj=allRequests.getJSONObject(i);
-                //Log.d("in populte: ",curObj.toString());
+            int curIndex=0, N=allRequestsJSONArray.length();
+
+            while(curIndex<N){
+                JSONObject curObj=allRequestsJSONArray.getJSONObject(curIndex++);
                 Request curRequest = Request.createRequest(curObj);
-                Log.d("new request",curRequest.toString());
+                int followerCount=curRequest.getFollowerCount();
+                for(int i=0;i<followerCount;i++){
+                    JSONObject likeObj=allRequestsJSONArray.getJSONObject(curIndex++);
+//                    Liker newLiker = new Liker(likeObj.getInt("likerId"),likeObj.getString("likerName"));
+//                    curRequest.addLikerInitially(newLiker);
+                }
                 allRequestsArrayList.add(curRequest);
             }
         } catch (JSONException e) {
@@ -168,15 +174,16 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
             likeCnt.setText("" + currentRequest.getFollowerCount());
 
             Button respondButton=(Button)itemView.findViewById(R.id.respondButton);
-            respondButton.setOnClickListener(new View.OnClickListener(){
+            respondButton.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
-                    if(v.getId()==R.id.respondButton){
-                        Intent intent=new Intent(getActivity(),AddUpdate.class);
+                    if (v.getId() == R.id.respondButton) {
+                        Intent intent = new Intent(getActivity(), AddUpdate.class);
                         intent.putExtra("calling_from", Interfaces.WhoIsCallingUpdateInterface.ADD_UPDATE_TO_RESPOND_TO_REQUEST);
-                        intent.putExtra("location_from",currentRequest.getLocationIdFrom()).
-                                putExtra("location_to",currentRequest.getLocationIdTo());
+                        intent.putExtra("location_from", currentRequest.getLocationIdFrom())
+                                .putExtra("location_to", currentRequest.getLocationIdTo())
+                                .putExtra("request_id", currentRequest.getRequestId());
                         startActivity(intent);
                     }
                 }

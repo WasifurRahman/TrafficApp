@@ -49,6 +49,7 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
     private OnFragmentInteractionListener mListener;
 
     private static Context context;
+    private JSONObject jsonUpdates;
 
     private String queryAllUpdates="/allupdates";
     private String queryAddLike="/addupdatelike";
@@ -62,6 +63,7 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
     LinearLayout progressLayout;
     ListView customUpdateList;
 
+    FetchUpdateTask fetchUpdateTask = new FetchUpdateTask();
 
 
     /**
@@ -114,11 +116,18 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
                 JSONObject curObj=allUpdatesJSONArray.getJSONObject(curIndex++);
                 Update curUpdate=Update.createUpdate(curObj);
                 int likeCnt=curUpdate.getLikeCount();
+                int dislikeCount=curUpdate.getDislikeCount();
                 for(int i=0;i<likeCnt;i++){
                     JSONObject likeObj=allUpdatesJSONArray.getJSONObject(curIndex++);
                     Liker newLiker = new Liker(likeObj.getInt("likerId"),likeObj.getString("likerName"));
                     curUpdate.addLikerInitially(newLiker);
                 }
+                for(int i=0;i<likeCnt;i++){
+                    JSONObject dislikeObj=allUpdatesJSONArray.getJSONObject(curIndex++);
+//                    Liker newLiker = new Liker(likeObj.getInt("dislikerId"),likeObj.getString("dislikerName"));
+//                    curUpdate.addLikerInitially(newLiker);
+                }
+
                 allUserUpdatesArraylist.add(curUpdate);
             }
         } catch (Exception e) {
@@ -284,10 +293,17 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         progressLayout = (LinearLayout) getActivity().findViewById(R.id.progressbar_view);
         customUpdateList=(ListView)getActivity().findViewById(R.id.userUpdatesListView);
 
-        new FetchUpdateTask().execute();
+        fetchUpdateTask.execute();
         //populateUpdateList(jsonUpdatesField);
         //populateUpdateListView();
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        fetchUpdateTask.cancel(true);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -341,9 +357,10 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
     }
 
 
+
+
     class FetchUpdateTask extends AsyncTask<String, Void, String> {
 
-        private JSONObject jsonUpdates;
 
         @Override
         protected void onPreExecute() {

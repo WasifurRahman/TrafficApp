@@ -19,32 +19,38 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="notifFromUsername"
-            android:id="@+id/notifFromUsernameTextView"
-            android:layout_gravity="right" />
+            android:textSize="15dp"
+            android:id="@+id/notifText" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text=" notifType "
-            android:id="@+id/notifTypeTextView"
-            android:layout_gravity="center_horizontal" />
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="notifFromUsername"-->
+            <!--android:id="@+id/notifFromUsernameTextView"-->
+            <!--android:layout_gravity="right" />-->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/yourTextView"
-            android:text="your "/>
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text=" notifType "-->
+            <!--android:id="@+id/notifTypeTextView"-->
+            <!--android:layout_gravity="center_horizontal" />-->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/notifAboutTextView"
-            android:text="notifOn"/>
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:id="@+id/yourTextView"-->
+            <!--android:text="your "/>-->
+
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:id="@+id/notifAboutTextView"-->
+            <!--android:text="notifOn"/>-->
 
     </LinearLayout>
 

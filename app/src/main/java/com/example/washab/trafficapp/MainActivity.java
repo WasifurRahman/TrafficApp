@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity
 //            startActivity(intent);
 //            Log.e(MainActivity.class.getSimpleName(),"loginButtonPressed");
 //
-            email = ((EditText)findViewById(R.id.emailEditText)).getText().toString();
+            email = ((EditText)findViewById(R.id.emailLoginEditText)).getText().toString();
             password = ((EditText)findViewById(R.id.passwordEditText)).getText().toString();
 
             if(showSignUpError()){

@@ -25,7 +25,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/usernameEditText"
-        android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/usernameTextView"
         android:layout_toEndOf="@+id/usernameTextView" />
 
@@ -43,10 +42,11 @@
     <RadioGroup
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/situationText"
+        android:layout_above="@+id/emailSignUpTextView"
         android:orientation="horizontal"
         android:layout_alignRight="@+id/signupButton"
         android:layout_alignEnd="@+id/signupButton"
+        android:layout_marginRight="40dp"
         android:id="@+id/radioGroup">
 
         <RadioButton
@@ -75,7 +75,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Email"
-        android:id="@+id/situationText"
+        android:id="@+id/emailSignUpTextView"
         android:layout_below="@+id/genderTextView"
         android:layout_alignLeft="@+id/genderTextView"
         android:layout_alignStart="@+id/genderTextView"
@@ -84,18 +84,18 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/emailEditText"
-        android:layout_alignBottom="@+id/situationText"
+        android:id="@+id/emailSignUpEditText"
+        android:layout_alignBottom="@+id/emailSignUpTextView"
         android:layout_toRightOf="@+id/usernameTextView"
-        android:layout_toEndOf="@+id/usernameTextView" />
+        android:layout_toEndOf="@+id/usernameTextView"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Sign Up"
         android:id="@+id/signupButton"
-        android:layout_marginTop="73dp"
-        android:layout_below="@+id/repeatPasswordtextView"
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/repeatPasswordTextView"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:onClick="onSignUpButtonClick" />
@@ -105,11 +105,11 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Password"
-        android:id="@+id/timeStampText"
-        android:layout_below="@+id/situationText"
+        android:id="@+id/passwordTextView"
+        android:layout_below="@+id/emailSignUpTextView"
         android:layout_marginTop="48dp"
-        android:layout_alignLeft="@+id/situationText"
-        android:layout_alignStart="@+id/situationText" />
+        android:layout_alignLeft="@+id/emailSignUpTextView"
+        android:layout_alignStart="@+id/emailSignUpTextView" />
 
     <EditText
         android:layout_width="match_parent"
@@ -117,38 +117,43 @@
         android:inputType="textPassword"
         android:ems="10"
         android:id="@+id/repeatPasswordEditText"
+        android:layout_alignRight="@id/passwordEditText"
         android:layout_above="@+id/signupButton"
-        android:layout_toRightOf="@+id/usernameTextView"
-        android:layout_toEndOf="@+id/usernameTextView" />
+        android:layout_toRightOf="@+id/repeatPasswordTextView"
+        android:layout_toEndOf="@+id/repeatPasswordTextView"
+        android:layout_alignBottom="@+id/repeatPasswordTextView"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/errorTextView"
+        android:textSize="17dp"
+        android:textStyle="italic"
         android:layout_below="@+id/signupButton"
-        android:layout_alignLeft="@+id/timeStampText"
-        android:layout_alignStart="@+id/timeStampText"
-        android:textColor="#ff0b0b" />
+        android:layout_centerHorizontal="true"
+        android:textColor="#ff0b0b"
+        android:padding="10dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Repeat Password"
-        android:id="@+id/repeatPasswordtextView"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Repeat Password "
+        android:id="@+id/repeatPasswordTextView"
         android:layout_marginTop="48dp"
-        android:layout_below="@+id/timeStampText"
-        android:layout_alignLeft="@+id/timeStampText"
-        android:layout_alignStart="@+id/timeStampText" />
+        android:layout_below="@+id/passwordTextView"
+        android:layout_alignLeft="@+id/passwordTextView"
+        android:layout_alignStart="@+id/passwordTextView" />
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/passwordEditText"
         android:layout_centerVertical="true"
-        android:layout_toRightOf="@+id/repeatPasswordtextView"
-        android:layout_toEndOf="@+id/repeatPasswordtextView"
+        android:layout_toRightOf="@+id/repeatPasswordTextView"
+        android:layout_toEndOf="@+id/passwordTextView"
         android:inputType="textPassword"
-
+        android:layout_alignBottom="@id/passwordTextView"
         />
 
 
