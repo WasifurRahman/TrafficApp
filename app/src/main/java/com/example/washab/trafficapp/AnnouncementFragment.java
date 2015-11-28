@@ -48,6 +48,7 @@ public class AnnouncementFragment extends Fragment {
     JSONObject jsonAnnouncements;
     LinearLayout progressLayout;
     ListView customAnnouncementListView;
+    private int locationIdToSearch=0;
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -171,6 +172,12 @@ public class AnnouncementFragment extends Fragment {
         list.setAdapter(adapter);
     }
 
+    public void setAnnouncementSearchLocation(int locationIdToSearch) {
+        this.locationIdToSearch=locationIdToSearch;
+        new FetchAnnouncementTask().execute();
+
+    }
+
     private class MyListAdapter extends ArrayAdapter<Announcement>{
         public MyListAdapter(){
             super(getActivity(), R.layout.user_announcement_item, allAnnouncementsArrayList);
@@ -274,7 +281,15 @@ public class AnnouncementFragment extends Fragment {
             params.add(new Pair("postType", "announcement"));
             // getting JSON string from URL
 
-            jsonAnnouncements =jParser.makeHttpRequest("/allposts", "GET", params);
+            if(locationIdToSearch==0){
+                jsonAnnouncements =jParser.makeHttpRequest("/allposts", "GET", params);
+            }
+            else {
+                params.add(new Pair("locationId",locationIdToSearch));
+                jsonAnnouncements =jParser.makeHttpRequest("/postsfromlocation", "GET", params);
+            }
+
+
 
             // Check your log cat for JSON reponse
             Log.d("All info: ", jsonAnnouncements.toString());

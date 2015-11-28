@@ -48,6 +48,7 @@ public class DiscussionFragment extends Fragment {
     private String sortingCriteria = "mostRecent";
     LinearLayout progressLayout;
     ListView customDiscussionListView;
+    private int locationIdToSearch=0;
 
     /**
      * Use this factory method to create a new instance of
@@ -153,6 +154,11 @@ public class DiscussionFragment extends Fragment {
         list.setAdapter(adapter);
     }
 
+    public void setDiscussionSearchLocation(int locationIdToSearch) {
+        this.locationIdToSearch=locationIdToSearch;
+        new FetchDiscussionTask().execute();
+    }
+
     private class MyListAdapter extends ArrayAdapter<Discussion>{
         public MyListAdapter(){
 
@@ -248,8 +254,14 @@ public class DiscussionFragment extends Fragment {
             params.add(new Pair("sortType", sortingCriteria));
             params.add(new Pair("postType", "discussion"));
             // getting JSON string from URL
+            if(locationIdToSearch==0){
+                jsonDiscussions = jParser.makeHttpRequest("/allposts", "GET", params);
+            }
+            else {
+                params.add(new Pair("locationId",locationIdToSearch));
+                jsonDiscussions =jParser.makeHttpRequest("/postsfromlocation", "GET", params);
+            }
 
-            jsonDiscussions = jParser.makeHttpRequest("/allposts", "GET", params);
 
             return null;
 

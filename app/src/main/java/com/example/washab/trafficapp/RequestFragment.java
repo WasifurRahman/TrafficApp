@@ -1,11 +1,12 @@
 package com.example.washab.trafficapp;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -49,6 +50,10 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
     private String sortingCriteria = "mostRecent";
     LinearLayout progressLayout;
     ListView customRequestListView;
+    private int locationIdToSearch;
+    private int requestToBeFollowed;
+    private int followerId;
+
 
 
     /**
@@ -106,18 +111,28 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
 
         try {
 
-            JSONArray allRequests=jsonRequests.getJSONArray("requests");
+            JSONArray allRequestsJSONArray=jsonRequests.getJSONArray("requests");
             allRequestsArrayList.clear();
-            for(int i=0;i<allRequests.length();i++){
-                JSONObject curObj=allRequests.getJSONObject(i);
-                //Log.d("in populte: ",curObj.toString());
-                Request curRequest = Request.createRequest(curObj);
-                Log.d("new request",curRequest.toString());
+            int curIndex=0, N=allRequestsJSONArray.length();
+
+            while(curIndex<N){
+                JSONObject curObj=allRequestsJSONArray.getJSONObject(curIndex++);
+               // Update curUpdate=Update.createUpdate(curObj);
+                Request curRequest=Request.createRequest(curObj);
+                int followerCount=curRequest.getFollowerCount();
+                for(int i=0;i<followerCount;i++){
+                    JSONObject followObj=allRequestsJSONArray.getJSONObject(curIndex++);
+
+                    Follower newFollower=new Follower(followObj.getInt("followerId"),followObj.getString("followerName"));
+                    curRequest.addFollowerInitially(newFollower);
+                }
                 allRequestsArrayList.add(curRequest);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+
 
     }
 
@@ -127,13 +142,18 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
         list.setAdapter(adapter);
     }
 
+    public void setRequestSearchLocation(int locationIdToSearch) {
+        this.locationIdToSearch=locationIdToSearch;
+        new FetchRequestTask().execute();
+    }
+
     private class MyListAdapter extends ArrayAdapter<Request>{
         public MyListAdapter(){
             super(getActivity(), R.layout.user_request_item,allRequestsArrayList);
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
 
             View itemView=convertView;
             if(itemView==null){
@@ -144,6 +164,8 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
             //find the update to work with
             final Request currentRequest= allRequestsArrayList.get(position);
             //fill the view
+
+            Follower mayBeFollower=new Follower(Utility.CurrentUser.getId(),Utility.CurrentUser.getName());
 
 
             TextView locFrom = (TextView)itemView.findViewById(R.id.requestLocationFromTextView);
@@ -164,28 +186,110 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
             TextView updateTime=(TextView) itemView.findViewById(R.id.requestUpdateTimeTextView);
             updateTime.setText(currentRequest.getTimeOfRequest());
 
-            TextView likeCnt=(TextView) itemView.findViewById(R.id.requestFollowerCountTextView);
-            likeCnt.setText("" + currentRequest.getFollowerCount());
+            final TextView followCnt=(TextView) itemView.findViewById(R.id.requestFollowerCountTextView);
+            followCnt.setText("" + currentRequest.getFollowerCount());
+
+
 
             Button respondButton=(Button)itemView.findViewById(R.id.respondButton);
-            respondButton.setOnClickListener(new View.OnClickListener(){
+            respondButton.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
-                    if(v.getId()==R.id.respondButton){
-                        Intent intent=new Intent(getActivity(),AddUpdate.class);
+                    if (v.getId() == R.id.respondButton) {
+                        Intent intent = new Intent(getActivity(), AddUpdate.class);
                         intent.putExtra("calling_from", Interfaces.WhoIsCallingUpdateInterface.ADD_UPDATE_TO_RESPOND_TO_REQUEST);
-                        intent.putExtra("location_from",currentRequest.getLocationIdFrom()).
-                                putExtra("location_to",currentRequest.getLocationIdTo());
+                        intent.putExtra("location_from", currentRequest.getLocationIdFrom()).
+                                putExtra("location_to", currentRequest.getLocationIdTo());
                         startActivity(intent);
                     }
                 }
             });
 
+            final Button followButton =(Button)itemView.findViewById(R.id.followButton);
+
+           followButton.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    if (v.getId() == R.id.followButton) {
+                        handleFollowButtonPress(position,followButton,followCnt);
+
+                    }
+                }
+            });
+
+            checkIfAlreadyFollowedAndChangeColorAccordingly(mayBeFollower, currentRequest, followButton);
+
+
             return itemView;
             // return super.getView(position, convertView, parent);
         }
     }
+
+
+    private void checkIfAlreadyFollowedAndChangeColorAccordingly(Follower curFollower, Request curRequest, Button followButton) {
+        synchronized (curRequest) {
+            // Log.d("UpdateId-LikerId-LikeCount", curUpdate.getId() + "-" + curLiker.getLikerId() + "-" + curUpdate.getLikeCount());
+//            Log.d("");
+            if (curRequest.hasTHeUserFollowedTheRequest(curFollower)) {
+
+                Log.d("InsidefollowButton Color", "Yes");
+                followButton.setText("Followed");
+                followButton.setBackgroundColor(Color.CYAN);
+                followButton.setWidth(50);
+
+            }else{
+                followButton.setText("Follow");
+                followButton.setBackgroundColor(Color.LTGRAY);
+                followButton.setWidth(20);
+            }
+        }
+    }
+
+    private void handleFollowButtonPress(int pos, Button followButton, TextView followCount) {
+
+        //Log.d("the pressed like button update: ",allUserUpdatesArraylist.get(pos).toString());
+
+        //check if the user has pressed the like button already.if he had,do not do anything.
+        //else increseLIkeCountBy one
+        Follower curFollower=new Follower(Utility.CurrentUser.getId(),Utility.CurrentUser.getName());
+        Request curRequest=allRequestsArrayList.get(pos);
+        if(!curRequest.hasTHeUserFollowedTheRequest(curFollower)){
+            curRequest.addFollower(curFollower);
+           // curRequest.re(curFollower);
+            //Log.d("yes liked ", "for the first time");
+            followButton.setText("Followed");
+            followButton.setBackgroundColor(Color.CYAN);
+            //now increase the likeCount by one
+            int curFollowCount=curRequest.getFollowerCount();
+            followCount.setText("" + curFollowCount);
+            requestToBeFollowed=curRequest.getRequestId();
+            followerId=Utility.CurrentUser.getId();
+            new AddFollowerTask().execute();
+
+            //populateUpdateListView();
+
+
+        }else{
+            Log.d(" Already followed", "the request");
+        }
+    }
+
+//    private void handledislikeButtonPress(int pos,Button dislikeButton) {
+//
+//        Log.d("pressed dislike button update: ",allUserUpdatesArraylist.get(pos).toString());
+//
+//        //check if the user has pressed the like button already.if he had,do not do anything.
+//        //else increseLIkeCountBy one
+//        Liker curDisliker=new Liker(Utility.CurrentUser.getId(),Utility.CurrentUser.getName());
+//        Update curUpdate=allUserUpdatesArraylist.get(pos);
+//        if(!curUpdate.hasTheUserLikedTheUpdate(curDisliker)){
+//            curUpdate.addLiker(curDisliker);
+//            curUpdate.removeDisliker(curDisliker);
+//
+//        }
+//    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -250,10 +354,24 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
             // Building Parameters
             List<Pair> params = new ArrayList<Pair>();
 
-            params.add(new Pair("sortType", sortingCriteria));
+
 
             // getting JSON string from URL
-            jsonRequests = jParser.makeHttpRequest("/allrequests", "GET", params);
+
+
+
+            params.add(new Pair("sortType", sortingCriteria));
+            // getting JSON string from URL
+
+            if(locationIdToSearch==0){
+                jsonRequests = jParser.makeHttpRequest("/allrequests", "GET", params);
+                Log.d("specific: ","all locationsearch");
+            }
+            else{
+                params.add(new Pair("locationId", locationIdToSearch));
+                jsonRequests = jParser.makeHttpRequest("/requestsfromlocation", "GET", params);
+                Log.d("specific: ",Locations.getLocationName(locationIdToSearch));
+            }
 
             return null;
 
@@ -274,6 +392,44 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
             //jsonUpdatesField=jsonUpdates;
             populateRequestList(jsonRequests);
             populateRequestListView();
+        }
+    }
+
+
+    class AddFollowerTask extends AsyncTask<String, Void, String> {
+
+        private JSONObject jsonAddRequestFollow;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        protected String doInBackground(String... args) {
+
+            JSONParser jParser = new JSONParser();
+            // Building Parameters
+            List<Pair> params = new ArrayList<Pair>();
+
+            params.add(new Pair("requestId",requestToBeFollowed));
+            params.add(new Pair("followerId",followerId));
+
+            jsonAddRequestFollow = jParser.makeHttpRequest("/addrequestfollower", "POST", params);
+
+            // Check your log cat for JSON reponse
+            // Log.d("All info: ",jsonUpdates.toString());
+            return null;
+
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         **/
+        protected void onPostExecute (String a){
+            if(jsonAddRequestFollow == null) {
+                Utility.CurrentUser.showConnectionError(getActivity());
+            }
         }
     }
 }

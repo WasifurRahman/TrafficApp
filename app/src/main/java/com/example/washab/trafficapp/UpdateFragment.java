@@ -98,7 +98,9 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         }
 
         UpdateFragment.context = this.getActivity();
+        setHasOptionsMenu(true);
     }
+
 
 
     private void populateUpdateList(JSONObject jsonUpdates){
