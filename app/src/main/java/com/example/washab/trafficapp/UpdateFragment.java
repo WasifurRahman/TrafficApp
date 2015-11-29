@@ -64,6 +64,7 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
     ListView customUpdateList;
 
     FetchUpdateTask fetchUpdateTask = new FetchUpdateTask();
+    AddLikerTask addLikerTask = new AddLikerTask();
 
 
     /**
@@ -103,7 +104,11 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         setHasOptionsMenu(true);
     }
 
-
+    /**
+     * The update list is prepared from database information.
+     *
+     * @param jsonUpdates A JSON object containing info of updates from database.
+     */
 
     private void populateUpdateList(JSONObject jsonUpdates){
 
@@ -137,13 +142,19 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         }
     }
 
+    /**
+     * ListView is prepared for displaying the list of updates.
+     */
+
     private void populateUpdateListView(){
         ArrayAdapter<Update> adapter = new MyListAdapter();
         ListView list=(ListView)getView().findViewById(R.id.userUpdatesListView);
         list.setAdapter(adapter);
     }
 
-
+    /**
+     * Array adapter MyListAdapter accomodates requests dynamically and fills the list container with proper layout.
+     */
 
     private class MyListAdapter extends ArrayAdapter<Update>{
         public MyListAdapter(){
@@ -208,6 +219,7 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
                         handleLikeButtonPress(position,likeButton,likeCnt);
                     }
                 }
+
             });
 
             return itemView;
@@ -217,6 +229,13 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
 
         }
     }
+
+    /**
+     * Modifies the like button when the page loads, based on whether the current user has already liked an update or not.
+     * @param curLiker The user for whom update-liking is considered currently
+     * @param curUpdate The update currently in context
+     * @param likeButton The button allowing a new like for the update
+     */
 
     private void checkIfAlreadyLikedAndChangeColorAccordingly(Liker curLiker, Update curUpdate, Button likeButton) {
         synchronized (curUpdate) {
@@ -237,9 +256,17 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         }
     }
 
+    /**
+     * Handles pressing of like button during user session.
+     *
+     * @param pos Position in arraylist of updates
+     * @param likeButton The button allowing a new liker for the update
+     * @param likeCount The number of people who liked the update
+     */
+
     private void handleLikeButtonPress(int pos, Button likeButton, TextView likeCount) {
 
-        //Log.d("the pressed like button update: ",allUserUpdatesArraylist.get(pos).toString());
+//        Log.d("the pressed like button update: ",allUserUpdatesArraylist.get(pos).toString());
 
         //check if the user has pressed the like button already.if he had,do not do anything.
         //else increseLIkeCountBy one
@@ -248,7 +275,7 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         if(!curUpdate.hasTheUserLikedTheUpdate(curLiker)){
             curUpdate.addLiker(curLiker);
             curUpdate.removeDisliker(curLiker);
-            //Log.d("yes liked ", "for the first time");
+//            Log.d("yes liked ", "for the first time");
             likeButton.setText("Liked");
             likeButton.setBackgroundColor(Color.CYAN);
             //now increase the likeCount by one
@@ -256,9 +283,9 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
             likeCount.setText("" + curLikeCount);
             updateToBeLiked=curUpdate.getId();
             likerId=Utility.CurrentUser.getId();
-            new AddLikerTask().execute();
+            addLikerTask.execute();
 
-            //populateUpdateListView();
+//            populateUpdateListView();
 
 
         }else{
@@ -286,6 +313,16 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
+        View view = new View(UpdateFragment.context);
+        view.setOnTouchListener(new Interfaces.OnSwipeTouchListener(UpdateFragment.context) {
+            @Override
+            public void onSwipeRight() {
+//                Home.removeAddedFragment(null);
+//                addPostTypeFragment();
+//                startDiscussionFragment(    );
+            }
+        });
+
 
         return inflater.inflate(R.layout.fragment_user_updates, container, false);
     }
@@ -306,6 +343,7 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         super.onPause();
 
         fetchUpdateTask.cancel(true);
+        addLikerTask.cancel(true);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -332,15 +370,26 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         mListener = null;
     }
 
+    /**
+     * Sets the criteria for sorting of the updates in the page.
+     *
+     * @param sortingCriteria The criteria used to sort the updates in the page.
+     */
+
     public void setUpdateSorting (String sortingCriteria) {
         this.sortingCriteria = sortingCriteria;
 
-        new FetchUpdateTask().execute();
+        fetchUpdateTask.execute();
     }
+
+    /**
+     *
+     * @param locationIdToSearch A location to search updates for.
+     */
 
     public void setUpdatesLocation(int locationIdToSearch) {
         this.locationIdToSearch=locationIdToSearch;
-        new FetchUpdateTask().execute();
+        fetchUpdateTask.execute();
     }
 
     /**
@@ -358,7 +407,9 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         public void onFragmentInteraction(Uri uri);
     }
 
-
+    /**
+     * AsyncTask FetchUpdateTask runs in background to send a HTTP request and fetch all updates in JSON format from database.
+     */
 
 
     class FetchUpdateTask extends AsyncTask<String, Void, String> {
@@ -419,6 +470,9 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         }
     }
 
+    /**
+     * AsyncTask AddLikerTask runs in background to send a HTTP request to add a new update-liker to database.
+     */
 
     class AddLikerTask extends AsyncTask<String, Void, String> {
 
@@ -448,7 +502,7 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         }
 
         /**
-         * After completing background task Dismiss the progress dialog
+         * After completing background task
          **/
         protected void onPostExecute (String a){
             if(jsonAddUpdateLike == null) {

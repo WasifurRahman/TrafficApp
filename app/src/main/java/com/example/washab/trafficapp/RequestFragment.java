@@ -53,6 +53,8 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
     private int locationIdToSearch;
     private int requestToBeFollowed;
     private int followerId;
+    private FetchRequestTask fetchRequestTask = new FetchRequestTask();
+    private AddFollowerTask addFollowerTask = new AddFollowerTask();
 
 
 
@@ -100,12 +102,23 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
         progressLayout = (LinearLayout) getActivity().findViewById(R.id.progressbar_view);
         customRequestListView=(ListView)getActivity().findViewById(R.id.userRequestListView);
         
-        new FetchRequestTask().execute();
-//        populateRequestList(JSONObject jsonRequests);
-//        populateRequestListView();
+        fetchRequestTask.execute();
 
         super.onActivityCreated(savedInstanceState);
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        fetchRequestTask.cancel(true);
+        addFollowerTask.cancel(true);
+    }
+
+    /**
+     * The request list is prepared from database information.
+     *
+     * @param jsonRequests A JSON object containing info of requests from database.
+     */
 
     private void populateRequestList(JSONObject jsonRequests){
 
@@ -132,10 +145,11 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
         }catch (JSONException e) {
             e.printStackTrace();
         }
-
-
-
     }
+
+    /**
+     * ListView is prepared for displaying the list of requests.
+     */
 
     private void populateRequestListView(){
         ArrayAdapter<Request> adapter = new MyListAdapter();
@@ -143,10 +157,18 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
         list.setAdapter(adapter);
     }
 
+    /**
+     *
+     * @param locationIdToSearch A location to search requests for.
+     */
     public void setRequestSearchLocation(int locationIdToSearch) {
         this.locationIdToSearch=locationIdToSearch;
-        new FetchRequestTask().execute();
+        fetchRequestTask.execute();
     }
+
+    /**
+     * Array adapter MyListAdapter accomodates requests dynamically and fills the list container with proper layout.
+     */
 
     private class MyListAdapter extends ArrayAdapter<Request>{
         public MyListAdapter(){
@@ -162,7 +184,7 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
             }
 
 
-            //find the update to work with
+            //find the request to work with
             final Request currentRequest= allRequestsArrayList.get(position);
             //fill the view
 
@@ -229,6 +251,13 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
         }
     }
 
+    /**
+     * Modifies the follow button when the page loads, based on whether the current user is already following the request or not.
+     *
+     * @param curFollower The user for whom request-following is considered currently
+     * @param curRequest The request currently in context
+     * @param followButton The button allowing a new follower for the request
+     */
 
     private void checkIfAlreadyFollowedAndChangeColorAccordingly(Follower curFollower, Request curRequest, Button followButton) {
         synchronized (curRequest) {
@@ -249,6 +278,14 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
         }
     }
 
+    /**
+     * Handles pressing of follow button during user session.
+     *
+     * @param pos Position in arraylist of requests
+     * @param followButton The button allowing a new follower for the request
+     * @param followCount The number of people following the request
+     */
+
     private void handleFollowButtonPress(int pos, Button followButton, TextView followCount) {
 
         //Log.d("the pressed like button update: ",allUserUpdatesArraylist.get(pos).toString());
@@ -268,7 +305,7 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
             followCount.setText("" + curFollowCount);
             requestToBeFollowed=curRequest.getRequestId();
             followerId=Utility.CurrentUser.getId();
-            new AddFollowerTask().execute();
+            addFollowerTask.execute();
 
             //populateUpdateListView();
 
@@ -277,21 +314,6 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
             Log.d(" Already followed", "the request");
         }
     }
-
-//    private void handledislikeButtonPress(int pos,Button dislikeButton) {
-//
-//        Log.d("pressed dislike button update: ",allUserUpdatesArraylist.get(pos).toString());
-//
-//        //check if the user has pressed the like button already.if he had,do not do anything.
-//        //else increseLIkeCountBy one
-//        Liker curDisliker=new Liker(Utility.CurrentUser.getId(),Utility.CurrentUser.getName());
-//        Update curUpdate=allUserUpdatesArraylist.get(pos);
-//        if(!curUpdate.hasTheUserLikedTheUpdate(curDisliker)){
-//            curUpdate.addLiker(curDisliker);
-//            curUpdate.removeDisliker(curDisliker);
-//
-//        }
-//    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -332,11 +354,21 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
         public void onFragmentInteraction(Uri uri);
     }
 
+    /**
+     * Sets the criteria for sorting of the requests in the page.
+     *
+     * @param sortingCriteria The criteria used to sort the requests in the page.
+     */
+
     public void setRequestSorting (String sortingCriteria) {
         this.sortingCriteria = sortingCriteria;
         Log.d("Sorting Criteria change", "New Background Thread starts");
-        new FetchRequestTask().execute();
+        fetchRequestTask.execute();
     }
+
+    /**
+     * AsyncTask FetchRequestTask runs in background to send a HTTP request and fetch all requests in JSON format from database.
+     */
 
     class FetchRequestTask extends AsyncTask<String, Void, String> {
 
@@ -356,13 +388,8 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
             // Building Parameters
             List<Pair> params = new ArrayList<Pair>();
 
-
-
-            // getting JSON string from URL
-
-
-
             params.add(new Pair("sortType", sortingCriteria));
+
             // getting JSON string from URL
 
             if(locationIdToSearch==0){
@@ -397,6 +424,9 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
         }
     }
 
+    /**
+     * AsyncTask AddFollowerTask runs in background to send a HTTP request to add a new request follower to database.
+     */
 
     class AddFollowerTask extends AsyncTask<String, Void, String> {
 
@@ -426,7 +456,7 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
         }
 
         /**
-         * After completing background task Dismiss the progress dialog
+         * After completing background task
          **/
         protected void onPostExecute (String a){
             if(jsonAddRequestFollow == null) {

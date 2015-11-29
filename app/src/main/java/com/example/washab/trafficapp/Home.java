@@ -7,12 +7,15 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -22,7 +25,8 @@ import android.widget.TextView;
 
 public class Home extends AppCompatActivity implements UpdateFragment.OnFragmentInteractionListener ,AnnouncementFragment.OnFragmentInteractionListener,
 ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFragment.OnFragmentInteractionListener,RequestFragment.OnFragmentInteractionListener,PostTypeFragment.OnFragmentInteractionListener
-,ChooseAnnouncementOptionsFragment.OnFragmentInteractionListener,ChooseDiscussionOptionsFragment.OnFragmentInteractionListener,DiscussionFragment.OnFragmentInteractionListener, NotificationsFragment.OnFragmentInteractionListener,Interfaces.WhoIsCallingUpdateInterface{
+,ChooseAnnouncementOptionsFragment.OnFragmentInteractionListener,ChooseDiscussionOptionsFragment.OnFragmentInteractionListener,DiscussionFragment.OnFragmentInteractionListener, NotificationsFragment.OnFragmentInteractionListener,
+Interfaces.WhoIsCallingUpdateInterface{
 
     private String updatesFragmentTag="UPDATESFRAGMENT";
     private String postsFragmentTag="POSTSFRAGMENT";
@@ -45,8 +49,11 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     private static final int NOTIFS = 4;
     private static final int DISCUSSIONS = 5;
     private static final int ANNOUNCEMENTS= 6;
+    private static final int SWIPE_DISTANCE_THRESHOLD = 100;
+    private static final int SWIPE_VELOCITY_THRESHOLD = 100;
 
     private Menu menu;
+//    private GestureDetectorCompat gestureDetector;
 
 //
 //    private String announcementSortingCriteria ="mostRecent";
@@ -62,7 +69,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-
+//        this.gestureDetector = new GestureDetectorCompat(this, this);               //an object from this class which would allow us to detect gestures
 
         locationChoices=Locations.getAllLocationNamesForSearch();
         // add all locations at the start of the location names
@@ -165,17 +172,6 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
             startActivity(intent);
         }
         super.onPostResume();
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)
-    {
-        if(keyCode == KeyEvent.KEYCODE_BACK)
-        {
-
-            return true;
-        }
-        return false;
     }
 
     @Override
@@ -455,7 +451,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     }
 
     public void onNotifsButtonClick(View v){
-        Log.d("inside notifs button click", "yes");
+//        Log.d("inside notifs button click", "yes");
         if(v.getId()==R.id.notifsButton){
             setTheLocationInTitlebarToAllLocations();
             switch (Utility.CurrentUser.getDisplayPage()) {
