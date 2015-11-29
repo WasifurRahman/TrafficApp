@@ -56,12 +56,14 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
     private String sortingCriteria = "mostRecent";
     private String query="/allupdates";
     private int updateToBeLiked=-1;
+
     private int likerId=-1;
     private TextView changeLikeCount;
     private int locationIdToSearch=0;
     LinearLayout progressLayout;
     ListView customUpdateList;
-
+    private int dislikerId;
+    private int updateToBeDisliked;
 
 
     /**
@@ -115,11 +117,16 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
             while(curIndex<N){
                 JSONObject curObj=allUpdatesJSONArray.getJSONObject(curIndex++);
                 Update curUpdate=Update.createUpdate(curObj);
-                int likeCnt=curUpdate.getLikeCount();
+                int likeCnt=curUpdate.getLikeCount(),dislikeCount=curUpdate.getDislikeCount();
                 for(int i=0;i<likeCnt;i++){
                     JSONObject likeObj=allUpdatesJSONArray.getJSONObject(curIndex++);
-                    Liker newLiker = new Liker(likeObj.getInt("likerId"),likeObj.getString("likerName"));
-                    curUpdate.addLikerInitially(newLiker);
+                    Voter newVoter = new Voter(likeObj.getInt("likerId"),likeObj.getString("likerName"));
+                    curUpdate.addLikerInitially(newVoter);
+                }
+                for(int i=0;i<dislikeCount;i++){
+                    JSONObject dislikeObj=allUpdatesJSONArray.getJSONObject(curIndex++);
+                    Voter newVoter = new Voter(dislikeObj.getInt("dislikerId"),dislikeObj.getString("dislikerName"));
+                    curUpdate.addDisLikerInitially(newVoter);
                 }
                 allUserUpdatesArraylist.add(curUpdate);
             }
@@ -154,7 +161,7 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
             final Update currentUpdate= allUserUpdatesArraylist.get(position);
             int currentUserId=Utility.CurrentUser.getId();
             String currentUserName=Utility.CurrentUser.getName();
-            Liker mayBeLiker=new Liker(currentUserId,currentUserName);
+            Voter mayBeVoter =new Voter(currentUserId,currentUserName);
             //fill the view
             Log.d("check update changes : ", currentUpdate.toString());
 
@@ -182,13 +189,16 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
             final TextView likeCnt=(TextView) itemView.findViewById(R.id.likeCountTextView);
             likeCnt.setText("" + currentUpdate.getLikeCount());
 
-            TextView dislikeCnt=(TextView) itemView.findViewById(R.id.dislikeCountTextView);
+            final TextView dislikeCnt=(TextView) itemView.findViewById(R.id.dislikeCountTextView);
             dislikeCnt.setText("" + currentUpdate.getDislikeCount());
 
             final Button likeButton=(Button)itemView.findViewById(R.id.updateLikeButton);
+
+            final Button dislikeButton= (Button)itemView.findViewById(R.id.updateDislikeButton);
 //            ColorDrawable buttonColor = (ColorDrawable) likeButton.getBackground();
 //            Log.d("Button Colour before check", "" + buttonColor.getColor());
-            checkIfAlreadyLikedAndChangeColorAccordingly(mayBeLiker, currentUpdate, likeButton);
+            checkIfAlreadyLikedAndChangeColorAccordingly(mayBeVoter, currentUpdate, likeButton);
+            checkIfAlreadyDislikedAndChangeColorAccordingly(mayBeVoter, currentUpdate, dislikeButton);
 //            Log.d("Button Colour after check", "" + buttonColor.getColor());
             likeButton.setOnClickListener(new View.OnClickListener() {
 
@@ -196,7 +206,18 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
                 public void onClick(View v) {
                     if (v.getId() == R.id.updateLikeButton) {
                         Log.d("like button: ", "update like button pressed");
-                        handleLikeButtonPress(position,likeButton,likeCnt);
+                        handleLikeButtonPress(position,likeButton,likeCnt,dislikeButton,dislikeCnt);
+                    }
+                }
+            });
+
+            dislikeButton.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    if (v.getId() == R.id.updateDislikeButton) {
+                        Log.d("dislike button: ", "update dislike button pressed");
+                        handledislikeButtonPress(position, dislikeButton, dislikeCnt,likeButton,likeCnt);
                     }
                 }
             });
@@ -209,11 +230,30 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         }
     }
 
-    private void checkIfAlreadyLikedAndChangeColorAccordingly(Liker curLiker, Update curUpdate, Button likeButton) {
+    private void checkIfAlreadyDislikedAndChangeColorAccordingly(Voter curVoter, Update curUpdate, Button dislikeButton) {
         synchronized (curUpdate) {
-           // Log.d("UpdateId-LikerId-LikeCount", curUpdate.getId() + "-" + curLiker.getLikerId() + "-" + curUpdate.getLikeCount());
+            // Log.d("UpdateId-LikerId-LikeCount", curUpdate.getId() + "-" + curVoter.getLikerId() + "-" + curUpdate.getLikeCount());
 //            Log.d("");
-            if (curUpdate.hasTheUserLikedTheUpdate(curLiker)) {
+            if (curUpdate.hasTheUserDisLikedTheUpdate(curVoter)) {
+
+                Log.d("Inside dislikeButton Color", "Yes");
+                dislikeButton.setText("Disliked");
+                dislikeButton.setBackgroundColor(Color.CYAN);
+                dislikeButton.setWidth(50);
+
+            }else{
+                dislikeButton.setText("Dislike");
+                dislikeButton.setBackgroundColor(Color.LTGRAY);
+                dislikeButton.setWidth(20);
+            }
+        }
+    }
+
+    private void checkIfAlreadyLikedAndChangeColorAccordingly(Voter curVoter, Update curUpdate, Button likeButton) {
+        synchronized (curUpdate) {
+           // Log.d("UpdateId-LikerId-LikeCount", curUpdate.getId() + "-" + curVoter.getLikerId() + "-" + curUpdate.getLikeCount());
+//            Log.d("");
+            if (curUpdate.hasTheUserLikedTheUpdate(curVoter)) {
 
                 Log.d("Inside likeButton Color", "Yes");
                 likeButton.setText("Liked");
@@ -228,23 +268,30 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         }
     }
 
-    private void handleLikeButtonPress(int pos, Button likeButton, TextView likeCount) {
+    private void handleLikeButtonPress(int pos, Button likeButton, TextView likeCountTextView,Button dislikeButton,TextView dislikeCountTextView) {
 
         //Log.d("the pressed like button update: ",allUserUpdatesArraylist.get(pos).toString());
 
         //check if the user has pressed the like button already.if he had,do not do anything.
         //else increseLIkeCountBy one
-        Liker curLiker=new Liker(Utility.CurrentUser.getId(),Utility.CurrentUser.getName());
+        Voter curVoter =new Voter(Utility.CurrentUser.getId(),Utility.CurrentUser.getName());
         Update curUpdate=allUserUpdatesArraylist.get(pos);
-        if(!curUpdate.hasTheUserLikedTheUpdate(curLiker)){
-            curUpdate.addLiker(curLiker);
-            curUpdate.removeDisliker(curLiker);
+        if(!curUpdate.hasTheUserLikedTheUpdate(curVoter)){
+
+            if(curUpdate.hasTheUserDisLikedTheUpdate(curVoter)){
+                curUpdate.removeDisliker(curVoter);
+                removeColorFromDislike(curUpdate, dislikeButton, dislikeCountTextView);
+                new RemoveDislikerTask().execute(""+curUpdate.getId());
+
+            }
+            curUpdate.addLiker(curVoter);
+           // curUpdate.removeDisliker(curVoter);
             //Log.d("yes liked ", "for the first time");
             likeButton.setText("Liked");
             likeButton.setBackgroundColor(Color.CYAN);
             //now increase the likeCount by one
             int curLikeCount=curUpdate.getLikeCount();
-            likeCount.setText("" + curLikeCount);
+            likeCountTextView.setText("" + curLikeCount);
             updateToBeLiked=curUpdate.getId();
             likerId=Utility.CurrentUser.getId();
             new AddLikerTask().execute();
@@ -253,22 +300,61 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
 
 
         }else{
-            Log.d(" Already liked ", "the post");
+            curUpdate.removeLiker(curVoter);
+            removeColorFromLike(curUpdate, likeButton, likeCountTextView);
+            new RemoveLikerTask().execute(""+curUpdate.getId());
+            //Log.d(" Already liked ", "the post");
+
         }
     }
 
-    private void handledislikeButtonPress(int pos,Button dislikeButton) {
+    private void removeColorFromDislike(Update curUpdate,Button disLikeButton,TextView dislikeText) {
+        disLikeButton.setText("Dislike");
+        dislikeText.setText(""+curUpdate.getDislikeCount());
+        disLikeButton.setBackgroundColor(Color.LTGRAY);
 
-        Log.d("pressed dislike button update: ",allUserUpdatesArraylist.get(pos).toString());
+    }
 
-        //check if the user has pressed the like button already.if he had,do not do anything.
-        //else increseLIkeCountBy one
-        Liker curDisliker=new Liker(Utility.CurrentUser.getId(),Utility.CurrentUser.getName());
+    private void removeColorFromLike(Update curUpdate,Button likeButton,TextView likeText) {
+        likeButton.setText("Like");
+        likeText.setText(""+curUpdate.getLikeCount());
+        likeButton.setBackgroundColor(Color.LTGRAY);
+
+    }
+
+    private void handledislikeButtonPress(int pos,Button dislikeButton,TextView dislikeCountTextView,Button likeButton,TextView likeCountTextView) {
+
+        Voter curVoter =new Voter(Utility.CurrentUser.getId(),Utility.CurrentUser.getName());
         Update curUpdate=allUserUpdatesArraylist.get(pos);
-        if(!curUpdate.hasTheUserLikedTheUpdate(curDisliker)){
-            curUpdate.addLiker(curDisliker);
-            curUpdate.removeDisliker(curDisliker);
+        if(!curUpdate.hasTheUserDisLikedTheUpdate(curVoter)){
 
+            if(curUpdate.hasTheUserLikedTheUpdate(curVoter)){
+                curUpdate.removeLiker(curVoter);
+                removeColorFromLike(curUpdate, likeButton, likeCountTextView);
+                new RemoveLikerTask().execute(""+curUpdate.getId());
+
+            }
+
+            curUpdate.addDisliker(curVoter);
+            //curUpdate.removeLiker(curVoter);
+            //Log.d("yes liked ", "for the first time");
+            dislikeButton.setText("Disliked");
+            dislikeButton.setBackgroundColor(Color.CYAN);
+            //now increase the likeCount by one
+            int curdisLikeCount=curUpdate.getDislikeCount();
+            dislikeCountTextView.setText("" + curdisLikeCount);
+            updateToBeDisliked= curUpdate.getId();
+            dislikerId=Utility.CurrentUser.getId();
+            new AddDislikerTask().execute();
+
+            //populateUpdateListView();
+
+
+        }else{
+
+            curUpdate.removeDisliker(curVoter);
+            removeColorFromDislike(curUpdate, dislikeButton, dislikeCountTextView);
+            new RemoveDislikerTask().execute(""+curUpdate.getId());
         }
     }
 
@@ -439,5 +525,124 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
             }
         }
     }
+
+
+    class AddDislikerTask extends AsyncTask<String, Void, String> {
+
+        private JSONObject jsonAddUpdateDislike;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        protected String doInBackground(String... args) {
+
+            JSONParser jParser = new JSONParser();
+            // Building Parameters
+            List<Pair> params = new ArrayList<Pair>();
+
+            params.add(new Pair("updateId",updateToBeDisliked));
+            params.add(new Pair("dislikerId",dislikerId));
+
+            jsonAddUpdateDislike = jParser.makeHttpRequest("/addupdatedislike", "POST", params);
+
+            // Check your log cat for JSON reponse
+            // Log.d("All info: ",jsonUpdates.toString());
+            return null;
+
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         **/
+        protected void onPostExecute (String a){
+            if(jsonAddUpdateDislike == null) {
+                Utility.CurrentUser.showConnectionError(UpdateFragment.context);
+            }
+        }
+    }
+
+
+    class RemoveDislikerTask extends AsyncTask<String, Void, String> {
+
+        private JSONObject jsonRemoveDisliker;
+        private int updateToRemoveDislikeFrom;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        protected String doInBackground(String... args) {
+
+            JSONParser jParser = new JSONParser();
+            // Building Parameters
+            List<Pair> params = new ArrayList<Pair>();
+            updateToRemoveDislikeFrom=Integer.parseInt(args[0]);
+
+            params.add(new Pair("updateId",updateToRemoveDislikeFrom));
+            params.add(new Pair("dislikerId",Utility.CurrentUser.getId()));
+
+            jsonRemoveDisliker = jParser.makeHttpRequest("/removeupdatedislike", "POST", params);
+
+            // Check your log cat for JSON reponse
+            // Log.d("All info: ",jsonUpdates.toString());
+            return null;
+
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         **/
+        protected void onPostExecute (String a){
+            if(jsonRemoveDisliker == null) {
+                Utility.CurrentUser.showConnectionError(UpdateFragment.context);
+            }
+        }
+    }
+
+
+    class RemoveLikerTask extends AsyncTask<String, Void, String> {
+
+        private JSONObject jsonRemoveLike;
+        private int updateToREmoveLikeFrom;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        protected String doInBackground(String... args) {
+
+            JSONParser jParser = new JSONParser();
+            // Building Parameters
+            List<Pair> params = new ArrayList<Pair>();
+            updateToREmoveLikeFrom =Integer.parseInt(args[0]);
+
+            params.add(new Pair("updateId", updateToREmoveLikeFrom));
+            params.add(new Pair("likerId",Utility.CurrentUser.getId()));
+
+            jsonRemoveLike = jParser.makeHttpRequest("/removeupdatelike", "POST", params);
+
+            // Check your log cat for JSON reponse
+            // Log.d("All info: ",jsonUpdates.toString());
+            return null;
+
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         **/
+        protected void onPostExecute (String a){
+            if(jsonRemoveLike== null) {
+                Utility.CurrentUser.showConnectionError(UpdateFragment.context);
+            }
+        }
+    }
+
 
 }

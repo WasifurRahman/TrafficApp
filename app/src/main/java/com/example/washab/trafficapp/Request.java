@@ -18,8 +18,9 @@ public class Request {
     private int followerCount;
     private HashSet<Follower>followers=new HashSet<Follower>();
 
-    public Request(int requesterId, String description, int followerCount, int locationIdFrom, int locationIdTo, String status, int requestId, String timeOfRequest) {
+    public Request(int requesterId, String requesterName,String description, int followerCount, int locationIdFrom, int locationIdTo, String status, int requestId, String timeOfRequest) {
         this.requesterId = requesterId;
+        this.requesterName=requesterName;
         this.description = description;
         this.followerCount = followerCount;
         this.locationIdFrom = locationIdFrom;
@@ -34,6 +35,7 @@ public class Request {
     public static Request createRequest(JSONObject jsonObject) {
         try {
             return new Request(jsonObject.getInt("requesterId"),
+                    jsonObject.getString("requesterName"),
                     jsonObject.getString("description"),
                     jsonObject.getInt("followerCount"),
                     jsonObject.getInt("locationIdFrom"),
@@ -61,6 +63,13 @@ public class Request {
         if(!followers.contains(follower)){
             followers.add(follower);
             followerCount++;
+        }
+    }
+
+    public void removeFollower(Follower follower){
+        if(followers.contains(follower)){
+            followers.remove(follower);
+            followerCount--;
         }
     }
 

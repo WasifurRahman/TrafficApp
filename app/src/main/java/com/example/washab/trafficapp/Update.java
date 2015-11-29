@@ -40,50 +40,52 @@ public class Update {
     private int estTimeToCross;
     private String situation,description,timeOfSituation,timeOfUpdate;
     private String updaterName;
-    private HashSet<Liker> likersId=new HashSet<Liker>();
-    private HashSet<Liker> dislikersId=new HashSet<Liker>();
+    private HashSet<Voter> likersId=new HashSet<Voter>();
+    private HashSet<Voter> dislikersId=new HashSet<Voter>();
     private int likeCount,dislikeCount;
 
-    public boolean hasTheUserLikedTheUpdate(Liker liker){
-        return likersId.contains(liker);
+    public boolean hasTheUserLikedTheUpdate(Voter voter){
+        return likersId.contains(voter);
     }
 
-    public boolean hasTheUserDisLikedTheUpdate(int id){
+    public boolean hasTheUserDisLikedTheUpdate(Voter id){
         return dislikersId.contains(id);
     }
 
-    public void addLiker(Liker liker){
+    public void addLiker(Voter voter){
         synchronized (this) {
-            if (!likersId.contains(liker)) {
-                likersId.add(liker);
+            if (!likersId.contains(voter)) {
+                likersId.add(voter);
                 likeCount++;
             }
         }
     }
 
-    public void addDisliker(Liker liker){
-        dislikersId.add(liker);
+    public void addDisliker(Voter disliker){
+        dislikersId.add(disliker);
         dislikeCount++;
     }
-    public void addLikerInitially(Liker liker) {
-        likersId.add(liker);
+    public void addLikerInitially(Voter voter) {
+        likersId.add(voter);
 
     }
 
-    public void addDisLikerInitially(Liker liker) {
-        dislikersId.add(liker);
+    public void addDisLikerInitially(Voter disliker) {
+        dislikersId.add(disliker);
 
     }
 
-    public void removeLiker(Liker liker){
-        if(likersId.contains(liker)){
-            likersId.remove(liker);
+    public void removeLiker(Voter voter){
+        if(likersId.contains(voter)){
+            likersId.remove(voter);
+            likeCount--;
         }
     }
 
-    public void removeDisliker(Liker liker){
-        if(dislikersId.contains(liker)){
-            dislikersId.remove(liker);
+    public void removeDisliker(Voter disliker){
+        if(dislikersId.contains(disliker)){
+            dislikersId.remove(disliker);
+            dislikeCount--;
         }
     }
 

@@ -3,6 +3,8 @@ package com.example.washab.trafficapp;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashSet;
+
 /**
  * Created by Shabab on 11/9/2015.
  */
@@ -14,6 +16,8 @@ public class Announcement {
     private String posterName;
     private int posterId;
     private int likeCount,dislikeCount;
+    private HashSet<Voter> likersId=new HashSet<Voter>();
+    private HashSet<Voter> dislikersId=new HashSet<Voter>();
 
     public Announcement(String description, int dislikeCount,int id, int likeCount,int locationId, String title, String timeOfUpdate, String posterName, int posterId,String source) {
         this.description = description;
@@ -32,6 +36,52 @@ public class Announcement {
         this.posterId = posterId;
     }
 
+
+    public boolean hasTheUserLikedTheDiscussion(Voter curVoter){
+        return likersId.contains(curVoter);
+    }
+
+    public boolean hasTheUserDislikedTheDiscussion(Voter curVoter){
+        return dislikersId.contains(curVoter);
+    }
+
+
+    public void addLikerInitially(Voter voter){
+        likersId.add(voter);
+    }
+
+    public void addLiker(Voter voter){
+        if(!likersId.contains(voter)){
+            likersId.add(voter);
+            likeCount++;
+        }
+    }
+
+    public void removeLiker(Voter voter){
+        if(likersId.contains(voter)){
+            likersId.remove(voter);
+            likeCount--;
+        }
+    }
+
+    public void addDisliker(Voter voter){
+        if(!dislikersId.contains(voter)){
+            dislikersId.add(voter);
+            dislikeCount++;
+        }
+    }
+
+    public void addDisLikerInitially(Voter voter){
+        dislikersId.add(voter);
+    }
+
+    public void removeDisliker(Voter voter){
+
+        if(dislikersId.contains(voter)){
+            dislikersId.remove(voter);
+            dislikeCount--;
+        }
+    }
 
     public String getDescription() {
         return description;
