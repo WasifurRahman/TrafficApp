@@ -16,8 +16,8 @@ public class Discussion{
     private int posterId;
     private String posterName;
     private int likeCount,dislikeCount;
-    private HashSet<Integer> likersId;
-    private HashSet<Integer> dislikersId;
+    private HashSet<Voter> likersId=new HashSet<Voter>();
+    private HashSet<Voter> dislikersId=new HashSet<Voter>();
 
 //    public Discussion(String description, int dislikeCount, int id, int likeCount, int locationId, String timeOfPost, String title,int posterId, String posterName,HashSet<Integer> likersId, HashSet<Integer> dislikersId) {
 //        this.description = description;
@@ -44,7 +44,51 @@ public class Discussion{
     }
 
 
+    public boolean hasTheUserLikedTheDiscussion(Voter curVoter){
+        return likersId.contains(curVoter);
+    }
 
+    public boolean hasTheUserDislikedTheDiscussion(Voter curVoter){
+        return dislikersId.contains(curVoter);
+    }
+
+
+    public void addLikerInitially(Voter voter){
+        likersId.add(voter);
+    }
+
+    public void addDisLikerInitially(Voter voter){
+        dislikersId.add(voter);
+    }
+
+    public void addLiker(Voter voter){
+        if(!likersId.contains(voter)){
+            likersId.add(voter);
+            likeCount++;
+        }
+    }
+
+    public void removeLiker(Voter voter){
+        if(likersId.contains(voter)){
+            likersId.remove(voter);
+            likeCount--;
+        }
+    }
+
+    public void addDisliker(Voter voter){
+        if(!dislikersId.contains(voter)){
+            dislikersId.add(voter);
+            dislikeCount++;
+        }
+    }
+
+    public void removeDisliker(Voter voter){
+
+        if(dislikersId.contains(voter)){
+            dislikersId.remove(voter);
+            dislikeCount--;
+        }
+    }
 
     public String getDescription() {
         return description;
@@ -129,19 +173,19 @@ public class Discussion{
         return null;
     }
 
-    public HashSet<Integer> getLikersId() {
+    public HashSet<Voter> getLikersId() {
         return likersId;
     }
 
-    public void setLikersId(HashSet<Integer> likersId) {
+    public void setLikersId(HashSet<Voter> likersId) {
         this.likersId = likersId;
     }
 
-    public HashSet<Integer> getDislikersId() {
+    public HashSet<Voter> getDislikersId() {
         return dislikersId;
     }
 
-    public void setDislikersId(HashSet<Integer> dislikersId) {
+    public void setDislikersId(HashSet<Voter> dislikersId) {
         this.dislikersId = dislikersId;
     }
 

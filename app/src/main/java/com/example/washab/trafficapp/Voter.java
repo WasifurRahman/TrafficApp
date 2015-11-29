@@ -3,9 +3,9 @@ package com.example.washab.trafficapp;
 /**
  * Created by wasif on 11/14/15.
  */
-public class Liker {
+public class Voter {
 
-    public Liker(int likerId, String likerName) {
+    public Voter(int likerId, String likerName) {
         this.likerId = likerId;
         this.likerName = likerName;
     }
@@ -17,12 +17,12 @@ public class Liker {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Liker)) return false;
+        if (!(o instanceof Voter)) return false;
 
-        Liker liker = (Liker) o;
+        Voter voter = (Voter) o;
 
-        if (getLikerId() != liker.getLikerId()) return false;
-        return getLikerName().equals(liker.getLikerName());
+        if (getLikerId() != voter.getLikerId()) return false;
+        return getLikerName().equals(voter.getLikerName());
 
     }
 
@@ -35,7 +35,7 @@ public class Liker {
 
     @Override
     public String toString() {
-        return "Liker{" +
+        return "Voter{" +
                 "likerId=" + likerId +
                 ", likerName='" + likerName + '\'' +
                 '}';

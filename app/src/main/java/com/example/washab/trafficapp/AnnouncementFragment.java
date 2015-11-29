@@ -1,16 +1,18 @@
 package com.example.washab.trafficapp;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -137,21 +139,27 @@ public class AnnouncementFragment extends Fragment {
 
         try {
 
-            JSONArray allDiscussionsJSONArray =jsonAnnouncements.getJSONArray("posts");
+            JSONArray allAnnouncementsJSONarray =jsonAnnouncements.getJSONArray("posts");
             allAnnouncementsArrayList.clear();
 
-            int curIndex = 0, N = allDiscussionsJSONArray.length();
+            int curIndex = 0, N = allAnnouncementsJSONarray.length();
 
             while (curIndex < N) {
-                JSONObject curObj = allDiscussionsJSONArray.getJSONObject(curIndex++);
-                Announcement curAnnouncment = Announcement.createAnnouncement(curObj);
-                //int likeCnt = curPost.getLikeCount();
-//                for (int i = 0; i < likeCnt; i++) {
-//                    JSONObject likeObj = allDiscussionsJSONArray.getJSONObject(curIndex++);
-//                    Liker newLiker = new Liker(likeObj.getInt("likerId"), likeObj.getString("likerName"));
-//                    curPost.addLikerInitially(newLiker);
-//                }
-                allAnnouncementsArrayList.add(curAnnouncment);
+                JSONObject curObj = allAnnouncementsJSONarray.getJSONObject(curIndex++);
+                Announcement curPost = Announcement.createAnnouncement(curObj);
+                int likeCnt = curPost.getLikeCount(),dislikeCnt=curPost.getDislikeCount();
+                for (int i = 0; i < likeCnt; i++) {
+                    JSONObject likeObj = allAnnouncementsJSONarray.getJSONObject(curIndex++);
+                    Voter newLiker = new Voter(likeObj.getInt("likerId"), likeObj.getString("likerName"));
+                    curPost.addLikerInitially(newLiker);
+                }
+
+                for (int i = 0; i < dislikeCnt; i++) {
+                    JSONObject dislikeObj = allAnnouncementsJSONarray.getJSONObject(curIndex++);
+                    Voter newLiker = new Voter(dislikeObj.getInt("dislikerId"), dislikeObj.getString("dislikerName"));
+                    curPost.addLikerInitially(newLiker);
+                }
+                allAnnouncementsArrayList.add(curPost);
 
             }
         } catch (JSONException e) {
@@ -184,7 +192,7 @@ public class AnnouncementFragment extends Fragment {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
 
             View itemView=convertView;
             if(itemView==null){
@@ -219,12 +227,44 @@ public class AnnouncementFragment extends Fragment {
             TextView updateTime=(TextView) itemView.findViewById(R.id.announcementUpdateTimeTextView);
             updateTime.setText(currentAnnouncement.getTimeOfUpdate());
 
-            TextView likeCnt=(TextView) itemView.findViewById(R.id.announcementLikeCountTextView);
-            likeCnt.setText("" + currentAnnouncement.getLikeCount());
+            final TextView likeCntTV=(TextView) itemView.findViewById(R.id.announcementLikeCountTextView);
+            likeCntTV.setText("" + currentAnnouncement.getLikeCount());
 
-            TextView dislikeCnt=(TextView) itemView.findViewById(R.id.announcementDislikeCountTextView);
-            dislikeCnt.setText("" + currentAnnouncement.getDislikeCount());
+            final TextView dislikeCntTV=(TextView) itemView.findViewById(R.id.announcementDislikeCountTextView);
+            dislikeCntTV.setText("" + currentAnnouncement.getDislikeCount());
 
+
+
+            final Button likeButton=(Button)itemView.findViewById(R.id.announcementLikeButton);
+            final Button dislikeButton= (Button)itemView.findViewById(R.id.announcementDislikeButton);
+            Voter curVoter=new Voter(Utility.CurrentUser.getId(),Utility.CurrentUser.getName());
+
+
+            checkIfAlreadyLikedAndChangeColorAccordingly(curVoter,currentAnnouncement,likeButton);
+            checkIfAlreadyDislikedAndChangeColorAccordingly(curVoter, currentAnnouncement, dislikeButton);
+
+
+            likeButton.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    if (v.getId() == R.id.announcementLikeButton) {
+                        Log.d("like button: ", "update like button pressed");
+                        handleLikeButtonPress(position, likeButton, likeCntTV, dislikeButton, dislikeCntTV);
+                    }
+                }
+            });
+
+            dislikeButton.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    if (v.getId() == R.id.announcementDislikeButton) {
+                        Log.d("dislike button: ", "update dislike button pressed");
+                        handledislikeButtonPress(position, dislikeButton, dislikeCntTV, likeButton, likeCntTV);
+                    }
+                }
+            });
 
 
             return itemView;
@@ -234,6 +274,138 @@ public class AnnouncementFragment extends Fragment {
 
         }
     }
+
+    private void checkIfAlreadyDislikedAndChangeColorAccordingly(Voter curVoter,Announcement curAnnouncement, Button dislikeButton) {
+        synchronized (curAnnouncement) {
+            // Log.d("UpdateId-LikerId-LikeCount", curUpdate.getId() + "-" + curVoter.getLikerId() + "-" + curUpdate.getLikeCount());
+//            Log.d("");
+            if (curAnnouncement.hasTheUserDislikedTheDiscussion(curVoter)) {
+
+                Log.d("Inside dislikeButton Color", "Yes");
+                dislikeButton.setText("Disliked");
+                dislikeButton.setBackgroundColor(Color.CYAN);
+                dislikeButton.setWidth(50);
+
+            }else{
+                dislikeButton.setText("Dislike");
+                dislikeButton.setBackgroundColor(Color.LTGRAY);
+                dislikeButton.setWidth(20);
+            }
+        }
+    }
+
+    private void checkIfAlreadyLikedAndChangeColorAccordingly(Voter curVoter, Announcement curAnnouncement, Button likeButton) {
+        synchronized (curAnnouncement) {
+            // Log.d("UpdateId-LikerId-LikeCount", curUpdate.getId() + "-" + curVoter.getLikerId() + "-" + curUpdate.getLikeCount());
+//            Log.d("");
+            if (curAnnouncement.hasTheUserLikedTheDiscussion(curVoter)) {
+
+                Log.d("Inside likeButton Color", "Yes");
+                likeButton.setText("Liked");
+                likeButton.setBackgroundColor(Color.CYAN);
+                likeButton.setWidth(50);
+
+            }else{
+                likeButton.setText("Like");
+                likeButton.setBackgroundColor(Color.LTGRAY);
+                likeButton.setWidth(20);
+            }
+        }
+    }
+
+    private void handleLikeButtonPress(int pos, Button likeButton, TextView likeCountTextView,Button dislikeButton,TextView dislikeCountTextView) {
+
+        //Log.d("the pressed like button update: ",allUserUpdatesArraylist.get(pos).toString());
+
+        //check if the user has pressed the like button already.if he had,do not do anything.
+        //else increseLIkeCountBy one
+        Voter curVoter =new Voter(Utility.CurrentUser.getId(),Utility.CurrentUser.getName());
+
+        Announcement curAnnouncement=allAnnouncementsArrayList.get(pos);
+        if(!curAnnouncement.hasTheUserLikedTheDiscussion(curVoter)){
+
+            if(curAnnouncement.hasTheUserDislikedTheDiscussion(curVoter)){
+                curAnnouncement.removeDisliker(curVoter);
+                removeColorFromDislike(curAnnouncement, dislikeButton, dislikeCountTextView);
+                new RemoveDislikerTask().execute("" + curAnnouncement.getId());
+
+            }
+            curAnnouncement.addLiker(curVoter);
+            // curUpdate.removeDisliker(curVoter);
+            //Log.d("yes liked ", "for the first time");
+            likeButton.setText("Liked");
+            likeButton.setBackgroundColor(Color.CYAN);
+            //now increase the likeCount by one
+            int curLikeCount=curAnnouncement.getLikeCount();
+            likeCountTextView.setText("" + curLikeCount);
+            //updateToBeFoll=curDiscussion.getId();
+            //likerId=Utility.CurrentUser.getId();
+            new AddLikerTask().execute(curAnnouncement.getId()+"");
+
+            //populateUpdateListView();
+
+
+        }else{
+            curAnnouncement.removeLiker(curVoter);
+            removeColorFromLike(curAnnouncement, likeButton, likeCountTextView);
+            new RemoveLikerTask().execute("" + curAnnouncement.getId());
+            //Log.d(" Already liked ", "the post");
+
+        }
+    }
+
+    private void removeColorFromDislike(Announcement curAnnouncement,Button disLikeButton,TextView dislikeText) {
+        disLikeButton.setText("Dislike");
+        dislikeText.setText("" + curAnnouncement.getDislikeCount());
+        disLikeButton.setBackgroundColor(Color.LTGRAY);
+
+    }
+
+    private void removeColorFromLike(Announcement curAnnouncement,Button likeButton,TextView likeText) {
+        likeButton.setText("Like");
+        likeText.setText("" + curAnnouncement.getLikeCount());
+        likeButton.setBackgroundColor(Color.LTGRAY);
+
+    }
+
+    private void handledislikeButtonPress(int pos,Button dislikeButton,TextView dislikeCountTextView,Button likeButton,TextView likeCountTextView) {
+
+        Voter curVoter =new Voter(Utility.CurrentUser.getId(),Utility.CurrentUser.getName());
+
+        Announcement curAnnouncement=allAnnouncementsArrayList.get(pos);
+        if(!curAnnouncement.hasTheUserDislikedTheDiscussion(curVoter)){
+
+            if(curAnnouncement.hasTheUserLikedTheDiscussion(curVoter)){
+                curAnnouncement.removeLiker(curVoter);
+                removeColorFromLike(curAnnouncement, likeButton, likeCountTextView);
+                new RemoveLikerTask().execute("" + curAnnouncement.getId());
+
+            }
+
+            curAnnouncement.addDisliker(curVoter);
+            //curUpdate.removeLiker(curVoter);
+            //Log.d("yes liked ", "for the first time");
+            dislikeButton.setText("Disliked");
+            dislikeButton.setBackgroundColor(Color.CYAN);
+            //now increase the likeCount by one
+            int curdisLikeCount=curAnnouncement.getDislikeCount();
+            dislikeCountTextView.setText("" + curdisLikeCount);
+
+            new AddDislikerTask().execute(curAnnouncement.getId()+"");
+
+            //populateUpdateListView();
+
+
+        }else{
+
+            curAnnouncement.removeDisliker(curVoter);
+            removeColorFromDislike(curAnnouncement, dislikeButton, dislikeCountTextView);
+            new RemoveDislikerTask().execute("" + curAnnouncement.getId());
+        }
+    }
+
+
+
 
 
     public void setAnnouncementSorting (String sortingCriteria) {
@@ -308,6 +480,166 @@ public class AnnouncementFragment extends Fragment {
 
             populateAnnouncementList(jsonAnnouncements);
             populateAnnouncementListView();
+        }
+    }
+
+
+
+    class AddLikerTask extends AsyncTask<String, Void, String> {
+
+        private JSONObject jsonAddRequestLike;
+        private int discussionToBeLiked;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        protected String doInBackground(String... args) {
+
+            JSONParser jParser = new JSONParser();
+            // Building Parameters
+            List<Pair> params = new ArrayList<Pair>();
+            discussionToBeLiked=Integer.parseInt(args[0]);
+
+            params.add(new Pair("postId",discussionToBeLiked));
+            params.add(new Pair("likerId",Utility.CurrentUser.getId()));
+
+            jsonAddRequestLike = jParser.makeHttpRequest("/addpostlike", "POST", params);
+
+            // Check your log cat for JSON reponse
+            // Log.d("All info: ",jsonUpdates.toString());
+            return null;
+
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         **/
+        protected void onPostExecute (String a){
+            if(jsonAddRequestLike == null) {
+                Utility.CurrentUser.showConnectionError(getActivity());
+            }
+        }
+    }
+
+
+    class AddDislikerTask extends AsyncTask<String, Void, String> {
+
+        private JSONObject jsonAddDislikeDiscussion;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        protected String doInBackground(String... args) {
+
+            JSONParser jParser = new JSONParser();
+            // Building Parameters
+            List<Pair> params = new ArrayList<Pair>();
+            int discussionToBeLIked=Integer.parseInt(args[0]);
+
+            params.add(new Pair("postId",discussionToBeLIked));
+            params.add(new Pair("dislikerId",Utility.CurrentUser.getId()));
+
+            jsonAddDislikeDiscussion = jParser.makeHttpRequest("/addpostdislike", "POST", params);
+
+            // Check your log cat for JSON reponse
+            // Log.d("All info: ",jsonUpdates.toString());
+            return null;
+
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         **/
+        protected void onPostExecute (String a){
+            if(jsonAddDislikeDiscussion == null) {
+                Utility.CurrentUser.showConnectionError(getActivity());
+            }
+        }
+    }
+
+
+    class RemoveDislikerTask extends AsyncTask<String, Void, String> {
+
+        private JSONObject jsonRemoveDisliker;
+        private int discussionToRemoveDislikeFrom;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        protected String doInBackground(String... args) {
+
+            JSONParser jParser = new JSONParser();
+            // Building Parameters
+            List<Pair> params = new ArrayList<Pair>();
+            discussionToRemoveDislikeFrom =Integer.parseInt(args[0]);
+
+            params.add(new Pair("postId", discussionToRemoveDislikeFrom));
+            params.add(new Pair("dislikerId",Utility.CurrentUser.getId()));
+
+            jsonRemoveDisliker = jParser.makeHttpRequest("/removepostdislike", "POST", params);
+
+            // Check your log cat for JSON reponse
+            // Log.d("All info: ",jsonUpdates.toString());
+            return null;
+
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         **/
+        protected void onPostExecute (String a){
+            if(jsonRemoveDisliker == null) {
+                Utility.CurrentUser.showConnectionError(getActivity());
+            }
+        }
+    }
+
+
+    class RemoveLikerTask extends AsyncTask<String, Void, String> {
+
+        private JSONObject jsonRemoveLike;
+        private int discussionToRemoveLIkeFrom;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        protected String doInBackground(String... args) {
+
+            JSONParser jParser = new JSONParser();
+            // Building Parameters
+            List<Pair> params = new ArrayList<Pair>();
+            discussionToRemoveLIkeFrom =Integer.parseInt(args[0]);
+
+            params.add(new Pair("postId", discussionToRemoveLIkeFrom));
+            params.add(new Pair("likerId",Utility.CurrentUser.getId()));
+
+            jsonRemoveLike = jParser.makeHttpRequest("/removepostlike", "POST", params);
+
+            // Check your log cat for JSON reponse
+            // Log.d("All info: ",jsonUpdates.toString());
+            return null;
+
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         **/
+        protected void onPostExecute (String a){
+            if(jsonRemoveLike== null) {
+                Utility.CurrentUser.showConnectionError(getActivity());
+            }
         }
     }
 

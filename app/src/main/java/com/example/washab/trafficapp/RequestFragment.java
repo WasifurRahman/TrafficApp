@@ -204,7 +204,7 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
 //            requesterName.setText(currentRequest.getRequesterName());
 
             TextView requesterId=(TextView) itemView.findViewById(R.id.requesterNameTextView);
-            requesterId.setText("" + currentRequest.getRequesterId());
+            requesterId.setText("" + currentRequest.getRequesterName());
 
             TextView updateTime=(TextView) itemView.findViewById(R.id.requestUpdateTimeTextView);
             updateTime.setText(currentRequest.getTimeOfRequest());
@@ -236,7 +236,8 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
 
                 @Override
                 public void onClick(View v) {
-                    if (v.getId() == R.id.followButton) {
+                    //can not follow his own post
+                    if (v.getId() == R.id.followButton && currentRequest.getRequesterId()!=Utility.CurrentUser.getId()) {
                         handleFollowButtonPress(position,followButton,followCnt);
 
                     }
@@ -312,7 +313,34 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
 
         }else{
             Log.d(" Already followed", "the request");
+            curRequest.removeFollower(curFollower);
+
+            removeColorFromFollow(curRequest,followButton,followCount);
+            new RemoveFollowerTask().execute("" + curRequest.getRequestId());
         }
+    }
+
+
+//    private void handledislikeButtonPress(int pos,Button dislikeButton) {
+//
+//        Log.d("pressed dislike button update: ",allUserUpdatesArraylist.get(pos).toString());
+//
+//        //check if the user has pressed the like button already.if he had,do not do anything.
+//        //else increseLIkeCountBy one
+//        Voter curDisliker=new Voter(Utility.CurrentUser.getId(),Utility.CurrentUser.getName());
+//        Update curUpdate=allUserUpdatesArraylist.get(pos);
+//        if(!curUpdate.hasTheUserLikedTheUpdate(curDisliker)){
+//            curUpdate.addLiker(curDisliker);
+//            curUpdate.removeDisliker(curDisliker);
+//
+//        }
+//    }
+
+    private void removeColorFromFollow(Request curRequest,Button followButton,TextView followText) {
+        followButton.setText("Follow");
+        followText.setText(""+curRequest.getFollowerCount());
+        followButton.setBackgroundColor(Color.LTGRAY);
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -464,4 +492,45 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
             }
         }
     }
+
+
+    class RemoveFollowerTask extends AsyncTask<String, Void, String> {
+
+        private JSONObject jsonRemoveFollow;
+        private int requestToUpdateFollowFrom;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        protected String doInBackground(String... args) {
+
+            JSONParser jParser = new JSONParser();
+            // Building Parameters
+            List<Pair> params = new ArrayList<Pair>();
+            requestToUpdateFollowFrom =Integer.parseInt(args[0]);
+
+            params.add(new Pair("requestId", requestToUpdateFollowFrom));
+            params.add(new Pair("followerId",Utility.CurrentUser.getId()));
+
+            jsonRemoveFollow = jParser.makeHttpRequest("/removerequestfollower", "POST", params);
+
+            // Check your log cat for JSON reponse
+            // Log.d("All info: ",jsonUpdates.toString());
+            return null;
+
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         **/
+        protected void onPostExecute (String a){
+            if(jsonRemoveFollow == null) {
+                Utility.CurrentUser.showConnectionError(getActivity());
+            }
+        }
+    }
+
 }

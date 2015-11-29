@@ -236,6 +236,7 @@
         android:layout_height="wrap_content"
         android:text="Dislike"
         android:id="@+id/updateDislikeButton"
+        android:layout_marginLeft="40dp"
         android:width="20dp"/>
     </LinearLayout>
 

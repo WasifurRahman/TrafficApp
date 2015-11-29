@@ -18,10 +18,12 @@ public class Request {
     private int followerCount;
     private HashSet<Follower>followers=new HashSet<Follower>();
 
+
     /**
      * Constructor for request object.
      *
      * @param requesterId The user ID of the user who made the request.
+     * @param requesterName The username of the user who made the request.
      * @param description Any additional information regarding the request.
      * @param followerCount The number of users following the request.
      * @param locationIdFrom Source location of request.
@@ -31,13 +33,13 @@ public class Request {
      * @param timeOfRequest The time when the request was made.
      */
 
-    public Request(int requesterId, String description, int followerCount, int locationIdFrom, int locationIdTo, String status, int requestId, String timeOfRequest) {
+    public Request(int requesterId, String requesterName,String description, int followerCount, int locationIdFrom, int locationIdTo, String status, int requestId, String timeOfRequest) {
         this.requesterId = requesterId;
+        this.requesterName=requesterName;
         this.description = description;
         this.followerCount = followerCount;
         this.locationIdFrom = locationIdFrom;
         this.locationIdTo = locationIdTo;
-//        this.requesterName = requesterName;
         this.requestId = requestId;
         this.timeOfRequest = timeOfRequest;
         this.requestStatus = status;
@@ -52,6 +54,7 @@ public class Request {
     public static Request createRequest(JSONObject jsonObject) {
         try {
             return new Request(jsonObject.getInt("requesterId"),
+                    jsonObject.getString("requesterName"),
                     jsonObject.getString("description"),
                     jsonObject.getInt("followerCount"),
                     jsonObject.getInt("locationIdFrom"),
@@ -98,6 +101,13 @@ public class Request {
         if(!followers.contains(follower)){
             followers.add(follower);
             followerCount++;
+        }
+    }
+
+    public void removeFollower(Follower follower){
+        if(followers.contains(follower)){
+            followers.remove(follower);
+            followerCount--;
         }
     }
 
