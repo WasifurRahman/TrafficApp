@@ -13,7 +13,6 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -98,45 +97,32 @@ public class SignUp extends AppCompatActivity {
         return false;
     }
 
- /*   public boolean onFemaleRBClick(View v) {
-
-        if(onMaleRBClick(v)) {
-
-        }
-
-    }
-
-    public boolean onMaleRBClick(View v) {
-
-
-    }
-*/
    int randomWithRange(int min, int max)
     {
         int range = (max - min) + 1;
         return (int)(Math.random() * range) + min;
     }
-   private void sendEmail(String email){
-       emailVerifyCode=randomWithRange(1000,9999);
-       Intent i = new Intent(Intent.ACTION_SEND);
-      // i.setType("message/rfc822");
-       i.putExtra(Intent.EXTRA_EMAIL  , new String[]{email});
-       i.putExtra(Intent.EXTRA_SUBJECT, "Email Address Verification");
-       i.putExtra(Intent.EXTRA_TEXT   , "Your email verification code is: "+ emailVerifyCode);
-       try {
-           startActivity(Intent.createChooser(i, "Send mail..."));
-           Log.d("email sent", "email sent success");
-       } catch (android.content.ActivityNotFoundException ex) {
-           Toast.makeText(SignUp.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
-       }
-   }
+//   private void sendEmail(String email){
+//       emailVerifyCode=randomWithRange(1000,9999);
+//       Intent i = new Intent(Intent.ACTION_SEND);
+//      // i.setType("message/rfc822");
+//       i.putExtra(Intent.EXTRA_EMAIL  , new String[]{email});
+//       i.putExtra(Intent.EXTRA_SUBJECT, "Email Address Verification");
+//       i.putExtra(Intent.EXTRA_TEXT   , "Your email verification code is: "+ emailVerifyCode);
+//       try {
+//           startActivity(Intent.createChooser(i, "Send mail..."));
+//           Log.d("email sent", "email sent success");
+//       } catch (android.content.ActivityNotFoundException ex) {
+//           Toast.makeText(SignUp.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+//       }
+//   }
 
 
     public void onSignUpButtonClick(View v) {
 
         if(v.getId() == R.id.signupButton)
         {
-            email = ((EditText) findViewById(R.id.emailEditText)).getText().toString();
+            email = ((EditText) findViewById(R.id.emailLoginEditText)).getText().toString();
             password = ((EditText) findViewById(R.id.passwordEditText)).getText().toString();
             username = ((EditText) findViewById(R.id.usernameEditText)).getText().toString();
             repeatPassword= ((EditText) findViewById(R.id.repeatPasswordEditText)).getText().toString();
@@ -151,7 +137,7 @@ public class SignUp extends AppCompatActivity {
                 errorText.setText("Please enter a valid address.\n");
             }
             else if(passwordMissMatch()){
-                errorText.setText("password mismatch.\n");
+                errorText.setText("Password Mismatch!\n");
             }
             else
            {

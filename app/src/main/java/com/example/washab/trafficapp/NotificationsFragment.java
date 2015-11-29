@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -36,6 +37,8 @@ public class NotificationsFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     private ArrayList<Notification> allNotifsArraylist = new ArrayList<Notification>();
+    LinearLayout progressLayout;
+    ListView customNotifsListView;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -83,7 +86,10 @@ public class NotificationsFragment extends Fragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        progressLayout = (LinearLayout) getActivity().findViewById(R.id.progressbar_view);
+        customNotifsListView =(ListView)getActivity().findViewById(R.id.userNotifsListView);
         new FetchNotificationsTask().execute();
+
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -139,14 +145,37 @@ public class NotificationsFragment extends Fragment {
 
             //fill the view
 
-            TextView notifFromUsername = (TextView)itemView.findViewById(R.id.notifFromUsernameTextView);
-            notifFromUsername.setText(currentNotif.getNotifFromUsername());
+//            TextView notifFromUsername = (TextView)itemView.findViewById(R.id.notifFromUsernameTextView);
+//            notifFromUsername.setText(currentNotif.getNotifFromUsername());
 
-            TextView notifType = (TextView)itemView.findViewById(R.id.notifTypeTextView);
-            notifType.setText(" " + currentNotif.getNotifType() + "d ");
+//            TextView notifType = (TextView)itemView.findViewById(R.id.notifTypeTextView);
+//            notifType.setText(" " + currentNotif.getNotifType() + "d ");
 
-            TextView notifAbout = (TextView)itemView.findViewById(R.id.notifAboutTextView);
-            notifAbout.setText(currentNotif.getNotifAbout() + ".");
+//            TextView notifAbout = (TextView)itemView.findViewById(R.id.notifAboutTextView);
+//            notifAbout.setText(currentNotif.getNotifAbout() + ".");
+
+            TextView notifText = (TextView)itemView.findViewById(R.id.notifText);
+
+            String notifType = currentNotif.getNotifType();
+            String notifFromUsername = currentNotif.getNotifFromUsername();
+            String notifAbout = currentNotif.getNotifAbout();
+//            Log.d("notifType", notifType);
+            if(notifType.equals("like")) {
+//                Log.d("inside notifType", "like");
+                notifText.setText(notifFromUsername + " liked your " + notifAbout + ".");
+            }
+            else if(notifType.equals("follow")) {
+                notifText.setText(notifFromUsername + " followed your " + notifAbout + ".");
+            }
+            else if(notifType.equals("request")) {
+                notifText.setText(notifFromUsername + " requested an update on a location you are following.");
+            }
+            else if(notifType.equals("requestResponse")) {
+                notifText.setText(notifFromUsername + " responded to your " + notifAbout + ".");
+            }
+            else if(notifType.equals("followResponse")) {
+                notifText.setText(notifFromUsername + " responded to a " + notifAbout + " you are following.");
+            }
 
             return itemView;
             // return super.getView(position, convertView, parent);
@@ -196,6 +225,9 @@ public class NotificationsFragment extends Fragment {
 
         @Override
         protected void onPreExecute() {
+            progressLayout.setVisibility(View.VISIBLE);
+            customNotifsListView.setVisibility(View.GONE);
+
             super.onPreExecute();
         }
 
@@ -224,6 +256,9 @@ public class NotificationsFragment extends Fragment {
                 Utility.CurrentUser.showConnectionError(getActivity());
                 return;
             }
+
+            progressLayout.setVisibility(View.GONE);
+            customNotifsListView.setVisibility(View.VISIBLE);
 
             populateNotifList(jsonNotifs);
             populateNotifListView();

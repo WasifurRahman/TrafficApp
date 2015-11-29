@@ -53,6 +53,8 @@ public class DiscussionFragment extends Fragment {
     ListView customDiscussionListView;
     private int locationIdToSearch=0;
 
+    FetchDiscussionTask fetchDiscussionTask = new FetchDiscussionTask();
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -118,8 +120,8 @@ public class DiscussionFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         progressLayout = (LinearLayout) getActivity().findViewById(R.id.progressbar_view);
         customDiscussionListView =(ListView)getActivity().findViewById(R.id.userDiscussionListView);
+        fetchDiscussionTask.execute();
 
-        new FetchDiscussionTask().execute();
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -395,6 +397,16 @@ public class DiscussionFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();  // Always call the superclass method first
+
+        // Release the Camera because we don't need it when paused
+        // and other activities might need to use it.
+        Log.d("inside pause", "yes");
+        fetchDiscussionTask.cancel(true);
     }
 
 

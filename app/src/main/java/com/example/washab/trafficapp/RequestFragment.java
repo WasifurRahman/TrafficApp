@@ -111,24 +111,25 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
 
         try {
 
-            JSONArray allRequestsJSONArray=jsonRequests.getJSONArray("requests");
+            JSONArray allRequestsJSONArray = jsonRequests.getJSONArray("requests");
             allRequestsArrayList.clear();
-            int curIndex=0, N=allRequestsJSONArray.length();
+            int curIndex = 0, N = allRequestsJSONArray.length();
 
-            while(curIndex<N){
-                JSONObject curObj=allRequestsJSONArray.getJSONObject(curIndex++);
-               // Update curUpdate=Update.createUpdate(curObj);
-                Request curRequest=Request.createRequest(curObj);
-                int followerCount=curRequest.getFollowerCount();
-                for(int i=0;i<followerCount;i++){
-                    JSONObject followObj=allRequestsJSONArray.getJSONObject(curIndex++);
+            while (curIndex < N) {
+                JSONObject curObj = allRequestsJSONArray.getJSONObject(curIndex++);
 
-                    Follower newFollower=new Follower(followObj.getInt("followerId"),followObj.getString("followerName"));
+                Request curRequest = Request.createRequest(curObj);
+                int followerCount = curRequest.getFollowerCount();
+                for (int i = 0; i < followerCount; i++) {
+//                    JSONObject likeObj = allRequestsJSONArray.getJSONObject(curIndex++);
+                  JSONObject followObj = allRequestsJSONArray.getJSONObject(curIndex++);
+
+                    Follower newFollower = new Follower(followObj.getInt("followerId"), followObj.getString("followerName"));
                     curRequest.addFollowerInitially(newFollower);
                 }
                 allRequestsArrayList.add(curRequest);
             }
-        } catch (JSONException e) {
+        }catch (JSONException e) {
             e.printStackTrace();
         }
 
@@ -199,8 +200,9 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
                     if (v.getId() == R.id.respondButton) {
                         Intent intent = new Intent(getActivity(), AddUpdate.class);
                         intent.putExtra("calling_from", Interfaces.WhoIsCallingUpdateInterface.ADD_UPDATE_TO_RESPOND_TO_REQUEST);
-                        intent.putExtra("location_from", currentRequest.getLocationIdFrom()).
-                                putExtra("location_to", currentRequest.getLocationIdTo());
+                        intent.putExtra("location_from", currentRequest.getLocationIdFrom())
+                                .putExtra("location_to", currentRequest.getLocationIdTo())
+                                .putExtra("request_id", currentRequest.getRequestId());
                         startActivity(intent);
                     }
                 }
@@ -218,7 +220,7 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
 
                     }
                 }
-            });
+           });
 
             checkIfAlreadyFollowedAndChangeColorAccordingly(mayBeFollower, currentRequest, followButton);
 

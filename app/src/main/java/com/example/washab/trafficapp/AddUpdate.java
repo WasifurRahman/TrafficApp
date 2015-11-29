@@ -33,7 +33,7 @@ public class AddUpdate extends AppCompatActivity implements Interfaces.WhoIsCall
     String situationChoices[] = {"Free", "Mild", "Moderate", "Extreme", "Gridlock"};
     private String description;
     private String situation, timestamp;
-    private int fromLocationId, toLocationId, estimatedTime;
+    private int fromLocationId, toLocationId, estimatedTime, requestId;
     private boolean addUpdateButtonPressed = false;
     private String fromLocationName,toLocationName;
 
@@ -69,7 +69,7 @@ public class AddUpdate extends AppCompatActivity implements Interfaces.WhoIsCall
         initiateToLocationForResponse();
         initiateTimestamp();
         initiateSituation();
-
+        requestId = getIntent().getIntExtra("request_id", 0);
     }
 
     public void initiateFromLocationForResponse() {
@@ -269,6 +269,8 @@ public class AddUpdate extends AppCompatActivity implements Interfaces.WhoIsCall
             params.add(new Pair("description", description));
             params.add(new Pair("timeOfSituation", timestamp));
             params.add(new Pair("updaterId", Utility.CurrentUser.getId()));
+            params.add(new Pair("requestId", requestId));
+
             // getting JSON string from URL
             jsonAddUpdate = jParser.makeHttpRequest("/addupdate", "POST", params);
 //            jsonLocations = jParser.makeHttpRequest("/locations", "GET", null);

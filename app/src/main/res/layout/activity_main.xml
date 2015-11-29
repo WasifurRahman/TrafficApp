@@ -22,33 +22,33 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Email:  "
-        android:id="@+id/situationText"
+        android:id="@+id/emailLoginTextView"
         android:layout_marginTop="69dp"
         android:layout_below="@+id/welcomeText"
-        android:layout_toLeftOf="@+id/emailEditText"
-        android:layout_toStartOf="@+id/emailEditText" />
+        android:layout_toLeftOf="@+id/emailLoginEditText"
+        android:layout_toStartOf="@+id/emailLoginEditText" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
         android:ems="10"
-        android:id="@+id/emailEditText"
+        android:id="@+id/emailLoginEditText"
         android:text="a@a.aa"
-        android:layout_alignTop="@+id/situationText"
+        android:layout_alignBottom="@+id/emailLoginTextView"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="false"
-        android:layout_toEndOf="@+id/timeStampText"
-        android:layout_toRightOf="@+id/timeStampText" />
+        android:layout_toEndOf="@+id/passwordTextView"
+        android:layout_toRightOf="@+id/passwordTextView" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Password:  "
-        android:id="@+id/timeStampText"
+        android:id="@+id/passwordTextView"
         android:layout_marginTop="48dp"
-        android:layout_below="@+id/emailEditText"
+        android:layout_below="@+id/emailLoginEditText"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
@@ -59,11 +59,11 @@
         android:ems="10"
         android:text="a"
         android:id="@+id/passwordEditText"
-        android:layout_alignTop="@+id/timeStampText"
-        android:layout_alignRight="@+id/emailEditText"
-        android:layout_alignEnd="@+id/emailEditText"
-        android:layout_toRightOf="@+id/timeStampText"
-        android:layout_toEndOf="@+id/timeStampText" />
+        android:layout_alignRight="@+id/emailLoginEditText"
+        android:layout_alignEnd="@+id/emailLoginEditText"
+        android:layout_alignBottom="@id/passwordTextView"
+        android:layout_toRightOf="@+id/passwordTextView"
+        android:layout_toEndOf="@+id/passwordTextView" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
