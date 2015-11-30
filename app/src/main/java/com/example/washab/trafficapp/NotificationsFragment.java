@@ -202,6 +202,10 @@ public class NotificationsFragment extends Fragment {
                 notifText.setText(notifFromUsername + " responded to a " + notifAbout + " you are following.");
             }
 
+            TextView notifTime = (TextView)itemView.findViewById(R.id.notifTime);
+            String timeOfNotif = Utility.CurrentUser.parsePostTime(currentNotif.getTimeOfNotification());
+            notifTime.setText(timeOfNotif);
+
             return itemView;
         }
     }

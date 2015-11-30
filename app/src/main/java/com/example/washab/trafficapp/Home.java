@@ -108,6 +108,12 @@ Interfaces.WhoIsCallingUpdateInterface{
 
     }
 
+    public void showSearchMenu(boolean showMenu) {
+        if (menu == null)
+            return;
+        menu.setGroupVisible(R.id.search_group, showMenu);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -144,8 +150,6 @@ Interfaces.WhoIsCallingUpdateInterface{
                         Log.d("fragment alive","discussion fragment new");
                         ((DiscussionFragment)activeFragment).setDiscussionSearchLocation(locationIdToSearch);
                     }
-
-
 
                 }
 
@@ -232,6 +236,11 @@ Interfaces.WhoIsCallingUpdateInterface{
         Fragment announcementFragment = getFragmentManager().findFragmentByTag(announcementFragmentTag);
         if(announcementFragment!=null){
             return announcementFragmentTag;
+            //Log.d("fragment alive","announcement frgment");
+        }
+        Fragment notifsFragment = getFragmentManager().findFragmentByTag(notifsFragmentTag);
+        if(notifsFragment!=null){
+            return notifsFragmentTag;
             //Log.d("fragment alive","announcement frgment");
         }
         return null;
@@ -397,6 +406,7 @@ Interfaces.WhoIsCallingUpdateInterface{
             removeAddedFragment(null);
             addUpdatesFragment();
             addChooseUpdateOptionsFragment();
+//            showSearchMenu(true);
         }
     }
 
@@ -422,7 +432,7 @@ Interfaces.WhoIsCallingUpdateInterface{
             removeAddedFragment(null);
             addPostTypeFragment();
             startDiscussionFragment();
-
+//            showSearchMenu(true);
         }
     }
 
@@ -447,6 +457,7 @@ Interfaces.WhoIsCallingUpdateInterface{
             removeAddedFragment(null);
             addChooseRequestOptionsFragment();
             addRequestsFragment();
+//            showSearchMenu(true);
         }
     }
 
@@ -472,6 +483,7 @@ Interfaces.WhoIsCallingUpdateInterface{
 
             removeAddedFragment(null);
             addNotifsFragment();
+//            showSearchMenu(false);
         }
     }
 

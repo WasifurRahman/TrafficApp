@@ -70,4 +70,7 @@ public class Notification {
         return notifAbout;
     }
 
+    public String getTimeOfNotification() {
+        return timeOfNotification;
+    }
 }

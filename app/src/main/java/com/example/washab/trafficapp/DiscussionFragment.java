@@ -125,6 +125,11 @@ public class DiscussionFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
+    /**
+     * The discussion list is prepared from database information.
+     *
+     * @param jsonDiscussions A JSON object containing info of discussions from database.
+     */
 
     private void populateDiscussionList(JSONObject jsonDiscussions) {
 
@@ -158,6 +163,10 @@ public class DiscussionFragment extends Fragment {
         }
     }
 
+    /**
+     * ListView is prepared for displaying the list of updates.
+     */
+
     private void populateDiscussionListView(){
         ArrayAdapter<Discussion> adapter = new MyListAdapter();
 
@@ -169,6 +178,10 @@ public class DiscussionFragment extends Fragment {
         this.locationIdToSearch=locationIdToSearch;
         new FetchDiscussionTask().execute();
     }
+
+    /**
+     * Array adapter MyListAdapter accomodates discussions dynamically and fills the list container with proper layout.
+     */
 
     private class MyListAdapter extends ArrayAdapter<Discussion>{
         public MyListAdapter(){
@@ -193,7 +206,8 @@ public class DiscussionFragment extends Fragment {
             locFrom.setText(Locations.getLocationName(currentDiscussion.getLocationId()));
 
             TextView timeFrom = (TextView)itemView.findViewById(R.id.discussionUpdateTimeTextView);
-            timeFrom.setText(currentDiscussion.getTimeOfPost());
+            String timeOfPost = Utility.CurrentUser.parsePostTime(currentDiscussion.getTimeOfPost());
+            timeFrom.setText(timeOfPost);
 
             EditText sitDes=(EditText)itemView.findViewById(R.id.discussionDescriptionBox);
             sitDes.setText(currentDiscussion.getDescription());
@@ -236,19 +250,16 @@ public class DiscussionFragment extends Fragment {
                     }
                 }
             });
-
-
-
-
             return itemView;
-            // return super.getView(position, convertView, parent);
-
-
-
         }
     }
 
-
+    /**
+     * Modifies the dislike button when the page loads, based on whether the current user has already disliked a discussion or not.
+     * @param curVoter The user for whom discussion-voting is considered currently
+     * @param curDiscussion The discussion currently in context
+     * @param dislikeButton The button allowing a new dislike for the discussion
+     */
 
     private void checkIfAlreadyDislikedAndChangeColorAccordingly(Voter curVoter, Discussion curDiscussion, Button dislikeButton) {
         synchronized (curDiscussion) {
@@ -269,6 +280,13 @@ public class DiscussionFragment extends Fragment {
         }
     }
 
+    /**
+     * Modifies the like button when the page loads, based on whether the current user has already liked a discussion or not.
+     * @param curVoter The user for whom update-voting is considered currently
+     * @param curDiscussion The discussion currently in context
+     * @param likeButton The button allowing a new like for the discussion
+     */
+
     private void checkIfAlreadyLikedAndChangeColorAccordingly(Voter curVoter, Discussion curDiscussion, Button likeButton) {
         synchronized (curDiscussion) {
             // Log.d("UpdateId-LikerId-LikeCount", curUpdate.getId() + "-" + curVoter.getLikerId() + "-" + curUpdate.getLikeCount());
@@ -287,6 +305,16 @@ public class DiscussionFragment extends Fragment {
             }
         }
     }
+
+    /**
+     * Handles pressing of like button during user session. Removes 'dislike' and adds 'like' if it was 'disliked' by user before.
+     *
+     * @param pos Position in arraylist of updates
+     * @param likeButton The button allowing a new liker for the discussions
+     * @param likeCountTextView The number of people liking the discussion
+     * @param dislikeButton The button allowing a new disliker for the discussions
+     * @param dislikeCountTextView The number of people disliking the discussion
+     */
 
     private void handleLikeButtonPress(int pos, Button likeButton, TextView likeCountTextView,Button dislikeButton,TextView dislikeCountTextView) {
 
@@ -328,6 +356,14 @@ public class DiscussionFragment extends Fragment {
         }
     }
 
+    /**
+     * Changes color of dislike button.
+     *
+     * @param curDiscussion The discussion currently in context
+     * @param disLikeButton The button allowing a new disliker for the discussion
+     * @param dislikeText The text showing dislike/disliked on the button
+     */
+
     private void removeColorFromDislike(Discussion curDiscussion,Button disLikeButton,TextView dislikeText) {
         disLikeButton.setText("Dislike");
         dislikeText.setText("" + curDiscussion.getDislikeCount());
@@ -335,12 +371,30 @@ public class DiscussionFragment extends Fragment {
 
     }
 
+    /**
+     * Changes color of like button.
+     *
+     * @param curDiscussion The discussion currently in context
+     * @param likeButton The button allowing a new liker for the discussion
+     * @param likeText The text showing like/liked on the button
+     */
+
     private void removeColorFromLike(Discussion curDiscussion,Button likeButton,TextView likeText) {
         likeButton.setText("Like");
         likeText.setText("" + curDiscussion.getLikeCount());
         likeButton.setBackgroundColor(Color.LTGRAY);
 
     }
+
+    /**
+     * Handles pressing of dislike button during user session. Removes 'like' and adds 'dislike' if it was 'liked' by user before.
+     *
+     * @param pos Position in arraylist of updates
+     * @param likeButton The button allowing a new liker for the discussion
+     * @param likeCountTextView The number of people liking the discussion
+     * @param dislikeButton The button allowing a new disliker for the discussion
+     * @param dislikeCountTextView The number of people disliking the discussion
+     */
 
     private void handledislikeButtonPress(int pos,Button dislikeButton,TextView dislikeCountTextView,Button likeButton,TextView likeCountTextView) {
 
@@ -377,6 +431,12 @@ public class DiscussionFragment extends Fragment {
         }
     }
 
+    /**
+     * Sets the criteria for sorting of the discussions in the page.
+     *
+     * @param sortingCriteria The criteria used to sort the discussions in the page.
+     */
+
 
     public void setDiscussionSorting (String sortingCriteria) {
         this.sortingCriteria = sortingCriteria;
@@ -410,7 +470,9 @@ public class DiscussionFragment extends Fragment {
     }
 
 
-
+    /**
+     * AsyncTask FetchDiscussionTask runs in background to send a HTTP request and fetch all discussions in JSON format from database.
+     */
 
     class FetchDiscussionTask extends AsyncTask<String, Void, String> {
 
@@ -466,7 +528,9 @@ public class DiscussionFragment extends Fragment {
         }
     }
 
-
+    /**
+     * AsyncTask AddLikerTask runs in background to send a HTTP request to add a new discussion-liker to database.
+     */
 
     class AddLikerTask extends AsyncTask<String, Void, String> {
 
@@ -507,6 +571,10 @@ public class DiscussionFragment extends Fragment {
         }
     }
 
+    /**
+     * AsyncTask AddDislikerTask runs in background to send a HTTP request to add a new discussion-disliker to database.
+     */
+
 
     class AddDislikerTask extends AsyncTask<String, Void, String> {
 
@@ -546,6 +614,9 @@ public class DiscussionFragment extends Fragment {
         }
     }
 
+    /**
+     * AsyncTask RemoveDislikerTask runs in background to send a HTTP request to remove discussion-disliker from database.
+     */
 
     class RemoveDislikerTask extends AsyncTask<String, Void, String> {
 
@@ -586,6 +657,9 @@ public class DiscussionFragment extends Fragment {
         }
     }
 
+    /**
+     * AsyncTask RemovelikerTask runs in background to send a HTTP request to remove discussion-liker from database.
+     */
 
     class RemoveLikerTask extends AsyncTask<String, Void, String> {
 

@@ -5,13 +5,13 @@
     <string name="action_settings">Settings</string>
     <string name="signUpString">Sign Up</string>
     <string name="logInString">Log In</string>
-    <string name="title_activity_sign_up">SignUp</string>
-
+    <string name="title_activity_sign_up">Sign Up</string>
+.
     <string name="hello_world">Hello world!</string>
     <string name="nameString">Name:</string>
     <string name="title_activity_email_verification">EmailVerification</string>
     <string name="title_activity_home">Home</string>
-    <string name="title_activity_add_update">AddUpdate</string>
+    <string name="title_activity_add_update">Add Update</string>
     <string name="title_activity_sample_update">SampleUpdate</string>
     <string name="add_update_button">Update</string>
     <string name="add_request_button">Request</string>
@@ -27,6 +27,6 @@
     <string name="title_activity_add_discussion">AddDiscussion</string>
     <string name="startAddingDiscussion">ADD DISCUSSION</string>
     <string name="title_activity_searchable">SearchableActivity</string>
-    <string name="title_activity_add_preferred_location">AddPreferredLocationActivity</string>
+    <string name="title_activity_add_preferred_location">Follow Locations</string>
 
 </resources>

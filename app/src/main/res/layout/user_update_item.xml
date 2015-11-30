@@ -148,7 +148,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="2.5"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/updatorNameTextView"
+            android:id="@+id/updaterNameTextView"
             android:text="Large"/>
 
         <TextView

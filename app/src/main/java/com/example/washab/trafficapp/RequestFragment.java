@@ -163,7 +163,7 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
      */
     public void setRequestSearchLocation(int locationIdToSearch) {
         this.locationIdToSearch=locationIdToSearch;
-        fetchRequestTask.execute();
+        new FetchRequestTask().execute();
     }
 
     /**
@@ -207,7 +207,8 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
             requesterId.setText("" + currentRequest.getRequesterName());
 
             TextView updateTime=(TextView) itemView.findViewById(R.id.requestUpdateTimeTextView);
-            updateTime.setText(currentRequest.getTimeOfRequest());
+            String timeOfRequest = Utility.CurrentUser.parsePostTime(currentRequest.getTimeOfRequest());
+            updateTime.setText(timeOfRequest);
 
             final TextView followCnt=(TextView) itemView.findViewById(R.id.requestFollowerCountTextView);
             followCnt.setText("" + currentRequest.getFollowerCount());
