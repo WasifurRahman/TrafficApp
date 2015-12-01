@@ -3,39 +3,64 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     tools:context="com.example.washab.trafficapp.ChooseUpdateOptionsFragment">
-    <Button
-        android:layout_width="wrap_content"
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="ADD UPDATE"
-        android:id="@+id/startAddingUpdateButton"
-        android:onClick="OnStartingToAddUpdateButtonClick"
-        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:orientation="vertical"
+        android:padding="5dp">
 
-        />
-
-    <RadioGroup
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <RadioButton
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/updateOptionMostFavouriteButton"
-            android:text="@string/most_popular"
-            android:checked="false"/>
+            android:orientation="horizontal"
+            android:paddingTop="2dp"
+            android:paddingBottom="5dp">
 
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/most_recent"
-            android:id="@+id/updateOptionMostRecentButton"
-            android:checked="true"
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ADD UPDATE"
+                android:id="@+id/startAddingUpdateButton"
+                android:onClick="OnStartingToAddUpdateButtonClick"
+                android:paddingRight="@dimen/activity_horizontal_margin"
 
-            />
+                />
 
-    </RadioGroup>
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center_vertical"
+                android:baselineAligned="true">
 
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/updateOptionMostFavouriteButton"
+                    android:text="@string/most_popular"
+                    android:checked="false"/>
 
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/most_recent"
+                    android:id="@+id/updateOptionMostRecentButton"
+                    android:checked="true"
+                    />
+
+            </RadioGroup>
+        </LinearLayout>
+
+        <TextView
+            android:padding="5dp"
+            android:paddingBottom="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#707070" />
+
+    </LinearLayout>
 
 </LinearLayout>
+
+

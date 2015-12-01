@@ -22,14 +22,7 @@ import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
-import java.text.DateFormatSymbols;
-import java.text.ParseException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 
@@ -72,6 +65,10 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
     ListView customUpdateList;
     private int dislikerId;
     private int updateToBeDisliked;
+
+    private enum Situations {
+        Free, Mild, Moderate, Extreme, Gridlock
+    }
 
 
     FetchUpdateTask fetchUpdateTask = new FetchUpdateTask();
@@ -199,11 +196,29 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
             TextView locTo = (TextView)itemView.findViewById(R.id.locationToTextView);
             locTo.setText(Locations.getLocationName(currentUpdate.getLocationIdTo()));
 
-            TextView sitDes=(TextView)itemView.findViewById(R.id.situationDesCriptionTextView);
+            TextView sitDes=(TextView)itemView.findViewById(R.id.situationTextView);
             sitDes.setText(currentUpdate.getSituation());
 
+            switch (Situations.valueOf(currentUpdate.getSituation())) {
+                case Free:
+                    sitDes.setTextColor(Color.parseColor("#188F00"));
+                    break;
+                case Mild:
+                    sitDes.setTextColor(Color.parseColor("#ADCC12"));
+                    break;
+                case Moderate:
+                    sitDes.setTextColor(Color.parseColor("#CCBD12"));
+                    break;
+                case Extreme:
+                    sitDes.setTextColor(Color.parseColor("#CC6012"));
+                    break;
+                case Gridlock:
+                    sitDes.setTextColor(Color.parseColor("#CC2B12"));
+                    break;
+            }
+
             TextView estTime=(TextView) itemView.findViewById(R.id.estTimeDescriptorTextView);
-            estTime.setText(""+currentUpdate.getEstTimeToCross());
+            estTime.setText(""+currentUpdate.getEstTimeToCross() + " minutes");
 
             TextView updaterName=(TextView) itemView.findViewById(R.id.updaterNameTextView);
             updaterName.setText(currentUpdate.getUpdaterName());
@@ -281,11 +296,13 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
 
                 Log.d("Inside dislikeButton Color", "Yes");
                 dislikeButton.setText("Disliked");
-                dislikeButton.setBackgroundColor(Color.CYAN);
+                dislikeButton.setTextColor(Color.WHITE);
+                dislikeButton.setBackgroundColor(Color.parseColor("#521006"));
                 dislikeButton.setWidth(50);
 
             }else{
                 dislikeButton.setText("Dislike");
+                dislikeButton.setTextColor(Color.BLACK);
                 dislikeButton.setBackgroundColor(Color.LTGRAY);
                 dislikeButton.setWidth(20);
             }
@@ -307,11 +324,13 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
 
                 Log.d("Inside likeButton Color", "Yes");
                 likeButton.setText("Liked");
-                likeButton.setBackgroundColor(Color.CYAN);
+                likeButton.setTextColor(Color.WHITE);
+                likeButton.setBackgroundColor(Color.parseColor("#034513"));
                 likeButton.setWidth(50);
 
             }else{
                 likeButton.setText("Like");
+                likeButton.setTextColor(Color.BLACK);
                 likeButton.setBackgroundColor(Color.LTGRAY);
                 likeButton.setWidth(20);
             }
@@ -350,7 +369,8 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
            // curUpdate.removeDisliker(curVoter);
             //Log.d("yes liked ", "for the first time");
             likeButton.setText("Liked");
-            likeButton.setBackgroundColor(Color.CYAN);
+            likeButton.setTextColor(Color.WHITE);
+            likeButton.setBackgroundColor(Color.parseColor("#034513"));
             //now increase the likeCount by one
             int curLikeCount=curUpdate.getLikeCount();
             likeCountTextView.setText("" + curLikeCount);
@@ -380,6 +400,7 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
 
     private void removeColorFromDislike(Update curUpdate,Button disLikeButton,TextView dislikeText) {
         disLikeButton.setText("Dislike");
+        disLikeButton.setTextColor(Color.BLACK);
         dislikeText.setText(""+curUpdate.getDislikeCount());
         disLikeButton.setBackgroundColor(Color.LTGRAY);
 
@@ -394,6 +415,7 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
 
     private void removeColorFromLike(Update curUpdate,Button likeButton,TextView likeText) {
         likeButton.setText("Like");
+        likeButton.setTextColor(Color.BLACK);
         likeText.setText(""+curUpdate.getLikeCount());
         likeButton.setBackgroundColor(Color.LTGRAY);
 
@@ -426,7 +448,8 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
             //curUpdate.removeLiker(curVoter);
             //Log.d("yes liked ", "for the first time");
             dislikeButton.setText("Disliked");
-            dislikeButton.setBackgroundColor(Color.CYAN);
+            dislikeButton.setTextColor(Color.WHITE);
+            dislikeButton.setBackgroundColor(Color.parseColor("#521006"));
             //now increase the likeCount by one
             int curdisLikeCount=curUpdate.getDislikeCount();
             dislikeCountTextView.setText("" + curdisLikeCount);
