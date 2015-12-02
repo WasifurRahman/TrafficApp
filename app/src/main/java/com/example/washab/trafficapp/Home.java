@@ -22,7 +22,7 @@ import android.widget.TextView;
 
 public class Home extends AppCompatActivity implements UpdateFragment.OnFragmentInteractionListener ,AnnouncementFragment.OnFragmentInteractionListener,
 ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFragment.OnFragmentInteractionListener,RequestFragment.OnFragmentInteractionListener,PostTypeFragment.OnFragmentInteractionListener
-,ChooseAnnouncementOptionsFragment.OnFragmentInteractionListener,ChooseDiscussionOptionsFragment.OnFragmentInteractionListener,DiscussionFragment.OnFragmentInteractionListener, NotificationsFragment.OnFragmentInteractionListener,Interfaces.WhoIsCallingUpdateInterface{
+,ChooseAnnouncementOptionsFragment.OnFragmentInteractionListener,Interfaces.ToWhichActivityIsTheFragmentAttached,Interfaces.WhichFragmentIsCallingDetailedActivity,ChooseDiscussionOptionsFragment.OnFragmentInteractionListener,DiscussionFragment.OnFragmentInteractionListener, NotificationsFragment.OnFragmentInteractionListener,Interfaces.WhoIsCallingUpdateInterface{
 
     private String updatesFragmentTag="UPDATESFRAGMENT";
     private String postsFragmentTag="POSTSFRAGMENT";
@@ -45,6 +45,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     private static final int NOTIFS = 4;
     private static final int DISCUSSIONS = 5;
     private static final int ANNOUNCEMENTS= 6;
+
 
     private Menu menu;
 
@@ -485,6 +486,30 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+    @Override
+    public void callAppropriateDetailedActivity(int idOfTheFragmentToBeCalled,Object incomingObj) {
+        if(idOfTheFragmentToBeCalled== Interfaces.WhichFragmentIsCallingDetailedActivity.UPDATE_FRAGMENT){
+            Update updateToBeSent=(Update)incomingObj;
+            Log.d("detailed Update", updateToBeSent.toString());
+            Intent intent=new Intent(this,DetailActivity.class);
+            intent.putExtra("fragment_to_be_loaded",idOfTheFragmentToBeCalled).putExtra("print","update");
+            intent.putExtra("object_sent",updateToBeSent);
+            startActivity(intent);
+
+        }
+    }
+
+    @Override
+    public int getTheIdOfTheActivityTHeFragmentIsAttachedTo() {
+        return Interfaces.ToWhichActivityIsTheFragmentAttached.HOME_ACTIVITY;
+    }
+
+    @Override
+    public Update passUpdateObject() {
+        return null;
+    }
+
 
     @Override
     public void startAddDiscussionActivity() {

@@ -4,12 +4,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.HashSet;
 
 /**
  * Created by Shabab on 11/9/2015.
  */
-public class Update {
+public class Update implements Serializable {
     private int id,updaterId;
 
     @Override

@@ -28,5 +28,6 @@
     <string name="startAddingDiscussion">ADD DISCUSSION</string>
     <string name="title_activity_searchable">SearchableActivity</string>
     <string name="title_activity_add_preferred_location">AddPreferredLocationActivity</string>
+    <string name="title_activity_detail">DetailActivity</string>
 
 </resources>
