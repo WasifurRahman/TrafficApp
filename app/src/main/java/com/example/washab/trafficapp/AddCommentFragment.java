@@ -89,6 +89,7 @@ public class AddCommentFragment extends Fragment{
                     String commentorName = Utility.CurrentUser.getName();
                     EditText commentEditText = ((EditText) getActivity().findViewById(R.id.addCommentEditText));
                     String commentText = commentEditText.getText().toString();
+                    if(commentText.equals(""))return;
 
 
                     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");

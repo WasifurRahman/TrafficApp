@@ -133,6 +133,7 @@ public class Update implements Serializable {
 
     public static Update createUpdate(JSONObject jsonObject) {
         try {
+            //Log.d("before json in notification", jsonObject.toString());
              return new Update(jsonObject.getInt("id"),
                      jsonObject.getString("description"),
                     jsonObject.getInt("dislikeCount"),

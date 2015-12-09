@@ -121,7 +121,7 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
     private void populateUpdateList(JSONObject jsonUpdates){
 
         try {
-            //Log.d("within updates: ",jsonUpdates.toString());
+            Log.d("within updates: ",jsonUpdates.toString());
             allUserUpdatesArraylist.clear();
 
             JSONArray allUpdatesJSONArray=jsonUpdates.getJSONArray("updates");

@@ -72,11 +72,12 @@ public class DetailActivity extends AppCompatActivity implements  AddCommentFrag
                 //addUpdatesFragmentAndPassParamaters();
 
                 //addShowCommentFragment();
-                //loadCommentsFromServer(incomingDiscussionObj.getId());//comments are loaded from server.
+                addAddCommentFragment();
+                loadCommentsFromServer(incomingDiscussionObj.getId());//comments are loaded from server.
                 //then the background thread will load the json in the arraylist
                 //then the new fragment will be added
 
-                //addAddCommentFragment();
+
 
 
                 break;
@@ -88,11 +89,12 @@ public class DetailActivity extends AppCompatActivity implements  AddCommentFrag
                 //addUpdatesFragmentAndPassParamaters();
 
                 //addShowCommentFragment();
-                //loadCommentsFromServer(incomingDiscussionObj.getId());//comments are loaded from server.
+                addAddCommentFragment();
+                loadCommentsFromServer(incomingAnnouncementObj.getId());//comments are loaded from server.
                 //then the background thread will load the json in the arraylist
                 //then the new fragment will be added
 
-                //addAddCommentFragment();
+
 
 
                 break;
@@ -105,12 +107,9 @@ public class DetailActivity extends AppCompatActivity implements  AddCommentFrag
                 //Log.d("detailed_activity",incomingObj.toString());
                 //addUpdatesFragmentAndPassParamaters();
 
-                //addShowCommentFragment();
-                //loadCommentsFromServer(incomingDiscussionObj.getId());//comments are loaded from server.
-                //then the background thread will load the json in the arraylist
-                //then the new fragment will be added
 
-                //addAddCommentFragment();
+
+
 
 
                 break;
@@ -225,6 +224,16 @@ public class DetailActivity extends AppCompatActivity implements  AddCommentFrag
 
             new AddCommentTask().execute(""+newComment.getCommenterId(),""+incomingUpdateObj.getId(),newComment.getCommentText());
         }
+        else if(Interfaces.WhichFragmentIsCallingDetailedActivity.ANNOUNCEMENT_FRAGMENT==fragmentToBeLoaded){
+            //the update object is loaded currently.
+
+            new AddCommentTask().execute(""+newComment.getCommenterId(),""+incomingAnnouncementObj.getId(),newComment.getCommentText());
+        }
+        else if(Interfaces.WhichFragmentIsCallingDetailedActivity.DISCUSSION_FRAGMENT==fragmentToBeLoaded){
+            //the update object is loaded currently.
+
+            new AddCommentTask().execute(""+newComment.getCommenterId(),""+incomingDiscussionObj.getId(),newComment.getCommentText());
+        }
 
     }
 
@@ -299,9 +308,24 @@ public class DetailActivity extends AppCompatActivity implements  AddCommentFrag
             params.add(new Pair("commenterId",commenterId));
             params.add(new Pair("commentText",commentText));
 
-            if(Interfaces.WhichFragmentIsCallingDetailedActivity.UPDATE_FRAGMENT==fragmentToBeLoaded){
-                params.add(new Pair("updateId",toBeAssociatedId));
-                jsonAddComments=jParser.makeHttpRequest("/addupdatecomment", "POST", params);
+            switch (fragmentToBeLoaded) {
+                case Interfaces.WhichFragmentIsCallingDetailedActivity.UPDATE_FRAGMENT:
+                    params.add(new Pair("updateId", toBeAssociatedId));
+                    jsonAddComments = jParser.makeHttpRequest("/addupdatecomment", "POST", params);
+                    break;
+                case Interfaces.WhichFragmentIsCallingDetailedActivity.ANNOUNCEMENT_FRAGMENT:
+
+                    params.add(new Pair("postId", toBeAssociatedId));
+                    jsonAddComments = jParser.makeHttpRequest("/addpostcomment", "POST", params);
+                    break;
+
+                case Interfaces.WhichFragmentIsCallingDetailedActivity.DISCUSSION_FRAGMENT:
+
+                    params.add(new Pair("postId", toBeAssociatedId));
+                    Log.d("adding comments in discussion"," entered");
+                    jsonAddComments = jParser.makeHttpRequest("/addpostcomment", "POST", params);
+                    Log.d("adding comments in discussion",jsonAddComments.toString());
+                    break;
             }
             // getting JSON string from URL
 
@@ -340,13 +364,30 @@ public class DetailActivity extends AppCompatActivity implements  AddCommentFrag
             JSONParser jParser = new JSONParser();
             // Building Parameters
             List<Pair> params = new ArrayList<Pair>();
-            int updateId = Integer.parseInt(args[0]);
+            int idToFetchCommentsFrom = Integer.parseInt(args[0]);
 
-            params.add(new Pair("updateId", updateId));
-            // getting JSON string from URL
+            switch (fragmentToBeLoaded) {
+                case Interfaces.WhichFragmentIsCallingDetailedActivity.UPDATE_FRAGMENT:
+                    params.add(new Pair("updateId", idToFetchCommentsFrom));
+                    // getting JSON string from URL
+                    jsonComments = jParser.makeHttpRequest("/updatecomments", "GET", params);
+                    break;
+                case Interfaces.WhichFragmentIsCallingDetailedActivity.ANNOUNCEMENT_FRAGMENT:
+                    params.add(new Pair("postId", idToFetchCommentsFrom));
+                    // getting JSON string from URL
+                    jsonComments = jParser.makeHttpRequest("/postcomments", "GET", params);
 
+                    break;
 
-            jsonComments = jParser.makeHttpRequest("/updatecomments", "GET", params);
+                case Interfaces.WhichFragmentIsCallingDetailedActivity.DISCUSSION_FRAGMENT:
+                    params.add(new Pair("postId", idToFetchCommentsFrom));
+                    // getting JSON string from URL
+
+                    jsonComments = jParser.makeHttpRequest("/postcomments", "GET", params);
+
+                    break;
+
+            }
 
 
             return null;

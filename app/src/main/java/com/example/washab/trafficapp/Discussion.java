@@ -213,5 +213,22 @@ public class Discussion implements Serializable{
     public void setPosterName(String posterName) {
         this.posterName = posterName;
     }
+
+    @Override
+    public String toString() {
+        return "Discussion{" +
+                "id=" + id +
+                ", locationId=" + locationId +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", timeOfPost='" + timeOfPost + '\'' +
+                ", posterId=" + posterId +
+                ", posterName='" + posterName + '\'' +
+                ", likeCount=" + likeCount +
+                ", dislikeCount=" + dislikeCount +
+                ", likersId=" + likersId +
+                ", dislikersId=" + dislikersId +
+                '}';
+    }
 }
 
