@@ -212,14 +212,14 @@ public class AddUpdate extends AppCompatActivity implements Interfaces.WhoIsCall
 
     public void onAddUpdateButtonClick(View v){
 
-        if(v.getId()==R.id.addUpdateButton && addUpdateButtonPressed==false){
+        if(v.getId()==R.id.addUpdateButton){
             addUpdateButtonPressed = true;
             fromLocationId=Locations.getLocationId(fromLocationName);
             toLocationId=Locations.getLocationId(toLocationName);
             situation=situationChoices[situationIndex];
             int timeToSubtract=timeToDeduct[timestampIndex];
 
-            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
             Date date = new Date();
 //            dateFormat.format(date);
 

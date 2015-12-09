@@ -41,7 +41,7 @@ public class DetailActivity extends AppCompatActivity implements  AddCommentFrag
 
     private void loadAppropriateFragments() {
         fragmentToBeLoaded = getIntent().getIntExtra("fragment_to_be_loaded", 0);
-        String message = getIntent().getStringExtra("print");
+        //String message = getIntent().getStringExtra("print");
 
         switch (fragmentToBeLoaded) {
             case Interfaces.WhichFragmentIsCallingDetailedActivity.UPDATE_FRAGMENT:

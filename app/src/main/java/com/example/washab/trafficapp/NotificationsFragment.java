@@ -45,6 +45,7 @@ public class NotificationsFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private FetchNotificationsTask fetchNotificationsTask = new FetchNotificationsTask();
 
     /**
      * Use this factory method to create a new instance of
@@ -77,6 +78,14 @@ public class NotificationsFragment extends Fragment {
         }
     }
 
+    /**
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return A new view to display the notifications for the user.
+     */
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -84,11 +93,17 @@ public class NotificationsFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_notifications, container, false);
     }
 
+    /**
+     * Notifications are fetched from the database as soon as the activity is ready.
+     *
+     * @param savedInstanceState
+     */
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         progressLayout = (LinearLayout) getActivity().findViewById(R.id.progressbar_view);
         customNotifsListView =(ListView)getActivity().findViewById(R.id.userNotifsListView);
-        new FetchNotificationsTask().execute();
+        fetchNotificationsTask.execute();
 
         super.onActivityCreated(savedInstanceState);
     }
@@ -99,6 +114,18 @@ public class NotificationsFragment extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        fetchNotificationsTask.cancel(true);
+    }
+
+    /**
+     * The notification list is prepared from database information.
+     *
+     * @param jsonNotifs JSON object containing fetched notifications from database.
+     */
 
     private void populateNotifList(JSONObject jsonNotifs){
 
@@ -119,11 +146,19 @@ public class NotificationsFragment extends Fragment {
         }
     }
 
+    /**
+     * ListView is prepared for displaying the list of notifications.
+     */
+
     private void populateNotifListView(){
         ArrayAdapter<Notification> adapter = new MyListAdapter();
         ListView list=(ListView)getView().findViewById(R.id.userNotifsListView);
         list.setAdapter(adapter);
     }
+
+    /**
+     * Array adapter MyListAdapter accomodates notifications dynamically and fills the list container with proper layout.
+     */
 
     private class MyListAdapter extends ArrayAdapter<Notification>{
         public MyListAdapter(){
@@ -139,29 +174,19 @@ public class NotificationsFragment extends Fragment {
             }
 
 
-            //find the update to work with
+            //find the notification to work with
             final Notification currentNotif = allNotifsArraylist.get(position);
             int currentUserId=Utility.CurrentUser.getId();
 
             //fill the view
-
-//            TextView notifFromUsername = (TextView)itemView.findViewById(R.id.notifFromUsernameTextView);
-//            notifFromUsername.setText(currentNotif.getNotifFromUsername());
-
-//            TextView notifType = (TextView)itemView.findViewById(R.id.notifTypeTextView);
-//            notifType.setText(" " + currentNotif.getNotifType() + "d ");
-
-//            TextView notifAbout = (TextView)itemView.findViewById(R.id.notifAboutTextView);
-//            notifAbout.setText(currentNotif.getNotifAbout() + ".");
 
             TextView notifText = (TextView)itemView.findViewById(R.id.notifText);
 
             String notifType = currentNotif.getNotifType();
             String notifFromUsername = currentNotif.getNotifFromUsername();
             String notifAbout = currentNotif.getNotifAbout();
-//            Log.d("notifType", notifType);
+
             if(notifType.equals("like")) {
-//                Log.d("inside notifType", "like");
                 notifText.setText(notifFromUsername + " liked your " + notifAbout + ".");
             }
             else if(notifType.equals("follow")) {
@@ -177,11 +202,11 @@ public class NotificationsFragment extends Fragment {
                 notifText.setText(notifFromUsername + " responded to a " + notifAbout + " you are following.");
             }
 
+            TextView notifTime = (TextView)itemView.findViewById(R.id.notifTime);
+            String timeOfNotif = Utility.CurrentUser.parsePostTime(currentNotif.getTimeOfNotification());
+            notifTime.setText(timeOfNotif);
+
             return itemView;
-            // return super.getView(position, convertView, parent);
-
-
-
         }
     }
 
@@ -218,6 +243,10 @@ public class NotificationsFragment extends Fragment {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
+
+    /**
+     * AsyncTask FetchNotificationsTask runs in background to send a HTTP request and fetch all notifications in JSON format from database.
+     */
 
     class FetchNotificationsTask extends AsyncTask<String, Void, String> {
 

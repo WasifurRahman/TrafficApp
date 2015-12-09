@@ -2,7 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:myapp="http://schemas.android.com/apk/res-auto">
 
-
+<group
+    android:id = "@+id/search_group">
+    <ImageView
+        android:id="@+id/searchImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/search_icon"
+        myapp:showAsAction="always"/>
     <item
         android:id="@+id/searchSpinner"
         myapp:showAsAction="always"
@@ -10,17 +17,20 @@
         myapp:actionViewClass="android.widget.Spinner"
         />
 
+</group>
+
+
     <item
         android:id="@+id/addPreferredLocation"
 
         myapp:showAsAction="collapseActionView"
-        android:title="Add Location" />
+        android:title="Follow Locations" />
 
 
     <item
         android:id="@+id/logoutButton"
 
         myapp:showAsAction="collapseActionView"
-        android:title="LogOut" />
+        android:title="Log Out" />
 
 </menu>

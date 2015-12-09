@@ -2,136 +2,162 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="10dp"
+    android:layout_marginTop="20dp"
     android:layout_marginLeft="15dp"
     android:layout_marginRight="15dp"
-    android:layout_marginBottom="20dp"
-    android:paddingBottom="15dp"
-    android:descendantFocusability="blocksDescendants">
 
 
-    <TextView
-        android:padding="5dp"
-        android:paddingBottom="15dp"
+    android:descendantFocusability="blocksDescendants"
+    android:layout_marginBottom="1dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="1dp">
+
+
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="#707070" />
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingBottom="5dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Location:   "
+            android:layout_gravity="left"
+            android:textStyle="bold" />
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/locationFromTextView"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+
+                android:text=" - "/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/locationToTextView"
+                />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingBottom="5dp"
+        android:orientation="horizontal">
+
+        <!--<TextView-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="2"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="Situation"-->
+            <!--android:id="@+id/SitTextView"-->
+            <!--android:layout_gravity="left" />-->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Situation:   "
+            android:layout_gravity="left"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/situationTextView"
+            android:text="test"
+            android:textStyle="bold"
+            />
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:dividerPadding="5dp"
-        android:paddingBottom="20dp"
-        android:padding="10dp">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Large Text"
-            android:id="@+id/locationFromTextView"
-            android:layout_gravity="right" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="To"
-            android:id="@+id/toTextView"
-            android:layout_gravity="center_horizontal" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/locationToTextView"
-            android:text="Large"/>
-
-    </LinearLayout>
-
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Situation"
-            android:id="@+id/SitTextView"
-            android:layout_gravity="left" />
-
-
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/situationDesCriptionTextView"
-            android:text="Large"/>
-
-
-
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Estimated Time"
-            android:id="@+id/textIndTextView"
-            android:layout_gravity="left" />
-
-
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/estTimeDescriptorTextView"
-            android:text="Large"/>
-
-    </LinearLayout>
-
-    <EditText
-        android:id="@+id/updateDescriptionBox"
-        android:paddingTop="1dp"
-        android:layout_width="259dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/description_text_box"
         android:paddingLeft="10dp"
-        android:paddingRight="20dp"
-        android:paddingBottom="5dp"
-        android:padding="10dp"
-        android:editable="false"
-        android:textSize="15dp"
-        android:layout_gravity="fill_horizontal">
+        android:paddingBottom="5dp">
 
-    </EditText>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Estimated Time:   "
+            android:layout_gravity="left"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/estTimeDescriptorTextView"
+            android:text="test"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="10dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp">
+
+        <EditText
+            android:id="@+id/updateDescriptionBox"
+            android:paddingTop="1dp"
+            android:layout_width="259dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/description_text_box"
+            android:paddingLeft="10dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="5dp"
+            android:padding="10dp"
+            android:editable="false"
+            android:textSize="15dp"
+            android:layout_gravity="fill_horizontal">
+
+        </EditText>
+
+    </LinearLayout>
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingLeft="15dp"
+        android:paddingBottom="5dp">
 
         <TextView
             android:layout_width="0dp"
@@ -145,26 +171,24 @@
 
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2.5"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/updatorNameTextView"
-            android:text="Large"/>
-
-        <TextView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/ind"
-            android:text="at"/>
+            android:id="@+id/updaterNameTextView"
+            android:text="Large"/>
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="2.5"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/ind"
+            android:text="at  "/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:id="@+id/updateTimeTextView"
             android:text="Large"/>
 
@@ -177,46 +201,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/likeCountTextView"
-            android:layout_gravity="left" />
-
-
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2.5"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/ind2"
-            android:text="Likes"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/dislikeCountTextView" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2.5"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/ind3"
-            android:text="Dislikes"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:paddingLeft="10dp"
+        android:paddingTop="5dp">
 
     <!--<Button-->
         <!--android:layout_width="wrap_content"-->
@@ -227,20 +213,78 @@
 
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:text="Like"
             android:id="@+id/updateLikeButton"
-            android:width="20dp"/>
+            android:width="20dp"
+            android:paddingRight="10dp"
+            android:layout_marginRight="5dp"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Dislike"
-        android:id="@+id/updateDislikeButton"
-        android:layout_marginLeft="40dp"
-        android:width="20dp"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Dislike"
+            android:id="@+id/updateDislikeButton"
+            android:paddingLeft="10dp"
+            android:width="20dp"/>
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="15dp"
+        android:paddingBottom="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/likeCountTextView"
+            android:layout_gravity="left" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="  "/>
 
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/ind2"
+            android:text="Likes"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="         "/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/dislikeCountTextView" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="  "/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/ind3"
+            android:text="Dislikes"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:padding="5dp"
+        android:paddingTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#707070" />
 </LinearLayout>

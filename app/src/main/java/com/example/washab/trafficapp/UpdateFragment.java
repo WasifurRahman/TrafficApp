@@ -48,6 +48,7 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    //private OnFragmentInteractionListenerForDetailedActivity mListenerDetail;
 
     private static Context context;
     private JSONObject jsonUpdates;
@@ -67,8 +68,10 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
     private int dislikerId;
     private int updateToBeDisliked;
 
+    private enum Situations {
+        Free, Mild, Moderate, Extreme, Gridlock
+    }
 
-    //FetchUpdateTask fetchUpdateTask = new FetchUpdateTask();
 
 
 
@@ -109,7 +112,11 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         setHasOptionsMenu(true);
     }
 
-
+    /**
+     * The update list is prepared from database information.
+     *
+     * @param jsonUpdates A JSON object containing info of updates from database.
+     */
 
     private void populateUpdateList(JSONObject jsonUpdates){
 
@@ -146,6 +153,10 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         }
     }
 
+    /**
+     * ListView is prepared for displaying the list of updates.
+     */
+
     private void populateUpdateListView(){
         ArrayAdapter<Update> adapter = new MyListAdapter();
         ListView list=(ListView)getView().findViewById(R.id.userUpdatesListView);
@@ -153,6 +164,7 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         list.setAdapter(adapter);
 
     }
+
 
     private void registerCallBack(){
 
@@ -177,6 +189,11 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
     }
 
 
+
+
+    /**
+     * Array adapter MyListAdapter accomodates updates dynamically and fills the list container with proper layout.
+     */
 
 
     private class MyListAdapter extends ArrayAdapter<Update>{
@@ -207,17 +224,42 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
             TextView locTo = (TextView)itemView.findViewById(R.id.locationToTextView);
             locTo.setText(Locations.getLocationName(currentUpdate.getLocationIdTo()));
 
-            TextView sitDes=(TextView)itemView.findViewById(R.id.situationDesCriptionTextView);
+            TextView sitDes=(TextView)itemView.findViewById(R.id.situationTextView);
             sitDes.setText(currentUpdate.getSituation());
 
-            TextView estTime=(TextView) itemView.findViewById(R.id.estTimeDescriptorTextView);
-            estTime.setText(""+currentUpdate.getEstTimeToCross());
+            switch (Situations.valueOf(currentUpdate.getSituation())) {
+                case Free:
+                    sitDes.setTextColor(Color.parseColor("#188F00"));
+                    break;
+                case Mild:
+                    sitDes.setTextColor(Color.parseColor("#ADCC12"));
+                    break;
+                case Moderate:
+                    sitDes.setTextColor(Color.parseColor("#CCBD12"));
+                    break;
+                case Extreme:
+                    sitDes.setTextColor(Color.parseColor("#CC6012"));
+                    break;
+                case Gridlock:
+                    sitDes.setTextColor(Color.parseColor("#CC2B12"));
+                    break;
+            }
 
-            TextView updatorName=(TextView) itemView.findViewById(R.id.updatorNameTextView);
-            updatorName.setText(currentUpdate.getUpdaterName());
+            TextView estTime=(TextView) itemView.findViewById(R.id.estTimeDescriptorTextView);
+            estTime.setText(""+currentUpdate.getEstTimeToCross() + " minutes");
+
+            TextView updaterName=(TextView) itemView.findViewById(R.id.updaterNameTextView);
+            updaterName.setText(currentUpdate.getUpdaterName());
+
+//            String timeOfUpdate = itemView.findViewById(R.id.updateTimeTextView).toString();
+//            SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+//            TextView updateTime = (TextView) itemView.findViewById(R.id.updateTimeTextView);
+//            updateTime.setText(dateFormat.parse(timeOfUpdate, new ParsePosition(11)).toString());
 
             TextView updateTime=(TextView) itemView.findViewById(R.id.updateTimeTextView);
-            updateTime.setText(currentUpdate.getTimeOfUpdate());
+//            updateTime.setText(currentUpdate.getTimeOfUpdate());
+            String timeOfUpdate = Utility.CurrentUser.parsePostTime(currentUpdate.getTimeOfUpdate());
+            updateTime.setText(timeOfUpdate);
 
             EditText description = (EditText) itemView.findViewById(R.id.updateDescriptionBox);
             description.setText(currentUpdate.getDescription());
@@ -256,6 +298,7 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
                         handledislikeButtonPress(position, dislikeButton, dislikeCnt,likeButton,likeCnt);
                     }
                 }
+
             });
 
             return itemView;
@@ -269,6 +312,13 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
 
     }
 
+    /**
+     * Modifies the dislike button when the page loads, based on whether the current user has already disliked an update or not.
+     * @param curVoter The user for whom update-voting is considered currently
+     * @param curUpdate The update currently in context
+     * @param dislikeButton The button allowing a new dislike for the update
+     */
+
     private void checkIfAlreadyDislikedAndChangeColorAccordingly(Voter curVoter, Update curUpdate, Button dislikeButton) {
         synchronized (curUpdate) {
             // Log.d("UpdateId-LikerId-LikeCount", curUpdate.getId() + "-" + curVoter.getLikerId() + "-" + curUpdate.getLikeCount());
@@ -277,16 +327,25 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
 
                 Log.d("Inside dislikeButton Color", "Yes");
                 dislikeButton.setText("Disliked");
-                dislikeButton.setBackgroundColor(Color.CYAN);
+                dislikeButton.setTextColor(Color.WHITE);
+                dislikeButton.setBackgroundColor(Color.parseColor("#521006"));
                 dislikeButton.setWidth(50);
 
             }else{
                 dislikeButton.setText("Dislike");
+                dislikeButton.setTextColor(Color.BLACK);
                 dislikeButton.setBackgroundColor(Color.LTGRAY);
                 dislikeButton.setWidth(20);
             }
         }
     }
+
+    /**
+     * Modifies the like button when the page loads, based on whether the current user has already liked an update or not.
+     * @param curVoter The user for whom update-voting is considered currently
+     * @param curUpdate The update currently in context
+     * @param likeButton The button allowing a new like for the update
+     */
 
     private void checkIfAlreadyLikedAndChangeColorAccordingly(Voter curVoter, Update curUpdate, Button likeButton) {
         synchronized (curUpdate) {
@@ -296,25 +355,39 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
 
                 Log.d("Inside likeButton Color", "Yes");
                 likeButton.setText("Liked");
-                likeButton.setBackgroundColor(Color.CYAN);
+                likeButton.setTextColor(Color.WHITE);
+                likeButton.setBackgroundColor(Color.parseColor("#034513"));
                 likeButton.setWidth(50);
 
             }else{
                 likeButton.setText("Like");
+                likeButton.setTextColor(Color.BLACK);
                 likeButton.setBackgroundColor(Color.LTGRAY);
                 likeButton.setWidth(20);
             }
         }
     }
 
+    /**
+     * Handles pressing of like button during user session. Removes 'dislike' and adds 'like' if it was 'disliked' by user before.
+     *
+     * @param pos Position in arraylist of updates
+     * @param likeButton The button allowing a new liker for the updates
+     * @param likeCountTextView The number of people liking the update
+     * @param dislikeButton The button allowing a new disliker for the updates
+     * @param dislikeCountTextView The number of people disliking the update
+     */
+
     private void handleLikeButtonPress(int pos, Button likeButton, TextView likeCountTextView,Button dislikeButton,TextView dislikeCountTextView) {
 
-        //Log.d("the pressed like button update: ",allUserUpdatesArraylist.get(pos).toString());
+
+//        Log.d("the pressed like button update: ",allUserUpdatesArraylist.get(pos).toString());
 
         //check if the user has pressed the like button already.if he had,do not do anything.
         //else increseLIkeCountBy one
         Voter curVoter =new Voter(Utility.CurrentUser.getId(),Utility.CurrentUser.getName());
         Update curUpdate=allUserUpdatesArraylist.get(pos);
+
         if(!curUpdate.hasTheUserLikedTheUpdate(curVoter)){
 
             if(curUpdate.hasTheUserDisLikedTheUpdate(curVoter)){
@@ -327,7 +400,8 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
            // curUpdate.removeDisliker(curVoter);
             //Log.d("yes liked ", "for the first time");
             likeButton.setText("Liked");
-            likeButton.setBackgroundColor(Color.CYAN);
+            likeButton.setTextColor(Color.WHITE);
+            likeButton.setBackgroundColor(Color.parseColor("#034513"));
             //now increase the likeCount by one
             int curLikeCount=curUpdate.getLikeCount();
             likeCountTextView.setText("" + curLikeCount);
@@ -335,7 +409,7 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
             likerId=Utility.CurrentUser.getId();
             new AddLikerTask().execute();
 
-            //populateUpdateListView();
+//            populateUpdateListView();
 
 
         }else{
@@ -347,19 +421,46 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         }
     }
 
+    /**
+     * Changes color of dislike button.
+     *
+     * @param curUpdate The update currently in context
+     * @param disLikeButton The button allowing a new disliker for the update
+     * @param dislikeText The text showing dislike/disliked on the button
+     */
+
     private void removeColorFromDislike(Update curUpdate,Button disLikeButton,TextView dislikeText) {
         disLikeButton.setText("Dislike");
+        disLikeButton.setTextColor(Color.BLACK);
         dislikeText.setText(""+curUpdate.getDislikeCount());
         disLikeButton.setBackgroundColor(Color.LTGRAY);
 
     }
+    /**
+     * Changes color of like button.
+     *
+     * @param curUpdate The update currently in context
+     * @param likeButton The button allowing a new liker for the updates
+     * @param likeText The text showing like/liked on the button
+     */
 
     private void removeColorFromLike(Update curUpdate,Button likeButton,TextView likeText) {
         likeButton.setText("Like");
+        likeButton.setTextColor(Color.BLACK);
         likeText.setText(""+curUpdate.getLikeCount());
         likeButton.setBackgroundColor(Color.LTGRAY);
 
     }
+
+    /**
+     * Handles pressing of dislike button during user session. Removes 'like' and adds 'dislike' if it was 'liked' by user before.
+     *
+     * @param pos Position in arraylist of updates
+     * @param likeButton The button allowing a new liker for the updates
+     * @param likeCountTextView The number of people liking the update
+     * @param dislikeButton The button allowing a new disliker for the updates
+     * @param dislikeCountTextView The number of people disliking the update
+     */
 
     private void handledislikeButtonPress(int pos,Button dislikeButton,TextView dislikeCountTextView,Button likeButton,TextView likeCountTextView) {
 
@@ -378,7 +479,8 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
             //curUpdate.removeLiker(curVoter);
             //Log.d("yes liked ", "for the first time");
             dislikeButton.setText("Disliked");
-            dislikeButton.setBackgroundColor(Color.CYAN);
+            dislikeButton.setTextColor(Color.WHITE);
+            dislikeButton.setBackgroundColor(Color.parseColor("#521006"));
             //now increase the likeCount by one
             int curdisLikeCount=curUpdate.getDislikeCount();
             dislikeCountTextView.setText("" + curdisLikeCount);
@@ -401,6 +503,17 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
+        View view = new View(UpdateFragment.context);
+        /*
+        view.setOnTouchListener(new Interfaces.OnSwipeTouchListener(UpdateFragment.context) {
+            @Override
+            public void onSwipeRight() {
+//                Home.removeAddedFragment(null);
+//                addPostTypeFragment();
+//                startDiscussionFragment(    );
+            }
+        });*/
 
 
         return inflater.inflate(R.layout.fragment_user_updates, container, false);
@@ -439,7 +552,12 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
     public void onPause() {
         super.onPause();
 
+
         //fetchUpdateTask.cancel(true);
+
+        //fetchUpdateTask.cancel(true);
+        //addLikerTask.cancel(true);
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -454,9 +572,15 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         super.onAttach(activity);
         try {
             mListener = (OnFragmentInteractionListener) activity;
+
         } catch (ClassCastException e) {
+            //if this exception is called,it means that teh fragment is attached to detailed activity;
+            //mListenerDetail=(OnFragmentInteractionListenerForDetailedActivity)activity;
+            //so remove the exception for now
+
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
+
         }
     }
 
@@ -466,11 +590,22 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         mListener = null;
     }
 
+    /**
+     * Sets the criteria for sorting of the updates in the page.
+     *
+     * @param sortingCriteria The criteria used to sort the updates in the page.
+     */
+
     public void setUpdateSorting (String sortingCriteria) {
         this.sortingCriteria = sortingCriteria;
 
         new FetchUpdateTask().execute();
     }
+
+    /**
+     *
+     * @param locationIdToSearch A location to search updates for.
+     */
 
     public void setUpdatesLocation(int locationIdToSearch) {
         this.locationIdToSearch=locationIdToSearch;
@@ -491,11 +626,16 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
         public void callAppropriateDetailedActivity(int idOfTheFragmentToBeCalled, Object object);
+        //public void callAppropriateDetailedActivity(int idOfTheFragmentToBeCalled, Object object);
         public int getTheIdOfTheActivityTHeFragmentIsAttachedTo();
         public Update passUpdateObject();
     }
 
 
+
+    /**
+     * AsyncTask FetchUpdateTask runs in background to send a HTTP request and fetch all updates in JSON format from database.
+     */
 
 
     class FetchUpdateTask extends AsyncTask<String, Void, String> {
@@ -557,6 +697,9 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         }
     }
 
+    /**
+     * AsyncTask AddLikerTask runs in background to send a HTTP request to add a new update-liker to database.
+     */
 
     class AddLikerTask extends AsyncTask<String, Void, String> {
 
@@ -586,7 +729,7 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         }
 
         /**
-         * After completing background task Dismiss the progress dialog
+         * After completing background task
          **/
         protected void onPostExecute (String a){
             if(jsonAddUpdateLike == null) {
@@ -595,6 +738,9 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         }
     }
 
+    /**
+     * AsyncTask AddDislikerTask runs in background to send a HTTP request to add a new update-disliker to database.
+     */
 
     class AddDislikerTask extends AsyncTask<String, Void, String> {
 
@@ -633,6 +779,9 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         }
     }
 
+    /**
+     * AsyncTask RemoveDislikerTask runs in background to send a HTTP request to remove update-disliker from database.
+     */
 
     class RemoveDislikerTask extends AsyncTask<String, Void, String> {
 
@@ -673,6 +822,9 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         }
     }
 
+    /**
+     * AsyncTask RemovelikerTask runs in background to send a HTTP request to remove update-liker from database.
+     */
 
     class RemoveLikerTask extends AsyncTask<String, Void, String> {
 

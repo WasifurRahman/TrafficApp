@@ -225,7 +225,8 @@ public class AnnouncementFragment extends Fragment {
             updatorName.setText(currentAnnouncement.getPosterName());
 
             TextView updateTime=(TextView) itemView.findViewById(R.id.announcementUpdateTimeTextView);
-            updateTime.setText(currentAnnouncement.getTimeOfUpdate());
+            String timeOfAnnouncement = Utility.CurrentUser.parsePostTime(currentAnnouncement.getTimeOfUpdate());
+            updateTime.setText(timeOfAnnouncement);
 
             final TextView likeCntTV=(TextView) itemView.findViewById(R.id.announcementLikeCountTextView);
             likeCntTV.setText("" + currentAnnouncement.getLikeCount());

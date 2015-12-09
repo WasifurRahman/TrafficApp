@@ -122,7 +122,7 @@ public class SignUp extends AppCompatActivity {
 
         if(v.getId() == R.id.signupButton)
         {
-            email = ((EditText) findViewById(R.id.emailLoginEditText)).getText().toString();
+            email = ((EditText) findViewById(R.id.emailSignUpEditText)).getText().toString();
             password = ((EditText) findViewById(R.id.passwordEditText)).getText().toString();
             username = ((EditText) findViewById(R.id.usernameEditText)).getText().toString();
             repeatPassword= ((EditText) findViewById(R.id.repeatPasswordEditText)).getText().toString();
