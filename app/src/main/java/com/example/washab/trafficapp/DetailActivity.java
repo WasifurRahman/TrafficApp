@@ -17,12 +17,17 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
-public class DetailActivity extends AppCompatActivity implements  AddCommentFragment.OnFragmentInteractionListener,ShowCommentFragment.OnFragmentInteractionListener,Interfaces.WhichFragmentIsCallingDetailedActivity,Interfaces.ToWhichActivityIsTheFragmentAttached,UpdateFragment.OnFragmentInteractionListener {
+public class DetailActivity extends AppCompatActivity implements  AddCommentFragment.OnFragmentInteractionListener,ShowCommentFragment.OnFragmentInteractionListener,Interfaces.WhichFragmentIsCallingDetailedActivity,Interfaces.ToWhichActivityIsTheFragmentAttached,UpdateFragment.OnFragmentInteractionListener,DiscussionFragment.OnFragmentInteractionListener ,AnnouncementFragment.OnFragmentInteractionListener,RequestFragment.OnFragmentInteractionListener{
 
     private String updatesFragmentTag = "UPDATES_FRAGMENT_TAG";
+    private String discussionFragmentTag="DISCUSSIONFRAGMENT";
     private String showCommentFragmentTag = "SHOW_COMMENT_FRAGMENT_TAG";
+    private String announcementFragmentTag="ANNOUNCEMENTFRAGMENT";
+    private String requestsFragmentTag="REQUESTSFRAGMENT";
     private Update incomingUpdateObj;
+    private Discussion incomingDiscussionObj;
+    private Announcement incomingAnnouncementObj;
+    private Request incomingRequestObj;
     private ArrayList<Comment> allCommentsArrayList = new ArrayList<Comment>();
     private String commentFragmentTag = "COMMENT_FRAGMENT_TAG";
     int fragmentToBeLoaded;
@@ -55,6 +60,57 @@ public class DetailActivity extends AppCompatActivity implements  AddCommentFrag
                 //then the new fragment will be added
 
                 addAddCommentFragment();
+
+
+                break;
+
+
+            case Interfaces.WhichFragmentIsCallingDetailedActivity.DISCUSSION_FRAGMENT:
+                incomingDiscussionObj = (Discussion) getIntent().getSerializableExtra("object_sent");
+                addDiscussionFragment();
+                //Log.d("detailed_activity",incomingObj.toString());
+                //addUpdatesFragmentAndPassParamaters();
+
+                //addShowCommentFragment();
+                //loadCommentsFromServer(incomingDiscussionObj.getId());//comments are loaded from server.
+                //then the background thread will load the json in the arraylist
+                //then the new fragment will be added
+
+                //addAddCommentFragment();
+
+
+                break;
+
+            case Interfaces.WhichFragmentIsCallingDetailedActivity.ANNOUNCEMENT_FRAGMENT:
+                incomingAnnouncementObj = (Announcement) getIntent().getSerializableExtra("object_sent");
+                addAnnouncementFragment();
+                //Log.d("detailed_activity",incomingObj.toString());
+                //addUpdatesFragmentAndPassParamaters();
+
+                //addShowCommentFragment();
+                //loadCommentsFromServer(incomingDiscussionObj.getId());//comments are loaded from server.
+                //then the background thread will load the json in the arraylist
+                //then the new fragment will be added
+
+                //addAddCommentFragment();
+
+
+                break;
+
+            case Interfaces.WhichFragmentIsCallingDetailedActivity.REQUEST_FRAGMENT:
+                incomingRequestObj = (Request) getIntent().getSerializableExtra("object_sent");
+                addRequestsFragment();
+
+
+                //Log.d("detailed_activity",incomingObj.toString());
+                //addUpdatesFragmentAndPassParamaters();
+
+                //addShowCommentFragment();
+                //loadCommentsFromServer(incomingDiscussionObj.getId());//comments are loaded from server.
+                //then the background thread will load the json in the arraylist
+                //then the new fragment will be added
+
+                //addAddCommentFragment();
 
 
                 break;
@@ -111,6 +167,35 @@ public class DetailActivity extends AppCompatActivity implements  AddCommentFrag
         return updatesFragment;
     }
 
+    private void addAnnouncementFragment(){
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        //UpdateFragment updatesFragment = new  UpdateFragment();
+        AnnouncementFragment announcementFragment=new AnnouncementFragment();
+
+        fragmentTransaction.add(R.id.infoAndLikeFragmentContainer,announcementFragment,announcementFragmentTag);
+        fragmentTransaction.commit();
+    }
+
+    private void addDiscussionFragment(){
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        //UpdateFragment updatesFragment = new  UpdateFragment();
+        DiscussionFragment discussionFragment = new DiscussionFragment();
+
+        fragmentTransaction.add(R.id.infoAndLikeFragmentContainer,discussionFragment,discussionFragmentTag);
+        fragmentTransaction.commit();
+    }
+
+    private void addRequestsFragment(){
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        RequestFragment reqFragment=new RequestFragment();
+
+        fragmentTransaction.add(R.id.infoAndLikeFragmentContainer, reqFragment,requestsFragmentTag);
+        fragmentTransaction.commit();
+    }
+
 
     private void addShowCommentFragment() {
         FragmentManager fragmentManager = getFragmentManager();
@@ -154,6 +239,11 @@ public class DetailActivity extends AppCompatActivity implements  AddCommentFrag
     }
 
     @Override
+    public void onAnnouncementFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
     public void callAppropriateDetailedActivity(int idOfTheFragmentToBeCalled, Object object) {
 
     }
@@ -161,6 +251,21 @@ public class DetailActivity extends AppCompatActivity implements  AddCommentFrag
     @Override
     public int getTheIdOfTheActivityTHeFragmentIsAttachedTo() {
         return 0;
+    }
+
+    @Override
+    public Request passRequestObject() {
+        return incomingRequestObj;
+    }
+
+    @Override
+    public Announcement passAnnouncementObject() {
+        return incomingAnnouncementObj;
+    }
+
+    @Override
+    public Discussion passDiscussionObject() {
+        return incomingDiscussionObj;
     }
 
     @Override

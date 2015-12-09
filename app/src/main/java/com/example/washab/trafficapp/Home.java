@@ -7,15 +7,11 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -508,11 +504,63 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
             startActivity(intent);
 
         }
+
+        else if(idOfTheFragmentToBeCalled== Interfaces.WhichFragmentIsCallingDetailedActivity.DISCUSSION_FRAGMENT){
+
+            Discussion discussionToBeSent=(Discussion)incomingObj;
+            //Log.d("detailed Update", discussionToBeSent.toString());
+            Intent intent=new Intent(this,DetailActivity.class);
+            intent.putExtra("fragment_to_be_loaded",idOfTheFragmentToBeCalled);
+            intent.putExtra("object_sent",discussionToBeSent);
+
+            startActivity(intent);
+
+        }
+
+        else if(idOfTheFragmentToBeCalled== Interfaces.WhichFragmentIsCallingDetailedActivity.ANNOUNCEMENT_FRAGMENT){
+
+            Announcement announcementToBeSent=(Announcement)incomingObj;
+
+            Intent intent=new Intent(this,DetailActivity.class);
+            intent.putExtra("fragment_to_be_loaded",idOfTheFragmentToBeCalled);
+            intent.putExtra("object_sent",announcementToBeSent);
+
+            startActivity(intent);
+
+        }
+
+        else if(idOfTheFragmentToBeCalled== Interfaces.WhichFragmentIsCallingDetailedActivity.REQUEST_FRAGMENT){
+
+
+            Request requestToBeSent=(Request)incomingObj;
+
+            Intent intent=new Intent(this,DetailActivity.class);
+            intent.putExtra("fragment_to_be_loaded",idOfTheFragmentToBeCalled);
+            intent.putExtra("object_sent",requestToBeSent);
+
+            startActivity(intent);
+
+        }
     }
 
     @Override
     public int getTheIdOfTheActivityTHeFragmentIsAttachedTo() {
         return Interfaces.ToWhichActivityIsTheFragmentAttached.HOME_ACTIVITY;
+    }
+
+    @Override
+    public Request passRequestObject() {
+        return null;
+    }
+
+    @Override
+    public Announcement passAnnouncementObject() {
+        return null;
+    }
+
+    @Override
+    public Discussion passDiscussionObject() {
+        return null;
     }
 
     @Override

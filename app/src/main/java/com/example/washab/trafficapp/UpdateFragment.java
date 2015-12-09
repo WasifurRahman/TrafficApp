@@ -198,7 +198,11 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
 
     private class MyListAdapter extends ArrayAdapter<Update>{
         public MyListAdapter(){
+
+
             super(getActivity(), R.layout.user_update_item, allUserUpdatesArraylist);
+
+            //super(context, Id, allUserUpdatesArraylist);
         }
 
         @Override
@@ -627,6 +631,12 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         public void onFragmentInteraction(Uri uri);
         public void callAppropriateDetailedActivity(int idOfTheFragmentToBeCalled, Object object);
         //public void callAppropriateDetailedActivity(int idOfTheFragmentToBeCalled, Object object);
+        public int getTheIdOfTheActivityTHeFragmentIsAttachedTo();
+        public Update passUpdateObject();
+    }
+
+    public interface OnFragmentInteractionListenerForDetailed {
+        // TODO: Update argument type and name
         public int getTheIdOfTheActivityTHeFragmentIsAttachedTo();
         public Update passUpdateObject();
     }

@@ -3,12 +3,13 @@ package com.example.washab.trafficapp;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.HashSet;
 
 /**
  * Created by Shabab on 11/9/2015.
  */
-public class Announcement {
+public class Announcement implements Serializable{
     private int id;
     private  int locationId;
 

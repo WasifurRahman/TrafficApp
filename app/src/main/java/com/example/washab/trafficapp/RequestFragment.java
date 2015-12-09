@@ -12,6 +12,7 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -100,11 +101,49 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         progressLayout = (LinearLayout) getActivity().findViewById(R.id.progressbar_view);
-        customRequestListView=(ListView)getActivity().findViewById(R.id.userRequestListView);
+
         
-        fetchRequestTask.execute();
+
+
+        if(mListener.getTheIdOfTheActivityTHeFragmentIsAttachedTo()==Interfaces.ToWhichActivityIsTheFragmentAttached.HOME_ACTIVITY) {
+            //Log.e("updatesfragment","called by home");
+
+            customRequestListView=(ListView)getActivity().findViewById(R.id.userRequestListView);
+            registerCallBack();
+            new FetchRequestTask().execute();
+        }else{
+            progressLayout.setVisibility(View.GONE);
+
+
+            Request currentRequest =mListener.passRequestObject();
+
+
+            populateRequestList(currentRequest);
+           populateRequestListView();
+
+
+        }
 
         super.onActivityCreated(savedInstanceState);
+    }
+
+
+    private void registerCallBack() {
+
+        ListView lv = (ListView) getActivity().findViewById(R.id.userRequestListView);
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mListener.callAppropriateDetailedActivity(Interfaces.WhichFragmentIsCallingDetailedActivity.REQUEST_FRAGMENT, allRequestsArrayList.get(position));
+
+            }
+        });
+    }
+
+    private void populateRequestList(Request currentRequest) {
+        allRequestsArrayList.clear();
+        allRequestsArrayList.add(currentRequest);
     }
 
     @Override
@@ -381,6 +420,11 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+
+        public void callAppropriateDetailedActivity(int idOfTheFragmentToBeCalled, Object object);
+        //public void callAppropriateDetailedActivity(int idOfTheFragmentToBeCalled, Object object);
+        public int getTheIdOfTheActivityTHeFragmentIsAttachedTo();
+        public Request passRequestObject();
     }
 
     /**
