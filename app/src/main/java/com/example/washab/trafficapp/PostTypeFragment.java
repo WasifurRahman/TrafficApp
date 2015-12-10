@@ -116,12 +116,12 @@ public class PostTypeFragment extends Fragment implements View.OnClickListener{
 
         if(v.getId()==R.id.postTypeAnnouncementButton){
             mListener.startAnnouncementFragment();
-            mListener.setPostTypeToShow(ANNOUNCEMENTS);
+//            mListener.setPostTypeToShow(ANNOUNCEMENTS);
         }
 
         else if(v.getId()==R.id.postTypeDiscussionButton){
             mListener.startDiscussionFragment();
-            mListener.setPostTypeToShow(DISCUSSIONS);
+//            mListener.setPostTypeToShow(DISCUSSIONS);
         }
 
     }
@@ -141,7 +141,7 @@ public class PostTypeFragment extends Fragment implements View.OnClickListener{
         public void onFragmentInteraction(Uri uri);
         public void startAnnouncementFragment();
         public void startDiscussionFragment();
-        public void setPostTypeToShow(int postTypeToShow);
+//        public void setPostTypeToShow(int postTypeToShow);
     }
 
 }

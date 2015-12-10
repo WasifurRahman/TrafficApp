@@ -1,5 +1,7 @@
 package com.example.washab.trafficapp;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.widget.Toast;
 import android.content.Context;
 
@@ -8,6 +10,7 @@ import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Created by Shabab on 11/8/2015.
@@ -99,7 +102,6 @@ public class Utility {
         }
 
     }
-
 
 }
 

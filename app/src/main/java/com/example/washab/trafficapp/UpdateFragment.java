@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -192,9 +193,11 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
 
             TextView locFrom = (TextView)itemView.findViewById(R.id.locationFromTextView);
             locFrom.setText(Locations.getLocationName(currentUpdate.getLocationIdFrom()));
+            locFrom.setTextColor(Color.BLACK);
 
             TextView locTo = (TextView)itemView.findViewById(R.id.locationToTextView);
             locTo.setText(Locations.getLocationName(currentUpdate.getLocationIdTo()));
+            locTo.setTextColor(Color.BLACK);
 
             TextView sitDes=(TextView)itemView.findViewById(R.id.situationTextView);
             sitDes.setText(currentUpdate.getSituation());
@@ -218,7 +221,7 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
             }
 
             TextView estTime=(TextView) itemView.findViewById(R.id.estTimeDescriptorTextView);
-            estTime.setText(""+currentUpdate.getEstTimeToCross() + " minutes");
+            estTime.setText("~ "+currentUpdate.getEstTimeToCross() + " min");
 
             TextView updaterName=(TextView) itemView.findViewById(R.id.updaterNameTextView);
             updaterName.setText(currentUpdate.getUpdaterName());
@@ -235,12 +238,19 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
 
             EditText description = (EditText) itemView.findViewById(R.id.updateDescriptionBox);
             description.setText(currentUpdate.getDescription());
+            description.setMovementMethod(ScrollingMovementMethod.getInstance());
 
             final TextView likeCnt=(TextView) itemView.findViewById(R.id.likeCountTextView);
-            likeCnt.setText("" + currentUpdate.getLikeCount());
+            if(currentUpdate.getLikeCount() == 1) {
+                likeCnt.setText("" + currentUpdate.getLikeCount() + " like");
+            }
+            else likeCnt.setText("" + currentUpdate.getLikeCount() + " likes");
 
             final TextView dislikeCnt=(TextView) itemView.findViewById(R.id.dislikeCountTextView);
-            dislikeCnt.setText("" + currentUpdate.getDislikeCount());
+            if(currentUpdate.getDislikeCount() == 1)
+                dislikeCnt.setText("" + currentUpdate.getDislikeCount() + " dislike");
+            else
+                dislikeCnt.setText("" + currentUpdate.getDislikeCount() + " dislikes");
 
             final Button likeButton=(Button)itemView.findViewById(R.id.updateLikeButton);
 
@@ -373,7 +383,10 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
             likeButton.setBackgroundColor(Color.parseColor("#034513"));
             //now increase the likeCount by one
             int curLikeCount=curUpdate.getLikeCount();
-            likeCountTextView.setText("" + curLikeCount);
+            if(curLikeCount == 1) {
+                likeCountTextView.setText("" + curLikeCount + " like");
+            }
+            else likeCountTextView.setText("" + curLikeCount + " likes");
             updateToBeLiked=curUpdate.getId();
             likerId=Utility.CurrentUser.getId();
             addLikerTask.execute();
@@ -416,7 +429,10 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
     private void removeColorFromLike(Update curUpdate,Button likeButton,TextView likeText) {
         likeButton.setText("Like");
         likeButton.setTextColor(Color.BLACK);
-        likeText.setText(""+curUpdate.getLikeCount());
+        if(curUpdate.getLikeCount() == 1) {
+            likeText.setText("" + curUpdate.getLikeCount() + " like");
+        }
+        else likeText.setText("" + curUpdate.getLikeCount() + " likes");
         likeButton.setBackgroundColor(Color.LTGRAY);
 
     }
@@ -452,7 +468,10 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
             dislikeButton.setBackgroundColor(Color.parseColor("#521006"));
             //now increase the likeCount by one
             int curdisLikeCount=curUpdate.getDislikeCount();
-            dislikeCountTextView.setText("" + curdisLikeCount);
+            if(curdisLikeCount == 1) {
+                dislikeCountTextView.setText("" + curdisLikeCount + " dislike");
+            }
+            else dislikeCountTextView.setText("" + curdisLikeCount + " dislikes");
             updateToBeDisliked= curUpdate.getId();
             dislikerId=Utility.CurrentUser.getId();
             new AddDislikerTask().execute();

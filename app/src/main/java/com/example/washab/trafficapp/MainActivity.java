@@ -1,6 +1,7 @@
 package com.example.washab.trafficapp;
 
 import android.content.Intent;
+import android.content.pm.PackageInstaller;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -30,6 +32,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        SessionManager.Instance().init(this);
+//        SessionManager.Instance().checkLogin();
+//        HashMap<String, String> user = SessionManager.Instance().getUserDetails();
+//
+//        if(user!=null) {
+//            Utility.CurrentUser.setUser(18,user.get(SessionManager.KEY_NAME),user.get(SessionManager.Instance().getApiKey()));
+//        }
+
         setContentView(R.layout.activity_main);
         errorText = (TextView)findViewById(R.id.errorTextView);
         loginError = false;
@@ -118,6 +128,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         Utility.CurrentUser.setUser(userId, userName, apiKey);
+//        SessionManager.Instance().createLoginSession(userName, apiKey);
         Log.d("user assigned: ",""+ Utility.CurrentUser.makeString());
 
     }
@@ -211,6 +222,8 @@ public class MainActivity extends AppCompatActivity
                 Intent intent=new Intent(MainActivity.this,Home.class);
 //                    Log.d("Where now?", "Starting Home Activity");
                 startActivity(intent);
+
+                finish();
 
             }
         }

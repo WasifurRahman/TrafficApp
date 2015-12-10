@@ -48,8 +48,9 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="13dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginLeft="7dp"
+        android:layout_marginRight="7dp"
+        android:gravity="center"
         android:paddingBottom="10dp"
         >
 
@@ -61,37 +62,47 @@
             <!--android:layout_weight="1"-->
             <!--android:onClick="onUpdatesButtonClick" />-->
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.2"
-            android:paddingTop="14dp"
-            android:paddingRight="2dp"
-            android:paddingBottom="2dp"
-
-            android:text="UPDATES"
-            android:textSize="17dp"
-            android:textColor="#000000"
-            android:id="@+id/updatesButton"
-            android:clickable="true"
-            android:onClick="onUpdatesButtonClick"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingTop="14dp"
-            android:paddingRight="4dp"
-            android:paddingBottom="2dp"
-            android:paddingLeft="5dp"
-            android:text="POSTS"
-            android:textSize="17dp"
-            android:textColor="#000000"
-            android:id="@+id/postsButton"
-            android:clickable="true"
-            android:onClick="onPostsButtonClick"
-            android:textStyle="bold" />
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="14dp"
+                android:paddingBottom="2dp"
+
+                android:text="UPDATES"
+                android:textSize="17dp"
+                android:textColor="#000000"
+                android:id="@+id/updatesButton"
+                android:clickable="true"
+                android:onClick="onUpdatesButtonClick"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="14dp"
+                android:paddingBottom="2dp"
+                android:text="POSTS"
+                android:textSize="17dp"
+                android:textColor="#000000"
+                android:id="@+id/postsButton"
+                android:clickable="true"
+                android:onClick="onPostsButtonClick"
+                android:textStyle="bold" />
+
+        </LinearLayout>
 
         <!--<Button-->
             <!--android:layout_width="0dp"-->
@@ -101,36 +112,47 @@
             <!--android:layout_weight="1"-->
             <!--android:onClick="onRequestsButtonClick"/>-->
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.35"
-            android:paddingTop="14dp"
-            android:paddingRight="4dp"
-            android:paddingBottom="2dp"
-            android:text="REQUESTS"
-            android:textSize="17dp"
-            android:textColor="#000000"
-            android:id="@+id/requestsButton"
-            android:clickable="true"
-            android:onClick="onRequestsButtonClick"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingTop="14dp"
-            android:paddingRight="4dp"
-            android:paddingBottom="2dp"
-            android:paddingLeft="5dp"
-            android:text="NOTIFS"
-            android:textSize="17dp"
-            android:textColor="#000000"
-            android:id="@+id/notifsButton"
-            android:clickable="true"
-            android:onClick="onNotifsButtonClick"
-            android:textStyle="bold" />
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="14dp"
+                android:paddingBottom="2dp"
+                android:text="REQUESTS"
+                android:textSize="17dp"
+                android:textColor="#000000"
+                android:id="@+id/requestsButton"
+                android:clickable="true"
+                android:onClick="onRequestsButtonClick"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="14dp"
+                android:paddingBottom="2dp"
+                android:text="NOTIFS"
+                android:textSize="17dp"
+                android:textColor="#000000"
+                android:id="@+id/notifsButton"
+                android:clickable="true"
+                android:onClick="onNotifsButtonClick"
+                android:textStyle="bold" />
+
+        </LinearLayout>
 
 
     </LinearLayout>
@@ -154,14 +176,12 @@
         android:id="@+id/choiceFragmentContainer"></LinearLayout>
 
 
-
-
-
-    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
         android:id="@+id/dataFragmentContainer"></LinearLayout>
 
 

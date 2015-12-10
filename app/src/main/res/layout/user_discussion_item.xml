@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:layout_marginTop="25dp"
+    android:layout_marginLeft="15dp"
+    android:layout_marginRight="15dp"
+    android:layout_marginBottom="10dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="1dp">
 <!--
     <LinearLayout
         android:layout_width="match_parent"
@@ -35,126 +41,189 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Location: "
-            android:layout_gravity="left" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/discussionLocationTextView"
-            />
-
-    </LinearLayout>
-
-    <EditText
-        android:id="@+id/discussionDescriptionBox"
-        android:paddingTop="1dp"
-        android:layout_width="259dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/description_text_box"
+        android:orientation="horizontal"
         android:paddingLeft="10dp"
-        android:paddingRight="20dp"
-        android:paddingBottom="5dp"
-        android:padding="10dp"
-        android:editable="false"
-        android:textSize="15dp"
-        android:layout_gravity="fill_horizontal"/>
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        <!--<TextView-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="2"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="Location: "-->
+            <!--android:layout_gravity="left" />-->
 
-        <TextView
-            android:layout_width="0dp"
+        <EditText
+            android:id="@+id/discussionDescriptionBox"
+            android:layout_width="180dp"
             android:layout_height="wrap_content"
-            android:layout_weight="2.5"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Updated By"
-            android:layout_gravity="left" />
+            android:background="@drawable/description_text_box"
+            android:paddingLeft="10dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="5dp"
+            android:padding="10dp"
+            android:editable="false"
+            android:scrollbars="vertical"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+            android:textSize="13dp"
+            android:includeFontPadding="true"
+            android:layout_gravity="fill_horizontal">
 
+        </EditText>
 
-
-        <TextView
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2.5"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/discussionPosterNameTextView"
-            android:text="Large"/>
+            android:orientation="horizontal"
+            android:gravity="right"
+            android:layout_marginRight="10dp">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="at"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2.5"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/discussionUpdateTimeTextView"
-            android:text="Large"/>
-
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16dp"
+                android:textStyle="italic"
+                android:id="@+id/discussionLocationTextView"
+                />
+        </LinearLayout>
 
 
 
     </LinearLayout>
+    <!--<EditText-->
+        <!--android:id="@+id/discussionDescriptionBox"-->
+        <!--android:paddingTop="1dp"-->
+        <!--android:layout_width="259dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="@drawable/description_text_box"-->
+        <!--android:paddingLeft="10dp"-->
+        <!--android:paddingRight="20dp"-->
+        <!--android:paddingBottom="5dp"-->
+        <!--android:padding="10dp"-->
+        <!--android:editable="false"-->
+        <!--android:textSize="15dp"-->
+        <!--android:layout_gravity="fill_horizontal"/>-->
+
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal">-->
+
+        <!--<TextView-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="2.5"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="Updated By"-->
+            <!--android:layout_gravity="left" />-->
+
+
+
+        <!--<TextView-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="2.5"-->
+            <!--android:textAppearance="?android:attr/textAppearanceLarge"-->
+            <!--android:id="@+id/discussionPosterNameTextView"-->
+            <!--android:text="Large"/>-->
+
+        <!--<TextView-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="at"/>-->
+
+        <!--<TextView-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="2.5"-->
+            <!--android:textAppearance="?android:attr/textAppearanceLarge"-->
+            <!--android:id="@+id/discussionUpdateTimeTextView"-->
+            <!--android:text="Large"/>-->
+
+
+
+
+    <!--</LinearLayout>-->
+
+
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal">-->
+
+        <!--<TextView-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="2"-->
+            <!--android:textAppearance="?android:attr/textAppearanceLarge"-->
+            <!--android:id="@+id/discussionLikeCountTextView"-->
+            <!--android:layout_gravity="left" />-->
+
+
+
+        <!--<TextView-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="2.5"-->
+            <!--android:textAppearance="?android:attr/textAppearanceLarge"-->
+
+            <!--android:text="Likes"/>-->
+
+        <!--<TextView-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="2"-->
+            <!--android:textAppearance="?android:attr/textAppearanceLarge"-->
+            <!--android:id="@+id/discussionDislikeCountTextView" />-->
+
+        <!--<TextView-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="2.5"-->
+            <!--android:textAppearance="?android:attr/textAppearanceLarge"-->
+            <!--android:text="Dislikes"/>-->
+
+    <!--</LinearLayout>-->
+
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
+
+        <!--&lt;!&ndash;<Button&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:text="Like"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:id="@+id/updateLikeButton"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:background="#64ff34" />&ndash;&gt;-->
+
+        <!--<Button-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Like"-->
+            <!--android:id="@+id/discussionLikeButton"-->
+            <!--android:width="20dp"/>-->
+
+        <!--<Button-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Dislike"-->
+            <!--android:id="@+id/discussionDislikeButton"-->
+            <!--android:layout_marginLeft="40dp"-->
+            <!--android:width="20dp"/>-->
+    <!--</LinearLayout>-->
+
+
+
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/discussionLikeCountTextView"
-            android:layout_gravity="left" />
-
-
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2.5"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-
-            android:text="Likes"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/discussionDislikeCountTextView" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2.5"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Dislikes"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:paddingLeft="10dp"
+        android:paddingTop="14dp">
 
         <!--<Button-->
         <!--android:layout_width="wrap_content"-->
@@ -164,19 +233,106 @@
         <!--android:background="#64ff34" />-->
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="70dp"
+            android:layout_height="33dp"
+            android:gravity="center"
             android:text="Like"
+            android:textSize="11dp"
             android:id="@+id/discussionLikeButton"
-            android:width="20dp"/>
+            android:width="10dp"
+            android:paddingRight="10dp"
+            android:layout_marginRight="5dp"/>
 
         <Button
+            android:layout_width="72dp"
+            android:layout_height="33dp"
+            android:gravity="center"
+            android:text="Dislike"
+            android:textSize="11dp"
+            android:id="@+id/discussionDislikeButton"
+            android:paddingLeft="10dp"
+            android:width="20dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="15dp"
+        android:paddingBottom="5dp"
+        android:layout_marginBottom="10dp">
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Dislike"
-            android:id="@+id/discussionDislikeButton"
-            android:layout_marginLeft="40dp"
-            android:width="20dp"/>
+            android:id="@+id/discussionLikeCountTextView"
+            android:textSize="14dp"
+            android:text="test"
+            android:layout_gravity="left" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="          "/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="14dp"
+            android:id="@+id/discussionDislikeCountTextView" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="right"
+            android:baselineAligned="true"
+            android:layout_marginRight="10dp">
+
+            <!--<TextView-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="2.5"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="Updated By"-->
+            <!--android:id="@+id/updateIndTextView"-->
+            <!--android:layout_gravity="left" />-->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:paddingRight="5dp"
+                android:id="@+id/discussionPosterNameTextView"
+                android:text="Large"
+                android:textStyle="bold"/>
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:id="@+id/ind"-->
+            <!--android:text="at  "/>-->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:id="@+id/discussionUpdateTimeTextView"
+                android:text="Large"/>
+
+        </LinearLayout>
+
     </LinearLayout>
+
+    <TextView
+        android:padding="5dp"
+        android:paddingTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#BFCFBC" />
 
 </LinearLayout>

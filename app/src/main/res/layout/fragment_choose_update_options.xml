@@ -1,6 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="horizontal"
     tools:context="com.example.washab.trafficapp.ChooseUpdateOptionsFragment">
 
@@ -8,7 +8,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="5dp">
+        android:padding="5dp"
+        android:paddingBottom="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -54,10 +55,10 @@
 
         <TextView
             android:padding="5dp"
-            android:paddingBottom="15dp"
+            android:paddingBottom="0dp"
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:background="#707070" />
+            android:background="#BFCFBC" />
 
     </LinearLayout>
 

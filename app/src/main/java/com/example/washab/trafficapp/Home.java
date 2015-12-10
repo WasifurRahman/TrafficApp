@@ -4,9 +4,11 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -41,7 +43,7 @@ Interfaces.WhoIsCallingUpdateInterface{
     private String chooseDiscussionOptionsFragmentsTag="CHOOSEDISCUSSIONOPTIONSFRAGMENT";
     private String[] locationChoices;
     private int locationIdToSearch;
-    private int currentPostTypeToShow=DISCUSSIONS;
+//    private int currentPostTypeToShow=DISCUSSIONS;
 
     private static final int UPDATES = 1;
     private static final int POSTS = 2;
@@ -175,7 +177,14 @@ Interfaces.WhoIsCallingUpdateInterface{
             Intent intent=new Intent(Home.this,MainActivity.class);
             startActivity(intent);
         }
+//        SessionManager.Instance().checkLogin();
         super.onPostResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
     }
 
     @Override
@@ -193,6 +202,7 @@ Interfaces.WhoIsCallingUpdateInterface{
             Utility.CurrentUser.invalidate();
             Intent intent=new Intent(Home.this,MainActivity.class);
             startActivity(intent);
+//            SessionManager.Instance().logoutUser();
 
         }
         else if(id==R.id.addPreferredLocation){
@@ -200,7 +210,14 @@ Interfaces.WhoIsCallingUpdateInterface{
             Intent intent=new Intent(Home.this,AddPreferredLocationActivity.class);
             startActivity(intent);
 
+        } else if(id==R.id.home){
+
+            NavUtils.navigateUpFromSameTask(this);
+//            finish();
+            return true;
+
         }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -423,7 +440,7 @@ Interfaces.WhoIsCallingUpdateInterface{
                     ((TextView)findViewById(R.id.requestsButton)).setTextColor(Color.BLACK);
                     break;
                 case NOTIFS:
-                    ((TextView)findViewById(R.id.notifsButton)).setTextColor(Color.BLACK);
+                    ((TextView) findViewById(R.id.notifsButton)).setTextColor(Color.BLACK);
                     break;
             }
 
@@ -553,12 +570,12 @@ Interfaces.WhoIsCallingUpdateInterface{
        // addAnnouncementFragment();
     }
 
-    @Override
-    public void setPostTypeToShow(int postTypeToShow) {
-        this.currentPostTypeToShow=postTypeToShow;
-        //if(currentPostTypeToShow==DISCUSSIONS)Log.d("chosen fragment","discussions");
-       // if(currentPostTypeToShow==ANNOUNCEMENTS)Log.d("chosen fragment","announcement");
-    }
+//    @Override
+//    public void setPostTypeToShow(int postTypeToShow) {
+//        this.currentPostTypeToShow=postTypeToShow;
+//        //if(currentPostTypeToShow==DISCUSSIONS)Log.d("chosen fragment","discussions");
+//       // if(currentPostTypeToShow==ANNOUNCEMENTS)Log.d("chosen fragment","announcement");
+//    }
 
 
     @Override

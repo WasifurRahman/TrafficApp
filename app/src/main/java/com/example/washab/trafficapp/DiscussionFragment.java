@@ -203,7 +203,10 @@ public class DiscussionFragment extends Fragment {
             //fill the view
 
             TextView locFrom = (TextView)itemView.findViewById(R.id.discussionLocationTextView);
-            locFrom.setText(Locations.getLocationName(currentDiscussion.getLocationId()));
+            if(currentDiscussion.getLocationId() != 0) {
+                locFrom.setText("#" + Locations.getLocationName(currentDiscussion.getLocationId()));
+                locFrom.setTextColor(Color.parseColor("#197502"));
+            }
 
             TextView timeFrom = (TextView)itemView.findViewById(R.id.discussionUpdateTimeTextView);
             String timeOfPost = Utility.CurrentUser.parsePostTime(currentDiscussion.getTimeOfPost());
@@ -217,10 +220,16 @@ public class DiscussionFragment extends Fragment {
 
 
             final TextView likeCnt=(TextView) itemView.findViewById(R.id.discussionLikeCountTextView);
-            likeCnt.setText("" + currentDiscussion.getLikeCount());
+            if(currentDiscussion.getLikeCount() == 1) {
+                likeCnt.setText("" + currentDiscussion.getLikeCount() + " like");
+            }
+            else likeCnt.setText("" + currentDiscussion.getLikeCount() + " likes");
 
             final TextView dislikeCnt=(TextView) itemView.findViewById(R.id.discussionDislikeCountTextView);
-            dislikeCnt.setText("" + currentDiscussion.getDislikeCount());
+            if(currentDiscussion.getDislikeCount() == 1)
+                dislikeCnt.setText("" + currentDiscussion.getDislikeCount() + " dislike");
+            else
+                dislikeCnt.setText("" + currentDiscussion.getDislikeCount() + " dislikes");
 
             final Button likeButton=(Button)itemView.findViewById(R.id.discussionLikeButton);
             final Button dislikeButton= (Button)itemView.findViewById(R.id.discussionDislikeButton);
@@ -269,11 +278,13 @@ public class DiscussionFragment extends Fragment {
 
                 Log.d("Inside dislikeButton Color", "Yes");
                 dislikeButton.setText("Disliked");
-                dislikeButton.setBackgroundColor(Color.CYAN);
+                dislikeButton.setTextColor(Color.WHITE);
+                dislikeButton.setBackgroundColor(Color.parseColor("#521006"));
                 dislikeButton.setWidth(50);
 
             }else{
                 dislikeButton.setText("Dislike");
+                dislikeButton.setTextColor(Color.BLACK);
                 dislikeButton.setBackgroundColor(Color.LTGRAY);
                 dislikeButton.setWidth(20);
             }
@@ -295,11 +306,13 @@ public class DiscussionFragment extends Fragment {
 
                 Log.d("Inside likeButton Color", "Yes");
                 likeButton.setText("Liked");
-                likeButton.setBackgroundColor(Color.CYAN);
+                likeButton.setTextColor(Color.WHITE);
+                likeButton.setBackgroundColor(Color.parseColor("#034513"));
                 likeButton.setWidth(50);
 
             }else{
                 likeButton.setText("Like");
+                likeButton.setTextColor(Color.BLACK);
                 likeButton.setBackgroundColor(Color.LTGRAY);
                 likeButton.setWidth(20);
             }
@@ -336,10 +349,16 @@ public class DiscussionFragment extends Fragment {
             // curUpdate.removeDisliker(curVoter);
             //Log.d("yes liked ", "for the first time");
             likeButton.setText("Liked");
-            likeButton.setBackgroundColor(Color.CYAN);
+//            likeButton.setBackgroundColor(Color.CYAN);
+            likeButton.setTextColor(Color.WHITE);
+            likeButton.setBackgroundColor(Color.parseColor("#034513"));
             //now increase the likeCount by one
-            int curLikeCount=curDiscussion.getLikeCount();
-            likeCountTextView.setText("" + curLikeCount);
+//            int curLikeCount=curDiscussion.getLikeCount();
+//            likeCountTextView.setText("" + curLikeCount);
+            if(curDiscussion.getLikeCount() == 1) {
+                likeCountTextView.setText("" + curDiscussion.getLikeCount() + " like");
+            }
+            else likeCountTextView.setText("" + curDiscussion.getLikeCount() + " likes");
             //updateToBeFoll=curDiscussion.getId();
             //likerId=Utility.CurrentUser.getId();
             new AddLikerTask().execute(curDiscussion.getId()+"");
@@ -366,7 +385,12 @@ public class DiscussionFragment extends Fragment {
 
     private void removeColorFromDislike(Discussion curDiscussion,Button disLikeButton,TextView dislikeText) {
         disLikeButton.setText("Dislike");
-        dislikeText.setText("" + curDiscussion.getDislikeCount());
+//        dislikeText.setText("" + curDiscussion.getDislikeCount());
+        if(curDiscussion.getDislikeCount() == 1) {
+            dislikeText.setText("" + curDiscussion.getDislikeCount() + " dislike");
+        }
+        else dislikeText.setText("" + curDiscussion.getDislikeCount() + " dislikes");
+        disLikeButton.setTextColor(Color.BLACK);
         disLikeButton.setBackgroundColor(Color.LTGRAY);
 
     }
@@ -381,7 +405,12 @@ public class DiscussionFragment extends Fragment {
 
     private void removeColorFromLike(Discussion curDiscussion,Button likeButton,TextView likeText) {
         likeButton.setText("Like");
-        likeText.setText("" + curDiscussion.getLikeCount());
+//        likeText.setText("" + curDiscussion.getLikeCount());
+        if(curDiscussion.getLikeCount() == 1) {
+            likeText.setText("" + curDiscussion.getLikeCount() + " like");
+        }
+        else likeText.setText("" + curDiscussion.getLikeCount() + " likes");
+        likeButton.setTextColor(Color.BLACK);
         likeButton.setBackgroundColor(Color.LTGRAY);
 
     }
@@ -413,10 +442,16 @@ public class DiscussionFragment extends Fragment {
             //curUpdate.removeLiker(curVoter);
             //Log.d("yes liked ", "for the first time");
             dislikeButton.setText("Disliked");
-            dislikeButton.setBackgroundColor(Color.CYAN);
+//            dislikeButton.setBackgroundColor(Color.CYAN);
+            dislikeButton.setTextColor(Color.WHITE);
+            dislikeButton.setBackgroundColor(Color.parseColor("#521006"));
             //now increase the likeCount by one
-            int curdisLikeCount=curDiscussion.getDislikeCount();
-            dislikeCountTextView.setText("" + curdisLikeCount);
+//            int curdisLikeCount=curDiscussion.getDislikeCount();
+//            dislikeCountTextView.setText("" + curdisLikeCount);
+            if(curDiscussion.getDislikeCount() == 1) {
+                dislikeCountTextView.setText("" + curDiscussion.getDislikeCount() + " dislike");
+            }
+            else dislikeCountTextView.setText("" + curDiscussion.getDislikeCount() + " dislikes");
 
             new AddDislikerTask().execute(curDiscussion.getId()+"");
 

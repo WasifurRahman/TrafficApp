@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -26,16 +27,17 @@ import java.util.List;
 public class AddUpdate extends AppCompatActivity implements Interfaces.WhoIsCallingUpdateInterface{
 
     int fromLocationIndex, toLocationIndex, situationIndex, timestampIndex;
+    String[] locationArray;
 
     String locationChoices[] = Locations.getAllLocationNames();
-    String timestampChoices[] = {"Now", "10 minutes ago", "20 minutes ago", "30 minutes ago", "45 minutes ago"};
+    String timestampChoices[] = {"< Select an option >", "Now", "10 minutes ago", "20 minutes ago", "30 minutes ago", "45 minutes ago"};
     int timeToDeduct[]={0,10,20,30,45};
-    String situationChoices[] = {"Free", "Mild", "Moderate", "Extreme", "Gridlock"};
+    String situationChoices[] = {"< Select an option >", "Free", "Mild", "Moderate", "Extreme", "Gridlock"};
     private String description;
     private String situation, timestamp;
     private int fromLocationId, toLocationId, estimatedTime, requestId;
-    private boolean addUpdateButtonPressed = false;
-    private String fromLocationName,toLocationName;
+    private boolean error = false;
+    private String fromLocationName,toLocationName, errorMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,12 +104,17 @@ public class AddUpdate extends AppCompatActivity implements Interfaces.WhoIsCall
 
     public void initiateFromLocation() {
             Spinner spinner = (Spinner) findViewById(R.id.fromLocationSpinner);
+
+            locationArray = new String[locationChoices.length + 1];
+            locationArray[0] = "< Select an option >";
+            System.arraycopy(locationChoices, 0, locationArray, 1, locationChoices.length);
+
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
                     fromLocationIndex = position;
-                    fromLocationName=locationChoices[fromLocationIndex];
+                    fromLocationName=locationArray[fromLocationIndex];
                 }
 
                 @Override
@@ -116,7 +123,7 @@ public class AddUpdate extends AppCompatActivity implements Interfaces.WhoIsCall
             });
 
             // Application of the Array to the Spinner
-            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item,locationChoices);
+            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item,locationArray);
             spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
             spinner.setAdapter(spinnerArrayAdapter);
 
@@ -131,7 +138,7 @@ public class AddUpdate extends AppCompatActivity implements Interfaces.WhoIsCall
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
                 toLocationIndex = position;
-                toLocationName=locationChoices[toLocationIndex];
+                toLocationName=locationArray[toLocationIndex];
             }
 
             @Override
@@ -141,7 +148,7 @@ public class AddUpdate extends AppCompatActivity implements Interfaces.WhoIsCall
 
 
         // Application of the Array to the Spinner
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item, locationChoices);
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item, locationArray);
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         spinner.setAdapter(spinnerArrayAdapter);
 
@@ -188,6 +195,13 @@ public class AddUpdate extends AppCompatActivity implements Interfaces.WhoIsCall
         spinner.setAdapter(spinnerArrayAdapter);
     }
 
+    private boolean checkError() {
+        if(toLocationName.equals("< Select an option >") || fromLocationName.equals("< Select an option >") || situation.equals("< Select an option >") || timestamp.equals("< Select an option >") || estimatedTime==0) {
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -213,7 +227,6 @@ public class AddUpdate extends AppCompatActivity implements Interfaces.WhoIsCall
     public void onAddUpdateButtonClick(View v){
 
         if(v.getId()==R.id.addUpdateButton){
-            addUpdateButtonPressed = true;
             fromLocationId=Locations.getLocationId(fromLocationName);
             toLocationId=Locations.getLocationId(toLocationName);
             situation=situationChoices[situationIndex];
@@ -230,13 +243,27 @@ public class AddUpdate extends AppCompatActivity implements Interfaces.WhoIsCall
             Log.d("timestamp", dateFormat.format(newDate));
 
             timestamp = dateFormat.format(newDate);
-            estimatedTime = Integer.parseInt(((EditText) findViewById(R.id.estimatedTimeEditText)).getText().toString());
+            try {
+                estimatedTime = Integer.parseInt(((EditText) findViewById(R.id.estimatedTimeEditText)).getText().toString());
+            } catch(NumberFormatException e) {
+                e.printStackTrace();
+                estimatedTime = 0;
+            }
             description = ((EditText) findViewById(R.id.addUpdateDescriptionBox)).getText().toString();
 
             Log.d("AddUpdateEntries", fromLocationId + " " + toLocationId + " " + situation + " " + timestamp + " " + estimatedTime + " " + description);
 
             AddUpdateTask addUpdateTask = new AddUpdateTask();
-            addUpdateTask.execute();
+
+            if(checkError()) {
+                Toast.makeText(this, "One or more required field(s) missing!", Toast.LENGTH_LONG).show();
+            }
+            else if(fromLocationName.equals(toLocationName)) {
+                Toast.makeText(this,"Source and Destination locations must be different", Toast.LENGTH_LONG).show();
+            }
+            else
+                addUpdateTask.execute();
+
         }
 
     }
