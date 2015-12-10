@@ -4,12 +4,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.HashSet;
 
 /**
  * Created by Shabab on 11/9/2015.
  */
-public class Discussion{
+public class Discussion implements Serializable{
     private int id;
     private  int locationId;
     private String title,description, timeOfPost;
@@ -211,6 +212,23 @@ public class Discussion{
 
     public void setPosterName(String posterName) {
         this.posterName = posterName;
+    }
+
+    @Override
+    public String toString() {
+        return "Discussion{" +
+                "id=" + id +
+                ", locationId=" + locationId +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", timeOfPost='" + timeOfPost + '\'' +
+                ", posterId=" + posterId +
+                ", posterName='" + posterName + '\'' +
+                ", likeCount=" + likeCount +
+                ", dislikeCount=" + dislikeCount +
+                ", likersId=" + likersId +
+                ", dislikersId=" + dislikersId +
+                '}';
     }
 }
 

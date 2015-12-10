@@ -11,6 +11,7 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -117,9 +118,46 @@ public class AnnouncementFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
 
         progressLayout = (LinearLayout) getActivity().findViewById(R.id.progressbar_view);
-        customAnnouncementListView =(ListView)getActivity().findViewById(R.id.userAnnouncementListView);
-        new FetchAnnouncementTask().execute();
+
+
+
+        if(mListener.getTheIdOfTheActivityTHeFragmentIsAttachedTo()==Interfaces.ToWhichActivityIsTheFragmentAttached.HOME_ACTIVITY) {
+            //Log.e("updatesfragment","called by home");
+
+            customAnnouncementListView=(ListView)getActivity().findViewById(R.id.userAnnouncementListView);
+            registerCallBack();
+            new FetchAnnouncementTask().execute();
+        }else{
+            progressLayout.setVisibility(View.GONE);
+
+
+            Announcement currentAnouncement =mListener.passAnnouncementObject();
+
+            populateAnnouncementList(currentAnouncement);
+            populateAnnouncementListView();
+
+
+        }
         super.onActivityCreated(savedInstanceState);
+    }
+
+    private void populateAnnouncementList(Announcement currentAnouncement) {
+        allAnnouncementsArrayList.clear();
+        allAnnouncementsArrayList.add(currentAnouncement);
+    }
+
+
+    private void registerCallBack() {
+
+        ListView lv = (ListView) getActivity().findViewById(R.id.userAnnouncementListView);
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mListener.callAppropriateDetailedActivity(Interfaces.WhichFragmentIsCallingDetailedActivity.ANNOUNCEMENT_FRAGMENT, allAnnouncementsArrayList.get(position));
+
+            }
+        });
     }
 
 //  private void populateAnnouncementList(){
@@ -427,6 +465,11 @@ public class AnnouncementFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onAnnouncementFragmentInteraction(Uri uri);
+
+        public void callAppropriateDetailedActivity(int idOfTheFragmentToBeCalled, Object object);
+        //public void callAppropriateDetailedActivity(int idOfTheFragmentToBeCalled, Object object);
+        public int getTheIdOfTheActivityTHeFragmentIsAttachedTo();
+        public Announcement passAnnouncementObject();
     }
 
 

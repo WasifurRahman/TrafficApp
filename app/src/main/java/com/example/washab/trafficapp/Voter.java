@@ -1,9 +1,11 @@
 package com.example.washab.trafficapp;
 
+import java.io.Serializable;
+
 /**
  * Created by wasif on 11/14/15.
  */
-public class Voter {
+public class Voter implements Serializable{
 
     public Voter(int likerId, String likerName) {
         this.likerId = likerId;

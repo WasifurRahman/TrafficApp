@@ -13,11 +13,8 @@ import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -27,8 +24,10 @@ import android.widget.TextView;
 
 public class Home extends AppCompatActivity implements UpdateFragment.OnFragmentInteractionListener ,AnnouncementFragment.OnFragmentInteractionListener,
 ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFragment.OnFragmentInteractionListener,RequestFragment.OnFragmentInteractionListener,PostTypeFragment.OnFragmentInteractionListener
-,ChooseAnnouncementOptionsFragment.OnFragmentInteractionListener,ChooseDiscussionOptionsFragment.OnFragmentInteractionListener,DiscussionFragment.OnFragmentInteractionListener, NotificationsFragment.OnFragmentInteractionListener,
-Interfaces.WhoIsCallingUpdateInterface{
+
+,ChooseAnnouncementOptionsFragment.OnFragmentInteractionListener,Interfaces.ToWhichActivityIsTheFragmentAttached,Interfaces.WhichFragmentIsCallingDetailedActivity,ChooseDiscussionOptionsFragment.OnFragmentInteractionListener,DiscussionFragment.OnFragmentInteractionListener, NotificationsFragment.OnFragmentInteractionListener,Interfaces.WhoIsCallingUpdateInterface
+{
+
 
     private String updatesFragmentTag="UPDATESFRAGMENT";
     private String postsFragmentTag="POSTSFRAGMENT";
@@ -53,6 +52,7 @@ Interfaces.WhoIsCallingUpdateInterface{
     private static final int ANNOUNCEMENTS= 6;
     private static final int SWIPE_DISTANCE_THRESHOLD = 100;
     private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+
 
     private Menu menu;
 //    private GestureDetectorCompat gestureDetector;
@@ -510,6 +510,82 @@ Interfaces.WhoIsCallingUpdateInterface{
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+    @Override
+    public void callAppropriateDetailedActivity(int idOfTheFragmentToBeCalled,Object incomingObj) {
+        if(idOfTheFragmentToBeCalled== Interfaces.WhichFragmentIsCallingDetailedActivity.UPDATE_FRAGMENT){
+            Update updateToBeSent=(Update)incomingObj;
+            Log.d("detailed Update", updateToBeSent.toString());
+            Intent intent=new Intent(this,DetailActivity.class);
+            intent.putExtra("fragment_to_be_loaded",idOfTheFragmentToBeCalled).putExtra("print","update");
+            intent.putExtra("object_sent",updateToBeSent);
+            startActivity(intent);
+
+        }
+
+        else if(idOfTheFragmentToBeCalled== Interfaces.WhichFragmentIsCallingDetailedActivity.DISCUSSION_FRAGMENT){
+
+            Discussion discussionToBeSent=(Discussion)incomingObj;
+            //Log.d("detailed Update", discussionToBeSent.toString());
+            Intent intent=new Intent(this,DetailActivity.class);
+            intent.putExtra("fragment_to_be_loaded",idOfTheFragmentToBeCalled);
+            intent.putExtra("object_sent",discussionToBeSent);
+
+            startActivity(intent);
+
+        }
+
+        else if(idOfTheFragmentToBeCalled== Interfaces.WhichFragmentIsCallingDetailedActivity.ANNOUNCEMENT_FRAGMENT){
+
+            Announcement announcementToBeSent=(Announcement)incomingObj;
+
+            Intent intent=new Intent(this,DetailActivity.class);
+            intent.putExtra("fragment_to_be_loaded",idOfTheFragmentToBeCalled);
+            intent.putExtra("object_sent",announcementToBeSent);
+
+            startActivity(intent);
+
+        }
+
+        else if(idOfTheFragmentToBeCalled== Interfaces.WhichFragmentIsCallingDetailedActivity.REQUEST_FRAGMENT){
+
+
+            Request requestToBeSent=(Request)incomingObj;
+
+            Intent intent=new Intent(this,DetailActivity.class);
+            intent.putExtra("fragment_to_be_loaded",idOfTheFragmentToBeCalled);
+            intent.putExtra("object_sent",requestToBeSent);
+
+            startActivity(intent);
+
+        }
+    }
+
+    @Override
+    public int getTheIdOfTheActivityTHeFragmentIsAttachedTo() {
+        return Interfaces.ToWhichActivityIsTheFragmentAttached.HOME_ACTIVITY;
+    }
+
+    @Override
+    public Request passRequestObject() {
+        return null;
+    }
+
+    @Override
+    public Announcement passAnnouncementObject() {
+        return null;
+    }
+
+    @Override
+    public Discussion passDiscussionObject() {
+        return null;
+    }
+
+    @Override
+    public Update passUpdateObject() {
+        return null;
+    }
+
 
     @Override
     public void startAddDiscussionActivity() {

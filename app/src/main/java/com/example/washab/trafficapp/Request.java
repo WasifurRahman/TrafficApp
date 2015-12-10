@@ -3,13 +3,14 @@ package com.example.washab.trafficapp;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.HashSet;
 
 /**
  * Created by Shabab on 11/10/2015.
  */
 
-public class Request {
+public class Request implements Serializable{
 
     private int requestId, requesterId;
     private String requesterName;

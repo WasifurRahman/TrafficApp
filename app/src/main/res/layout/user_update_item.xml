@@ -5,9 +5,17 @@
     android:layout_marginTop="25dp"
     android:layout_marginLeft="15dp"
     android:layout_marginRight="15dp"
+<<<<<<< HEAD
     android:layout_marginBottom="10dp"
+=======
+
+
+    android:descendantFocusability="blocksDescendants"
+    android:layout_marginBottom="1dp"
+>>>>>>> 39964c557279dd29b585ccaf5dcf5f4c0dbc11e1
     android:paddingTop="10dp"
     android:paddingBottom="1dp">
+
 
 
     <LinearLayout

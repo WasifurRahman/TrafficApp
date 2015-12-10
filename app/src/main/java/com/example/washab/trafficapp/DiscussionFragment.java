@@ -11,6 +11,7 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -119,10 +120,33 @@ public class DiscussionFragment extends Fragment {
 
     public void onActivityCreated(Bundle savedInstanceState) {
         progressLayout = (LinearLayout) getActivity().findViewById(R.id.progressbar_view);
-        customDiscussionListView =(ListView)getActivity().findViewById(R.id.userDiscussionListView);
-        fetchDiscussionTask.execute();
+        //customDiscussionListView =(ListView)getActivity().findViewById(R.id.userDiscussionListView);
+        //fetchDiscussionTask.execute();
+
+        //progressLayout = (LinearLayout) getActivity().findViewById(R.id.progressbar_view);
+        //Log.e("inside updatefragment",mListener.getTheIdOfTheActivityTHeFragmentIsAttachedTo()+" "+Interfaces.ToWhichActivityIsTheFragmentAttached.HOME_ACTIVITY);
+        if(mListener.getTheIdOfTheActivityTHeFragmentIsAttachedTo()==Interfaces.ToWhichActivityIsTheFragmentAttached.HOME_ACTIVITY) {
+            //Log.e("updatesfragment","called by home");
+
+            customDiscussionListView=(ListView)getActivity().findViewById(R.id.userDiscussionListView);
+            registerCallBack();
+            new FetchDiscussionTask().execute();
+        }else{
+            progressLayout.setVisibility(View.GONE);
+
+            Discussion currentDiscussion=mListener.passDiscussionObject();
+            populateDiscussionList(currentDiscussion);
+            populateDiscussionListView();
+
+
+        }
 
         super.onActivityCreated(savedInstanceState);
+    }
+
+    private void populateDiscussionList(Discussion currentDiscussion) {
+        allDiscussionsArrayList.clear();
+        allDiscussionsArrayList.add(currentDiscussion);
     }
 
     /**
@@ -172,6 +196,19 @@ public class DiscussionFragment extends Fragment {
 
         ListView list=(ListView)getView().findViewById(R.id.userDiscussionListView);
         list.setAdapter(adapter);
+    }
+
+    private void registerCallBack() {
+
+        ListView lv = (ListView) getActivity().findViewById(R.id.userDiscussionListView);
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mListener.callAppropriateDetailedActivity(Interfaces.WhichFragmentIsCallingDetailedActivity.DISCUSSION_FRAGMENT, allDiscussionsArrayList.get(position));
+
+            }
+        });
     }
 
     public void setDiscussionSearchLocation(int locationIdToSearch) {
@@ -492,6 +529,10 @@ public class DiscussionFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+        public void callAppropriateDetailedActivity(int idOfTheFragmentToBeCalled, Object object);
+        //public void callAppropriateDetailedActivity(int idOfTheFragmentToBeCalled, Object object);
+        public int getTheIdOfTheActivityTHeFragmentIsAttachedTo();
+        public Discussion passDiscussionObject();
     }
 
     @Override

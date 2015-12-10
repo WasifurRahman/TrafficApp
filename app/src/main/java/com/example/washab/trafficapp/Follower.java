@@ -1,9 +1,11 @@
 package com.example.washab.trafficapp;
 
+import java.io.Serializable;
+
 /**
  * Created by wasif on 11/26/15.
  */
-public class Follower {
+public class Follower implements Serializable{
     public Follower(int followerId, String followerName) {
         this.followerId = followerId;
         this.followerName = followerName;

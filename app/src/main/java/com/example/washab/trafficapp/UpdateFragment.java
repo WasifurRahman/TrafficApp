@@ -13,6 +13,7 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,7 +36,7 @@ import java.util.List;
  * Use the {@link UpdateFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCallingUpdateInterface{
+public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCallingUpdateInterface,Interfaces.ToWhichActivityIsTheFragmentAttached{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -48,6 +49,7 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    //private OnFragmentInteractionListenerForDetailedActivity mListenerDetail;
 
     private static Context context;
     private JSONObject jsonUpdates;
@@ -71,9 +73,6 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         Free, Mild, Moderate, Extreme, Gridlock
     }
 
-
-    FetchUpdateTask fetchUpdateTask = new FetchUpdateTask();
-    AddLikerTask addLikerTask = new AddLikerTask();
 
 
 
@@ -123,7 +122,7 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
     private void populateUpdateList(JSONObject jsonUpdates){
 
         try {
-            //Log.d("within updates: ",jsonUpdates.toString());
+            Log.d("within updates: ",jsonUpdates.toString());
             allUserUpdatesArraylist.clear();
 
             JSONArray allUpdatesJSONArray=jsonUpdates.getJSONArray("updates");
@@ -162,16 +161,49 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
     private void populateUpdateListView(){
         ArrayAdapter<Update> adapter = new MyListAdapter();
         ListView list=(ListView)getView().findViewById(R.id.userUpdatesListView);
+        //list.setOnItemClickListener();
         list.setAdapter(adapter);
+
     }
+
+
+    private void registerCallBack(){
+
+        ListView lv=(ListView)getActivity().findViewById(R.id.userUpdatesListView);
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mListener.callAppropriateDetailedActivity(Interfaces.WhichFragmentIsCallingDetailedActivity.UPDATE_FRAGMENT, allUserUpdatesArraylist.get(position));
+
+            }
+        });
+      /*
+        lv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "pressed listView", Toast.LENGTH_LONG).show();
+            }
+        });
+        */
+
+    }
+
+
+
 
     /**
      * Array adapter MyListAdapter accomodates updates dynamically and fills the list container with proper layout.
      */
 
+
     private class MyListAdapter extends ArrayAdapter<Update>{
         public MyListAdapter(){
+
+
             super(getActivity(), R.layout.user_update_item, allUserUpdatesArraylist);
+
+            //super(context, Id, allUserUpdatesArraylist);
         }
 
         @Override
@@ -289,6 +321,9 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
 
 
         }
+
+
+
     }
 
     /**
@@ -389,7 +424,7 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
             else likeCountTextView.setText("" + curLikeCount + " likes");
             updateToBeLiked=curUpdate.getId();
             likerId=Utility.CurrentUser.getId();
-            addLikerTask.execute();
+            new AddLikerTask().execute();
 
 //            populateUpdateListView();
 
@@ -493,6 +528,7 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         // Inflate the layout for this fragment
 
         View view = new View(UpdateFragment.context);
+        /*
         view.setOnTouchListener(new Interfaces.OnSwipeTouchListener(UpdateFragment.context) {
             @Override
             public void onSwipeRight() {
@@ -500,7 +536,7 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
 //                addPostTypeFragment();
 //                startDiscussionFragment(    );
             }
-        });
+        });*/
 
 
         return inflater.inflate(R.layout.fragment_user_updates, container, false);
@@ -509,20 +545,42 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         progressLayout = (LinearLayout) getActivity().findViewById(R.id.progressbar_view);
-        customUpdateList=(ListView)getActivity().findViewById(R.id.userUpdatesListView);
+        //Log.e("inside updatefragment",mListener.getTheIdOfTheActivityTHeFragmentIsAttachedTo()+" "+Interfaces.ToWhichActivityIsTheFragmentAttached.HOME_ACTIVITY);
+        if(mListener.getTheIdOfTheActivityTHeFragmentIsAttachedTo()==Interfaces.ToWhichActivityIsTheFragmentAttached.HOME_ACTIVITY) {
+            //Log.e("updatesfragment","called by home");
 
-        fetchUpdateTask.execute();
+            customUpdateList=(ListView)getActivity().findViewById(R.id.userUpdatesListView);
+            registerCallBack();
+            new FetchUpdateTask().execute();
+        }else{
+            progressLayout.setVisibility(View.GONE);
+            Update currentUpdate=mListener.passUpdateObject();
+            populateUpdateList(currentUpdate);
+            populateUpdateListView();
+
+
+        }
         //populateUpdateList(jsonUpdatesField);
         //populateUpdateListView();
         super.onActivityCreated(savedInstanceState);
+    }
+
+    private void populateUpdateList(Update update) {
+        allUserUpdatesArraylist.clear();
+        allUserUpdatesArraylist.add(update);
+
     }
 
     @Override
     public void onPause() {
         super.onPause();
 
-        fetchUpdateTask.cancel(true);
-        addLikerTask.cancel(true);
+
+        //fetchUpdateTask.cancel(true);
+
+        //fetchUpdateTask.cancel(true);
+        //addLikerTask.cancel(true);
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -537,9 +595,15 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         super.onAttach(activity);
         try {
             mListener = (OnFragmentInteractionListener) activity;
+
         } catch (ClassCastException e) {
+            //if this exception is called,it means that teh fragment is attached to detailed activity;
+            //mListenerDetail=(OnFragmentInteractionListenerForDetailedActivity)activity;
+            //so remove the exception for now
+
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
+
         }
     }
 
@@ -584,7 +648,19 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+        public void callAppropriateDetailedActivity(int idOfTheFragmentToBeCalled, Object object);
+        //public void callAppropriateDetailedActivity(int idOfTheFragmentToBeCalled, Object object);
+        public int getTheIdOfTheActivityTHeFragmentIsAttachedTo();
+        public Update passUpdateObject();
     }
+
+    public interface OnFragmentInteractionListenerForDetailed {
+        // TODO: Update argument type and name
+        public int getTheIdOfTheActivityTHeFragmentIsAttachedTo();
+        public Update passUpdateObject();
+    }
+
+
 
     /**
      * AsyncTask FetchUpdateTask runs in background to send a HTTP request and fetch all updates in JSON format from database.
@@ -641,10 +717,11 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
             }
             else {
                 // Check log cat for JSON reponse
-                Log.d("All info: ",jsonUpdates.toString());
+                Log.d("All info: ", jsonUpdates.toString());
 
                 populateUpdateList(jsonUpdates);
                 populateUpdateListView();
+
             }
         }
     }

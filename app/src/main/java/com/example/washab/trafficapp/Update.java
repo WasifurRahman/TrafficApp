@@ -4,12 +4,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.HashSet;
 
 /**
  * Created by Shabab on 11/9/2015.
  */
-public class Update {
+public class Update implements Serializable {
     private int id,updaterId;
 
     @Override
@@ -132,6 +133,7 @@ public class Update {
 
     public static Update createUpdate(JSONObject jsonObject) {
         try {
+            //Log.d("before json in notification", jsonObject.toString());
              return new Update(jsonObject.getInt("id"),
                      jsonObject.getString("description"),
                     jsonObject.getInt("dislikeCount"),
