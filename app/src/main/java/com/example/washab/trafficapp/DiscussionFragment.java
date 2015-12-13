@@ -264,6 +264,8 @@ public class DiscussionFragment extends Fragment {
                 locFrom.setText("#" + Locations.getLocationName(currentDiscussion.getLocationId()));
                 locFrom.setTextColor(Color.parseColor("#197502"));
             }
+            else
+                locFrom.setText("");
 
             TextView timeFrom = (TextView)itemView.findViewById(R.id.discussionUpdateTimeTextView);
             String timeOfPost = Utility.CurrentUser.parsePostTime(currentDiscussion.getTimeOfPost());

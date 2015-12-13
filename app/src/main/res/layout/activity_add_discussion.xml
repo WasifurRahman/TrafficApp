@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:paddingRight="5dp"
     tools:context="com.example.washab.trafficapp.AddDiscussion">
 
 
@@ -36,44 +37,67 @@
 
     <LinearLayout
         android:orientation="horizontal" android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingRight="5dp"
+        android:paddingLeft="10dp"
+        android:paddingBottom="5dp"
+        android:paddingTop="20dp"
+        android:padding="10dp"
+        android:baselineAligned="true">
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="location"
-            android:layout_weight="1.2"
+            android:text="Location: "
+            android:layout_weight="41"
             />
         <Spinner
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/announcementLocationSpinner"
-            android:layout_weight="3"
+            android:layout_weight="59"
             android:paddingRight="10dp"
             android:spinnerMode="dropdown" />
 
     </LinearLayout>
 
+    <TextView
+        android:layout_width="243dp"
+        android:layout_height="wrap_content"
+        android:text="Tag a location (Optional)"
+        android:id="@+id/estimatedTimeHelperTextView"
+        android:textSize="10dp"
+        android:paddingLeft="40dp"
+        android:paddingBottom="5dp"
+        android:layout_gravity="right" />
+
     <LinearLayout
         android:orientation="horizontal" android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Description "
-            android:layout_weight="1.5"
-            />
+        android:layout_height="wrap_content"
+        android:paddingRight="5dp"
+        android:paddingLeft="10dp"
+        android:paddingBottom="5dp"
+        android:paddingTop="20dp"
+        android:padding="10dp"
+        android:gravity="right"
+        android:baselineAligned="true">
+        <!--<TextView-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="Description: "-->
+            <!--android:layout_weight="1.5"-->
+            <!--/>-->
 
         <EditText
             android:id="@+id/addDiscussionDescriptionBox"
             android:paddingTop="1dp"
             android:layout_width="259dp"
-            android:layout_height="45dp"
+            android:layout_height="80dp"
             android:background="@drawable/description_text_box"
-            android:hint="Additional information..."
+            android:hint="Share your thoughts..."
             android:paddingLeft="10dp"
-            android:inputType="textVisiblePassword"
+            android:inputType="textMultiLine"
             android:textSize="15dp"
             android:layout_gravity="right"/>
 
@@ -84,9 +108,12 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:paddingLeft="250dp"
+        android:paddingTop="30dp"
+        android:layout_gravity="end"
         android:text="@string/add_discussion_button"
         android:id="@+id/addDiscussionButton"
-        android:layout_gravity="right"
         android:onClick="onAddDiscussionButtonClick" />
 
 

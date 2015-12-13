@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -22,6 +24,7 @@ public class AddDiscussion extends AppCompatActivity {
 
     int locationIndex, locationId;
     String description;
+    String[] locationArray;
 
     String locationChoices[] = Locations.getAllLocationNames();
 
@@ -34,6 +37,11 @@ public class AddDiscussion extends AppCompatActivity {
 
     public void initiateLocation() {
         Spinner spinner = (Spinner) findViewById(R.id.announcementLocationSpinner);
+
+        locationArray = new String[locationChoices.length + 1];
+        locationArray[0] = "< Select an option >";
+        System.arraycopy(locationChoices, 0, locationArray, 1, locationChoices.length);
+
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -47,7 +55,7 @@ public class AddDiscussion extends AppCompatActivity {
         });
 
         // Application of the Array to the Spinner
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, locationChoices);
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, locationArray);
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         spinner.setAdapter(spinnerArrayAdapter);
 
@@ -80,12 +88,22 @@ public class AddDiscussion extends AppCompatActivity {
 
         if (v.getId() == R.id.addDiscussionButton) {
 //            addUpdateButtonPressed = true;
-            locationId = Locations.getLocationId(locationChoices[locationIndex]);
+            locationId = Locations.getLocationId(locationArray[locationIndex]);
+            Log.d("locationId AddDisc", "" + locationId);
+            if(locationId == -1) {
+                locationId = 0;
+            }
+
             description = ((EditText) findViewById(R.id.addDiscussionDescriptionBox)).getText().toString();
 
 //            Log.d("AddUpdateEntries", fromLocationId + " " + toLocationId + " " + situation + " " + timestamp + " " + estimatedTime + " " + description);
 
-            new AddDiscussionTask().execute();
+            if(description.equals("")) {
+                Toast.makeText(this, "Write something!", Toast.LENGTH_LONG).show();
+            }
+            else
+                new AddDiscussionTask().execute();
+
         }
     }
 

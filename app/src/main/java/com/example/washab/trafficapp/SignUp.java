@@ -1,6 +1,7 @@
 package com.example.washab.trafficapp;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -30,6 +32,7 @@ public class SignUp extends AppCompatActivity {
     private int emailVerifyCode;
     TextView errorText;
     private boolean signUpError;
+    private Button signUpButton;
     private static int EMAIL_VERIFICATION_REQUEST=1;
 
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
@@ -142,7 +145,10 @@ public class SignUp extends AppCompatActivity {
             else
            {
                 Log.e("EMAIL", email + "\n" + password + "\n" + username + "\n" + gender + "\n");
-
+               signUpButton = (Button) findViewById(R.id.signupButton);
+               signUpButton.setClickable(false);
+               signUpButton.getBackground().setAlpha(64);
+               signUpButton.setTextColor(Color.parseColor("#7CA181"));
 
                 SignUpTask signUpTask = new SignUpTask();
                 signUpTask.execute();
@@ -223,6 +229,11 @@ public class SignUp extends AppCompatActivity {
              * After completing background task Dismiss the progress dialog
              **/
             protected void onPostExecute (String file_url){
+
+                signUpButton.setClickable(true);
+                signUpButton.getBackground().setAlpha(255);
+                signUpButton.setTextColor(Color.BLACK);
+
                 if(jsonSignUp == null) {
                     Utility.CurrentUser.showConnectionError(getApplicationContext());
                     return;

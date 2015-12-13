@@ -35,7 +35,7 @@ import java.util.List;
  * Use the {@link RequestFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallingUpdateInterface {
+public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallingUpdateInterface, Interfaces.ToWhichActivityIsTheFragmentAttached {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -59,7 +59,7 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
     private RemoveFollowerTask removeFollowerTask = new RemoveFollowerTask();
 
     private TextView requestFragmentTextView;
-
+    private int fragmentAttachedToDetailedActivity = 501;
 
 
     /**
@@ -165,10 +165,12 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
 
         Utility.CurrentUser.fetchRequestTaskRunning = false;
 
-        if(!requestFragmentTextView.isClickable()) {
-            requestFragmentTextView.setClickable(true);
-            Log.d("onRequestPause", "REQUESTS textview is now clickable");
-        }
+//        if(){
+//            if(!requestFragmentTextView.isClickable()) {
+//                requestFragmentTextView.setClickable(true);
+//                Log.d("onRequestPause", "REQUESTS textview is now clickable");
+//            }
+//        }
     }
 
     /**
@@ -479,9 +481,9 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
         @Override
         protected void onPreExecute() {
 
-            if(requestFragmentTextView == null)
-                requestFragmentTextView = new TextView(getActivity());
-            requestFragmentTextView.setClickable(false);
+//            if(requestFragmentTextView == null)
+//                requestFragmentTextView = new TextView(getActivity());
+//            requestFragmentTextView.setClickable(false);
 
             progressLayout.setVisibility(View.VISIBLE);
             customRequestListView.setVisibility(View.GONE);
@@ -521,7 +523,7 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
             progressLayout.setVisibility(View.GONE);
             customRequestListView.setVisibility(View.VISIBLE);
 
-            requestFragmentTextView.setClickable(true);
+//            requestFragmentTextView.setClickable(true);
             Utility.CurrentUser.fetchRequestTaskRunning = false;
 
             if(jsonRequests == null) {

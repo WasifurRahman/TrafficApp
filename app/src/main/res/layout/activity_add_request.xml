@@ -3,11 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:paddingRight="5dp"
     tools:context="com.example.washab.trafficapp.AddRequest">
 
     <LinearLayout
         android:orientation="horizontal" android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:paddingRight="5dp"
+        android:paddingBottom="30dp">
 
         <TextView
             android:layout_width="0dp"
@@ -49,11 +53,14 @@
         android:id="@+id/addRequestDescriptionBox"
         android:paddingTop="1dp"
         android:layout_width="259dp"
-        android:layout_height="wrap_content"
+        android:layout_height="80dp"
         android:background="@drawable/description_text_box"
         android:hint="Additional information..."
         android:paddingLeft="10dp"
-        android:inputType="textCapSentences|textMultiLine"
+        android:paddingRight="20dp"
+        android:paddingBottom="5dp"
+        android:padding="10dp"
+        android:inputType="textMultiLine"
         android:textSize="15dp"
         android:layout_gravity="right">
 

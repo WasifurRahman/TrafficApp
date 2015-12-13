@@ -11,26 +11,27 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class AddRequest extends AppCompatActivity {
 
     int fromLocationIndex, toLocationIndex;
+    String[] locationArray;
 
     String locationChoices[] = Locations.getAllLocationNames();
     private String description;
     private int fromLocationId, toLocationId;
     private boolean addRequestButtonPressed = false;
+    Button addRequestButton;
+    AddRequestTask addRequestTask = new AddRequestTask();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,10 +43,16 @@ public class AddRequest extends AppCompatActivity {
 
     public void initiateFromLocation() {
         Spinner spinner = (Spinner) findViewById(R.id.fromLocationSpinner);
+
+        locationArray = new String[locationChoices.length + 1];
+        locationArray[0] = "< Select an option >";
+        System.arraycopy(locationChoices, 0, locationArray, 1, locationChoices.length);
+
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 fromLocationIndex = position;
+
             }
 
             @Override
@@ -54,7 +61,7 @@ public class AddRequest extends AppCompatActivity {
         });
 
         // Application of the Array to the Spinner
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item,locationChoices);
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item,locationArray);
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         spinner.setAdapter(spinnerArrayAdapter);
     }
@@ -74,7 +81,7 @@ public class AddRequest extends AppCompatActivity {
         });
 
         // Application of the Array to the Spinner
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item, locationChoices);
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item, locationArray);
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         spinner.setAdapter(spinnerArrayAdapter);
     }
@@ -107,14 +114,24 @@ public class AddRequest extends AppCompatActivity {
 
         if(v.getId()==R.id.addRequestButton && addRequestButtonPressed==false){
             addRequestButtonPressed = true;
-            fromLocationId=Locations.getLocationId(locationChoices[fromLocationIndex]);
-            toLocationId=Locations.getLocationId(locationChoices[toLocationIndex]);
+            fromLocationId=Locations.getLocationId(locationArray[fromLocationIndex]);
+            toLocationId=Locations.getLocationId(locationArray[toLocationIndex]);
             description = ((EditText) findViewById(R.id.addRequestDescriptionBox)).getText().toString();
 
             Log.d("AddRequestEntries", fromLocationId + " " + toLocationId + " " + description);
 
-            AddRequestTask addRequestTask = new AddRequestTask();
-            addRequestTask.execute();
+            if(fromLocationId == -1 || toLocationId == -1) {
+                Toast.makeText(this, "One or more required field(s) missing!", Toast.LENGTH_LONG).show();
+            }
+            else if(locationArray[fromLocationIndex].equals(locationArray[toLocationIndex])) {
+                Toast.makeText(this,"Source and Destination locations must be different", Toast.LENGTH_LONG).show();
+            }
+            else {
+                addRequestButton = (Button)v.findViewById(R.id.addRequestButton);
+                addRequestButton.setClickable(false);
+                addRequestTask.execute();
+            }
+
         }
 
     }
@@ -175,7 +192,7 @@ public class AddRequest extends AppCompatActivity {
 //            String s = Utility.CurrentUser.makeString();
 //                Log.d("Client User", s);
 
-
+            addRequestButton.setClickable(true);
             Intent intent=new Intent(AddRequest.this, Home.class);
             startActivity(intent);
 

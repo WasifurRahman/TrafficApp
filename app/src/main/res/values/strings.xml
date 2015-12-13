@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">TrafficApp</string>
 
-    <string name="welcome">Welcome To Traffic App</string>
+    <string name="welcome">Welcome To Traffic App!</string>
     <string name="action_settings">Settings</string>
     <string name="signUpString">Sign Up</string>
     <string name="logInString">Log In</string>
@@ -22,10 +22,10 @@
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_add_request">AddRequest</string>
+    <string name="title_activity_add_request">Add Request</string>
     <string name="title_activity_add_announcement">AddAnnouncement</string>
-    <string name="title_activity_add_discussion">AddDiscussion</string>
-    <string name="startAddingDiscussion">ADD DISCUSSION</string>
+    <string name="title_activity_add_discussion">Add Post</string>
+    <string name="startAddingDiscussion">ADD POST</string>
     <string name="title_activity_searchable">SearchableActivity</string>
 
     <string name="title_activity_detail">Details</string>

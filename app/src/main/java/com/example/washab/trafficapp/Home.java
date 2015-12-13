@@ -92,7 +92,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
                 break;
             case POSTS:
                 ((TextView)findViewById(R.id.postsButton)).setTextColor(Color.parseColor("#A5DF00"));
-                addPostTypeFragment();
+//                addPostTypeFragment();
 //                addChoosePostTypeOptionsFragment();
                 addDiscussionFragment();
                 addChooseDiscussionOptionsFragment();
@@ -221,6 +221,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
             return true;
 
         }
+
 
 
         return super.onOptionsItemSelected(item);
@@ -453,7 +454,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
             Utility.CurrentUser.setDisplayPage(POSTS);
             ((TextView)findViewById(R.id.postsButton)).setTextColor(Color.parseColor("#A5DF00"));
             removeAddedFragment(null);
-            addPostTypeFragment();
+//            addPostTypeFragment();
             startDiscussionFragment();
 //            showSearchMenu(true);
         }
