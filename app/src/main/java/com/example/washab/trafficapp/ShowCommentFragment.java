@@ -173,7 +173,7 @@ public class ShowCommentFragment extends Fragment {
             commentText.setText(currentComment.getCommentText());
 
             TextView commentTime=(TextView)itemView.findViewById(R.id.commentTime);
-            commentTime.setText(currentComment.getTimeStamp());
+            commentTime.setText(Utility.CurrentUser.parsePostTime(currentComment.getTimeStamp()));
 
             return itemView;
             // return super.getView(position, convertView, parent);

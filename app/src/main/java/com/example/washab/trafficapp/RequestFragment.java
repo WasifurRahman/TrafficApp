@@ -56,6 +56,9 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
     private int followerId;
     private FetchRequestTask fetchRequestTask = new FetchRequestTask();
     private AddFollowerTask addFollowerTask = new AddFollowerTask();
+    private RemoveFollowerTask removeFollowerTask = new RemoveFollowerTask();
+
+    private TextView requestFragmentTextView;
 
 
 
@@ -94,7 +97,11 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_request, container, false);
+        View v = inflater.inflate(R.layout.fragment_request, container, false);
+        if(requestFragmentTextView == null)
+            requestFragmentTextView = new TextView(getActivity());
+        requestFragmentTextView = (TextView) v.findViewById(R.id.requestsButton);
+        return v;
     }
 
 
@@ -102,15 +109,15 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
     public void onActivityCreated(Bundle savedInstanceState) {
         progressLayout = (LinearLayout) getActivity().findViewById(R.id.progressbar_view);
 
-        
-
-
         if(mListener.getTheIdOfTheActivityTHeFragmentIsAttachedTo()==Interfaces.ToWhichActivityIsTheFragmentAttached.HOME_ACTIVITY) {
             //Log.e("updatesfragment","called by home");
 
             customRequestListView=(ListView)getActivity().findViewById(R.id.userRequestListView);
             registerCallBack();
-            new FetchRequestTask().execute();
+            if(fetchRequestTask.getStatus() == AsyncTask.Status.PENDING || fetchRequestTask.getStatus() == AsyncTask.Status.FINISHED || fetchRequestTask.isCancelled()) {
+                fetchRequestTask = new FetchRequestTask();
+                fetchRequestTask.execute();
+            }
         }else{
             progressLayout.setVisibility(View.GONE);
 
@@ -149,8 +156,19 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
     @Override
     public void onPause() {
         super.onPause();
-        fetchRequestTask.cancel(true);
-        addFollowerTask.cancel(true);
+
+        if(fetchRequestTask.getStatus() == AsyncTask.Status.RUNNING) {
+            fetchRequestTask.cancel(true);
+            Log.d("onRequestPause", "cancelling fetchRequestTask...");
+        }
+//        addFollowerTask.cancel(true);
+
+        Utility.CurrentUser.fetchRequestTaskRunning = false;
+
+        if(!requestFragmentTextView.isClickable()) {
+            requestFragmentTextView.setClickable(true);
+            Log.d("onRequestPause", "REQUESTS textview is now clickable");
+        }
     }
 
     /**
@@ -202,7 +220,10 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
      */
     public void setRequestSearchLocation(int locationIdToSearch) {
         this.locationIdToSearch=locationIdToSearch;
-        new FetchRequestTask().execute();
+        if(fetchRequestTask.getStatus() == AsyncTask.Status.PENDING || fetchRequestTask.getStatus() == AsyncTask.Status.FINISHED || fetchRequestTask.isCancelled()) {
+            fetchRequestTask = new FetchRequestTask();
+            fetchRequestTask.execute();
+        }
     }
 
     /**
@@ -228,7 +249,6 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
             //fill the view
 
             Follower mayBeFollower=new Follower(Utility.CurrentUser.getId(),Utility.CurrentUser.getName());
-
 
             TextView locFrom = (TextView)itemView.findViewById(R.id.requestLocationFromTextView);
             locFrom.setText(Locations.getLocationName(currentRequest.getLocationIdFrom()));
@@ -346,7 +366,10 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
             followCount.setText("" + curFollowCount);
             requestToBeFollowed=curRequest.getRequestId();
             followerId=Utility.CurrentUser.getId();
-            addFollowerTask.execute();
+            if(addFollowerTask.getStatus() == AsyncTask.Status.FINISHED || addFollowerTask.getStatus() == AsyncTask.Status.PENDING) {
+                addFollowerTask = new AddFollowerTask();
+                addFollowerTask.execute();
+            }
 
             //populateUpdateListView();
 
@@ -355,8 +378,11 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
             Log.d(" Already followed", "the request");
             curRequest.removeFollower(curFollower);
 
-            removeColorFromFollow(curRequest,followButton,followCount);
-            new RemoveFollowerTask().execute("" + curRequest.getRequestId());
+            removeColorFromFollow(curRequest, followButton, followCount);
+            if(removeFollowerTask.getStatus() == AsyncTask.Status.FINISHED || removeFollowerTask.getStatus() == AsyncTask.Status.PENDING) {
+                removeFollowerTask = new RemoveFollowerTask();
+                removeFollowerTask.execute("" + curRequest.getRequestId());
+            }
         }
     }
 
@@ -436,7 +462,10 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
     public void setRequestSorting (String sortingCriteria) {
         this.sortingCriteria = sortingCriteria;
         Log.d("Sorting Criteria change", "New Background Thread starts");
-        fetchRequestTask.execute();
+        if(fetchRequestTask.getStatus() == AsyncTask.Status.PENDING || fetchRequestTask.getStatus() == AsyncTask.Status.FINISHED || fetchRequestTask.isCancelled()) {
+            fetchRequestTask = new FetchRequestTask();
+            fetchRequestTask.execute();
+        }
     }
 
     /**
@@ -449,8 +478,14 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
 
         @Override
         protected void onPreExecute() {
+
+            if(requestFragmentTextView == null)
+                requestFragmentTextView = new TextView(getActivity());
+            requestFragmentTextView.setClickable(false);
+
             progressLayout.setVisibility(View.VISIBLE);
             customRequestListView.setVisibility(View.GONE);
+            Utility.CurrentUser.fetchRequestTaskRunning = true;
             super.onPreExecute();
         }
 
@@ -485,6 +520,9 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
         protected void onPostExecute (String a){
             progressLayout.setVisibility(View.GONE);
             customRequestListView.setVisibility(View.VISIBLE);
+
+            requestFragmentTextView.setClickable(true);
+            Utility.CurrentUser.fetchRequestTaskRunning = false;
 
             if(jsonRequests == null) {
                 Utility.CurrentUser.showConnectionError(getActivity());

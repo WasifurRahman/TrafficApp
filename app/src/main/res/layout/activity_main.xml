@@ -35,11 +35,13 @@
         android:ems="10"
         android:id="@+id/emailLoginEditText"
         android:text="a@a.aa"
+        android:textSize="17dp"
         android:layout_alignBottom="@+id/emailLoginTextView"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="false"
         android:layout_toEndOf="@+id/passwordTextView"
-        android:layout_toRightOf="@+id/passwordTextView" />
+        android:layout_toRightOf="@+id/passwordTextView"
+        android:layout_alignBaseline="@+id/emailLoginTextView"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -63,11 +65,12 @@
         android:layout_alignEnd="@+id/emailLoginEditText"
         android:layout_alignBottom="@id/passwordTextView"
         android:layout_toRightOf="@+id/passwordTextView"
-        android:layout_toEndOf="@+id/passwordTextView" />
+        android:layout_toEndOf="@+id/passwordTextView"
+        android:layout_alignBaseline="@+id/passwordTextView"/>
 
     <Button
         style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:text="@string/logInString"
         android:id="@+id/loginButton"

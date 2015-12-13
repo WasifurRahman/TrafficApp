@@ -10,6 +10,8 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,6 +33,7 @@ public class DetailActivity extends AppCompatActivity implements  AddCommentFrag
     private ArrayList<Comment> allCommentsArrayList = new ArrayList<Comment>();
     private String commentFragmentTag = "COMMENT_FRAGMENT_TAG";
     int fragmentToBeLoaded;
+    private Button addCommentButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -216,6 +219,9 @@ public class DetailActivity extends AppCompatActivity implements  AddCommentFrag
 
         ShowCommentFragment frag = (ShowCommentFragment) (getFragmentManager().findFragmentByTag(showCommentFragmentTag));
 
+        addCommentButton = (Button) findViewById(R.id.addCommentButton);
+        addCommentButton.setClickable(false);
+
         frag.addNewComment(newComment);//update the underlying comments list
 
         //now change in the database
@@ -290,8 +296,8 @@ public class DetailActivity extends AppCompatActivity implements  AddCommentFrag
 
         @Override
         protected void onPreExecute() {
-            //progressLayout.setVisibility(View.VISIBLE);
-            //customUpdateList.setVisibility(View.GONE);
+//            progressLayout.setVisibility(View.VISIBLE);
+//            customUpdateList.setVisibility(View.GONE);
             super.onPreExecute();
         }
 
@@ -339,8 +345,12 @@ public class DetailActivity extends AppCompatActivity implements  AddCommentFrag
 
 
         protected void onPostExecute (String a){
+
+            addCommentButton.setClickable(true);
+            Toast.makeText(getApplicationContext(), "New Comment Added", Toast.LENGTH_LONG).show();
+
             if(jsonAddComments == null) {
-                //Utility.CurrentUser.showConnectionError(De);
+//                Utility.CurrentUser.showConnectionError(getApplicationContext());
             }
             Log.d("update comments:", jsonAddComments.toString());
 
@@ -396,7 +406,7 @@ public class DetailActivity extends AppCompatActivity implements  AddCommentFrag
 
         protected void onPostExecute (String a){
             if(jsonComments== null) {
-                //Utility.CurrentUser.showConnectionError(De);
+                Utility.CurrentUser.showConnectionError(getApplicationContext());
             }
             Log.d("update comments:",jsonComments.toString());
             convertTheJSONIntoArrayList(jsonComments);

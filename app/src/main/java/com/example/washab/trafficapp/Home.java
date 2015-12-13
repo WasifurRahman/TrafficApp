@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.GestureDetectorCompat;
@@ -136,21 +137,23 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
                     String activeFragmentTag=currentLoadedFragmentTag();
                     Fragment activeFragment = getFragmentManager().findFragmentByTag(activeFragmentTag);
 
-                    if(activeFragment.getClass()==UpdateFragment.class){
-                        Log.d("fragment alive","update fragment new");
-                        ((UpdateFragment)activeFragment).setUpdatesLocation(locationIdToSearch);
-                    }
-                    else if(activeFragment.getClass()==RequestFragment.class){
-                        Log.d("fragment alive","request fragment new");
-                        ((RequestFragment)activeFragment).setRequestSearchLocation(locationIdToSearch);
-                    }
-                    else if(activeFragment.getClass()==AnnouncementFragment.class){
-                        Log.d("fragment alive","announcement fragment new");
-                        ((AnnouncementFragment)activeFragment).setAnnouncementSearchLocation(locationIdToSearch);
-                    }
-                    else if(activeFragment.getClass()==DiscussionFragment.class){
-                        Log.d("fragment alive","discussion fragment new");
-                        ((DiscussionFragment)activeFragment).setDiscussionSearchLocation(locationIdToSearch);
+                    if(activeFragment != null) {
+                        if(activeFragment.getClass()==UpdateFragment.class){
+                            Log.d("fragment alive","update fragment new");
+                            ((UpdateFragment)activeFragment).setUpdatesLocation(locationIdToSearch);
+                        }
+                        else if(activeFragment.getClass()==RequestFragment.class){
+                            Log.d("fragment alive","request fragment new");
+                            ((RequestFragment)activeFragment).setRequestSearchLocation(locationIdToSearch);
+                        }
+                        else if(activeFragment.getClass()==AnnouncementFragment.class){
+                            Log.d("fragment alive","announcement fragment new");
+                            ((AnnouncementFragment)activeFragment).setAnnouncementSearchLocation(locationIdToSearch);
+                        }
+                        else if(activeFragment.getClass()==DiscussionFragment.class){
+                            Log.d("fragment alive","discussion fragment new");
+                            ((DiscussionFragment)activeFragment).setDiscussionSearchLocation(locationIdToSearch);
+                        }
                     }
 
                 }
@@ -174,6 +177,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     @Override
     protected void onPostResume() {
         if(Utility.CurrentUser.isTheUserValid()==false){
+            Utility.CurrentUser.setDisplayPage(0);
             Intent intent=new Intent(Home.this,MainActivity.class);
             startActivity(intent);
         }
@@ -403,7 +407,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
 
     public void onUpdatesButtonClick(View v){
         if(v.getId()==R.id.updatesButton){
-            setTheLocationInTitlebarToAllLocations();
+
             switch (Utility.CurrentUser.getDisplayPage()) {
                 case UPDATES:
                     break;
@@ -421,8 +425,10 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
             ((TextView)findViewById(R.id.updatesButton)).setTextColor(Color.parseColor("#A5DF00"));
 
             removeAddedFragment(null);
-            addUpdatesFragment();
             addChooseUpdateOptionsFragment();
+            setTheLocationInTitlebarToAllLocations();
+            if(Utility.CurrentUser.fetchUpdateTaskRunning == false)
+                addUpdatesFragment();
 //            showSearchMenu(true);
         }
     }
@@ -455,7 +461,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
 
     public void onRequestsButtonClick(View v){
         if(v.getId()==R.id.requestsButton){
-            setTheLocationInTitlebarToAllLocations();
+
             switch (Utility.CurrentUser.getDisplayPage()) {
                 case UPDATES:
                     ((TextView)findViewById(R.id.updatesButton)).setTextColor(Color.BLACK);
@@ -473,7 +479,9 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
             ((TextView)findViewById(R.id.requestsButton)).setTextColor(Color.parseColor("#A5DF00"));
             removeAddedFragment(null);
             addChooseRequestOptionsFragment();
-            addRequestsFragment();
+            setTheLocationInTitlebarToAllLocations();
+            if(Utility.CurrentUser.fetchRequestTaskRunning == false)
+                addRequestsFragment();
 //            showSearchMenu(true);
         }
     }

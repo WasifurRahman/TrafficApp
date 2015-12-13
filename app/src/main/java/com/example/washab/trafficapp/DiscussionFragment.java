@@ -2,6 +2,7 @@ package com.example.washab.trafficapp;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -53,6 +54,12 @@ public class DiscussionFragment extends Fragment {
     LinearLayout progressLayout;
     ListView customDiscussionListView;
     private int locationIdToSearch=0;
+    private static Context context;
+
+    private AddLikerTask addLikerTask = new AddLikerTask();
+    private RemoveLikerTask removeLikerTask = new RemoveLikerTask();
+    private AddDislikerTask addDislikerTask = new AddDislikerTask();
+    private RemoveDislikerTask removeDislikerTask = new RemoveDislikerTask();
 
     FetchDiscussionTask fetchDiscussionTask = new FetchDiscussionTask();
 
@@ -85,6 +92,7 @@ public class DiscussionFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        DiscussionFragment.context = this.getActivity();
     }
 
     @Override
@@ -130,7 +138,10 @@ public class DiscussionFragment extends Fragment {
 
             customDiscussionListView=(ListView)getActivity().findViewById(R.id.userDiscussionListView);
             registerCallBack();
-            new FetchDiscussionTask().execute();
+            if(fetchDiscussionTask.getStatus() == AsyncTask.Status.PENDING || fetchDiscussionTask.getStatus() == AsyncTask.Status.FINISHED || fetchDiscussionTask.isCancelled()) {
+                fetchDiscussionTask = new FetchDiscussionTask();
+                fetchDiscussionTask.execute();
+            }
         }else{
             progressLayout.setVisibility(View.GONE);
 
@@ -192,10 +203,16 @@ public class DiscussionFragment extends Fragment {
      */
 
     private void populateDiscussionListView(){
-        ArrayAdapter<Discussion> adapter = new MyListAdapter();
+        if(allDiscussionsArrayList != null) {
+            ArrayAdapter<Discussion> adapter = new MyListAdapter();
 
-        ListView list=(ListView)getView().findViewById(R.id.userDiscussionListView);
-        list.setAdapter(adapter);
+            View v;
+            if((v = getView()) != null) {
+                ListView list=(ListView)v.findViewById(R.id.userDiscussionListView);
+                //list.setOnItemClickListener();
+                list.setAdapter(adapter);
+            }
+        }
     }
 
     private void registerCallBack() {
@@ -213,7 +230,10 @@ public class DiscussionFragment extends Fragment {
 
     public void setDiscussionSearchLocation(int locationIdToSearch) {
         this.locationIdToSearch=locationIdToSearch;
-        new FetchDiscussionTask().execute();
+        if(fetchDiscussionTask.getStatus() == AsyncTask.Status.PENDING || fetchDiscussionTask.getStatus() == AsyncTask.Status.FINISHED || fetchDiscussionTask.isCancelled()) {
+            fetchDiscussionTask = new FetchDiscussionTask();
+            fetchDiscussionTask.execute();
+        }
     }
 
     /**
@@ -223,7 +243,7 @@ public class DiscussionFragment extends Fragment {
     private class MyListAdapter extends ArrayAdapter<Discussion>{
         public MyListAdapter(){
 
-            super(getActivity(), R.layout.user_discussion_item, allDiscussionsArrayList);
+            super(DiscussionFragment.context, R.layout.user_discussion_item, allDiscussionsArrayList);
         }
 
         @Override
@@ -379,7 +399,10 @@ public class DiscussionFragment extends Fragment {
             if(curDiscussion.hasTheUserDislikedTheDiscussion(curVoter)){
                 curDiscussion.removeDisliker(curVoter);
                 removeColorFromDislike(curDiscussion, dislikeButton, dislikeCountTextView);
-                new RemoveDislikerTask().execute(""+curDiscussion.getId());
+                if(removeDislikerTask.getStatus() == AsyncTask.Status.FINISHED || removeDislikerTask.getStatus() == AsyncTask.Status.PENDING) {
+                    removeDislikerTask = new RemoveDislikerTask();
+                    removeDislikerTask.execute(""+curDiscussion.getId());
+                }
 
             }
             curDiscussion.addLiker(curVoter);
@@ -398,7 +421,10 @@ public class DiscussionFragment extends Fragment {
             else likeCountTextView.setText("" + curDiscussion.getLikeCount() + " likes");
             //updateToBeFoll=curDiscussion.getId();
             //likerId=Utility.CurrentUser.getId();
-            new AddLikerTask().execute(curDiscussion.getId()+"");
+            if(addLikerTask.getStatus() == AsyncTask.Status.FINISHED || addLikerTask.getStatus() == AsyncTask.Status.PENDING) {
+                addLikerTask = new AddLikerTask();
+                addLikerTask.execute(curDiscussion.getId()+"");
+            }
 
             //populateUpdateListView();
 
@@ -406,7 +432,10 @@ public class DiscussionFragment extends Fragment {
         }else{
             curDiscussion.removeLiker(curVoter);
             removeColorFromLike(curDiscussion, likeButton, likeCountTextView);
-            new RemoveLikerTask().execute("" + curDiscussion.getId());
+            if(removeLikerTask.getStatus() == AsyncTask.Status.FINISHED || removeLikerTask.getStatus() == AsyncTask.Status.PENDING) {
+                removeLikerTask = new RemoveLikerTask();
+                removeLikerTask.execute("" + curDiscussion.getId());
+            }
             //Log.d(" Already liked ", "the post");
 
         }
@@ -471,7 +500,10 @@ public class DiscussionFragment extends Fragment {
             if(curDiscussion.hasTheUserLikedTheDiscussion(curVoter)){
                 curDiscussion.removeLiker(curVoter);
                 removeColorFromLike(curDiscussion, likeButton, likeCountTextView);
-                new RemoveLikerTask().execute("" + curDiscussion.getId());
+                if(removeLikerTask.getStatus() == AsyncTask.Status.FINISHED || removeLikerTask.getStatus() == AsyncTask.Status.PENDING) {
+                    removeLikerTask = new RemoveLikerTask();
+                    removeLikerTask.execute("" + curDiscussion.getId());
+                }
 
             }
 
@@ -490,7 +522,10 @@ public class DiscussionFragment extends Fragment {
             }
             else dislikeCountTextView.setText("" + curDiscussion.getDislikeCount() + " dislikes");
 
-            new AddDislikerTask().execute(curDiscussion.getId()+"");
+            if(addDislikerTask.getStatus() == AsyncTask.Status.FINISHED || addDislikerTask.getStatus() == AsyncTask.Status.PENDING) {
+                addDislikerTask = new AddDislikerTask();
+                addDislikerTask.execute(curDiscussion.getId() + "");
+            }
 
             //populateUpdateListView();
 
@@ -499,7 +534,10 @@ public class DiscussionFragment extends Fragment {
 
             curDiscussion.removeDisliker(curVoter);
             removeColorFromDislike(curDiscussion, dislikeButton, dislikeCountTextView);
-            new RemoveDislikerTask().execute("" + curDiscussion.getId());
+            if(removeDislikerTask.getStatus() == AsyncTask.Status.FINISHED || removeDislikerTask.getStatus() == AsyncTask.Status.PENDING) {
+                removeDislikerTask = new RemoveDislikerTask();
+                removeDislikerTask.execute(""+curDiscussion.getId());
+            }
         }
     }
 
@@ -512,7 +550,10 @@ public class DiscussionFragment extends Fragment {
 
     public void setDiscussionSorting (String sortingCriteria) {
         this.sortingCriteria = sortingCriteria;
-        new FetchDiscussionTask().execute();
+        if(fetchDiscussionTask.getStatus() == AsyncTask.Status.PENDING || fetchDiscussionTask.getStatus() == AsyncTask.Status.FINISHED || fetchDiscussionTask.isCancelled()) {
+            fetchDiscussionTask = new FetchDiscussionTask();
+            fetchDiscussionTask.execute();
+        }
     }
 
 
@@ -541,8 +582,14 @@ public class DiscussionFragment extends Fragment {
 
         // Release the Camera because we don't need it when paused
         // and other activities might need to use it.
-        Log.d("inside pause", "yes");
-        fetchDiscussionTask.cancel(true);
+        Log.d("inside Disc pause", "yes");
+        Utility.CurrentUser.insideHomePause++;
+        if(Utility.CurrentUser.insideHomePause >= 3) {
+            Log.d("insidePause count", Utility.CurrentUser.insideHomePause+"");
+            Utility.CurrentUser.insideHomePause = 0;
+            fetchDiscussionTask.cancel(true);
+//            Utility.CurrentUser.fetchUpdateTaskRunning = false;
+        }
     }
 
 

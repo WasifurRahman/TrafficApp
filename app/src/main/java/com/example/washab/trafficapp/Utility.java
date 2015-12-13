@@ -22,6 +22,9 @@ public class Utility {
         private static int id, displayPage = 0;
         private static String apiKey,username;
         private static boolean valid=false;
+        public static int insideHomePause = 0;
+        public static boolean fetchUpdateTaskRunning = false;
+        public static boolean fetchRequestTaskRunning = false;
 
         public static void setUser(int i,String uName,String apikey){
             id=i;

@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -38,6 +39,7 @@ public class AddUpdate extends AppCompatActivity implements Interfaces.WhoIsCall
     private int fromLocationId, toLocationId, estimatedTime, requestId;
     private boolean error = false;
     private String fromLocationName,toLocationName, errorMessage;
+    private Button addUpdateButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -261,8 +263,11 @@ public class AddUpdate extends AppCompatActivity implements Interfaces.WhoIsCall
             else if(fromLocationName.equals(toLocationName)) {
                 Toast.makeText(this,"Source and Destination locations must be different", Toast.LENGTH_LONG).show();
             }
-            else
+            else {
+                addUpdateButton = (Button)v.findViewById(R.id.addUpdateButton);
+                addUpdateButton.setClickable(false);
                 addUpdateTask.execute();
+            }
 
         }
 
@@ -330,9 +335,9 @@ public class AddUpdate extends AppCompatActivity implements Interfaces.WhoIsCall
                 String s = Utility.CurrentUser.makeString();
 //                Log.d("Client User", s);
 
-
                 Intent intent=new Intent(AddUpdate.this, Home.class);
                 startActivity(intent);
+                addUpdateButton.setClickable(true);
 
             }
         }

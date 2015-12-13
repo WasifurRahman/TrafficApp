@@ -73,9 +73,13 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         Free, Mild, Moderate, Extreme, Gridlock
     }
 
+    private AddLikerTask addLikerTask = new AddLikerTask();
+    private RemoveLikerTask removeLikerTask = new RemoveLikerTask();
+    private AddDislikerTask addDislikerTask = new AddDislikerTask();
+    private RemoveDislikerTask removeDislikerTask = new RemoveDislikerTask();
+    private FetchUpdateTask fetchUpdateTask = new FetchUpdateTask();
 
-
-
+    private TextView updateFragmentTextView;
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -159,10 +163,16 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
      */
 
     private void populateUpdateListView(){
-        ArrayAdapter<Update> adapter = new MyListAdapter();
-        ListView list=(ListView)getView().findViewById(R.id.userUpdatesListView);
-        //list.setOnItemClickListener();
-        list.setAdapter(adapter);
+        if(allUserUpdatesArraylist != null) {
+            ArrayAdapter<Update> adapter = new MyListAdapter();
+            View v;
+            if((v = getView()) != null) {
+                ListView list=(ListView)v.findViewById(R.id.userUpdatesListView);
+                //list.setOnItemClickListener();
+                list.setAdapter(adapter);
+            }
+
+        }
 
     }
 
@@ -199,11 +209,7 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
 
     private class MyListAdapter extends ArrayAdapter<Update>{
         public MyListAdapter(){
-
-
-            super(getActivity(), R.layout.user_update_item, allUserUpdatesArraylist);
-
-            //super(context, Id, allUserUpdatesArraylist);
+            super(UpdateFragment.context, R.layout.user_update_item, allUserUpdatesArraylist);
         }
 
         @Override
@@ -407,7 +413,10 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
             if(curUpdate.hasTheUserDisLikedTheUpdate(curVoter)){
                 curUpdate.removeDisliker(curVoter);
                 removeColorFromDislike(curUpdate, dislikeButton, dislikeCountTextView);
-                new RemoveDislikerTask().execute(""+curUpdate.getId());
+                if(removeDislikerTask.getStatus() == AsyncTask.Status.FINISHED || removeDislikerTask.getStatus() == AsyncTask.Status.PENDING) {
+                    removeDislikerTask = new RemoveDislikerTask();
+                    removeDislikerTask.execute(""+curUpdate.getId());
+                }
 
             }
             curUpdate.addLiker(curVoter);
@@ -424,7 +433,10 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
             else likeCountTextView.setText("" + curLikeCount + " likes");
             updateToBeLiked=curUpdate.getId();
             likerId=Utility.CurrentUser.getId();
-            new AddLikerTask().execute();
+            if(addLikerTask.getStatus() == AsyncTask.Status.FINISHED || addLikerTask.getStatus() == AsyncTask.Status.PENDING) {
+                addLikerTask = new AddLikerTask();
+                addLikerTask.execute();
+            }
 
 //            populateUpdateListView();
 
@@ -432,7 +444,10 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
         }else{
             curUpdate.removeLiker(curVoter);
             removeColorFromLike(curUpdate, likeButton, likeCountTextView);
-            new RemoveLikerTask().execute(""+curUpdate.getId());
+            if(removeLikerTask.getStatus() == AsyncTask.Status.FINISHED || removeLikerTask.getStatus() == AsyncTask.Status.PENDING) {
+                removeLikerTask = new RemoveLikerTask();
+                removeLikerTask.execute("" + curUpdate.getId());
+            }
             //Log.d(" Already liked ", "the post");
 
         }
@@ -449,7 +464,10 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
     private void removeColorFromDislike(Update curUpdate,Button disLikeButton,TextView dislikeText) {
         disLikeButton.setText("Dislike");
         disLikeButton.setTextColor(Color.BLACK);
-        dislikeText.setText(""+curUpdate.getDislikeCount());
+        if(curUpdate.getDislikeCount() == 1) {
+            dislikeText.setText("" + curUpdate.getDislikeCount() + " dislike");
+        }
+        else dislikeText.setText("" + curUpdate.getDislikeCount() + " dislikes");
         disLikeButton.setBackgroundColor(Color.LTGRAY);
 
     }
@@ -491,7 +509,10 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
             if(curUpdate.hasTheUserLikedTheUpdate(curVoter)){
                 curUpdate.removeLiker(curVoter);
                 removeColorFromLike(curUpdate, likeButton, likeCountTextView);
-                new RemoveLikerTask().execute(""+curUpdate.getId());
+                if(removeLikerTask.getStatus() == AsyncTask.Status.FINISHED || removeLikerTask.getStatus() == AsyncTask.Status.PENDING) {
+                    removeLikerTask = new RemoveLikerTask();
+                    removeLikerTask.execute("" + curUpdate.getId());
+                }
 
             }
 
@@ -509,7 +530,10 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
             else dislikeCountTextView.setText("" + curdisLikeCount + " dislikes");
             updateToBeDisliked= curUpdate.getId();
             dislikerId=Utility.CurrentUser.getId();
-            new AddDislikerTask().execute();
+            if(addDislikerTask.getStatus() == AsyncTask.Status.FINISHED || addDislikerTask.getStatus() == AsyncTask.Status.PENDING) {
+                addDislikerTask = new AddDislikerTask();
+                addDislikerTask.execute();
+            }
 
             //populateUpdateListView();
 
@@ -518,7 +542,10 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
 
             curUpdate.removeDisliker(curVoter);
             removeColorFromDislike(curUpdate, dislikeButton, dislikeCountTextView);
-            new RemoveDislikerTask().execute(""+curUpdate.getId());
+            if(removeDislikerTask.getStatus() == AsyncTask.Status.FINISHED || removeDislikerTask.getStatus() == AsyncTask.Status.PENDING) {
+                removeDislikerTask = new RemoveDislikerTask();
+                removeDislikerTask.execute(""+curUpdate.getId());
+            }
         }
     }
 
@@ -527,7 +554,7 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        View view = new View(UpdateFragment.context);
+        View view = inflater.inflate(R.layout.fragment_user_updates, container, false);
         /*
         view.setOnTouchListener(new Interfaces.OnSwipeTouchListener(UpdateFragment.context) {
             @Override
@@ -538,8 +565,10 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
             }
         });*/
 
-
-        return inflater.inflate(R.layout.fragment_user_updates, container, false);
+        if(updateFragmentTextView == null)
+            updateFragmentTextView = new TextView(getActivity());
+        updateFragmentTextView = (TextView) view.findViewById(R.id.updatesButton);
+        return view;
     }
 
     @Override
@@ -551,7 +580,10 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
 
             customUpdateList=(ListView)getActivity().findViewById(R.id.userUpdatesListView);
             registerCallBack();
-            new FetchUpdateTask().execute();
+            if(fetchUpdateTask.getStatus() == AsyncTask.Status.PENDING || fetchUpdateTask.getStatus() == AsyncTask.Status.FINISHED || fetchUpdateTask.isCancelled()) {
+                fetchUpdateTask = new FetchUpdateTask();
+                fetchUpdateTask.execute();
+            }
         }else{
             progressLayout.setVisibility(View.GONE);
             Update currentUpdate=mListener.passUpdateObject();
@@ -574,11 +606,19 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
     @Override
     public void onPause() {
         super.onPause();
+        Log.d("inside UpdateFrag pause", "hmm");
 
+        Utility.CurrentUser.insideHomePause++;
+        if(Utility.CurrentUser.insideHomePause >= 3) {
+            Log.d("insidePause count", Utility.CurrentUser.insideHomePause+"");
+            Utility.CurrentUser.insideHomePause = 0;
+            fetchUpdateTask.cancel(true);
+            Utility.CurrentUser.fetchUpdateTaskRunning = false;
+        }
 
-        //fetchUpdateTask.cancel(true);
+        //fetchDiscussionTask.cancel(true);
 
-        //fetchUpdateTask.cancel(true);
+        //fetchDiscussionTask.cancel(true);
         //addLikerTask.cancel(true);
 
     }
@@ -622,7 +662,10 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
     public void setUpdateSorting (String sortingCriteria) {
         this.sortingCriteria = sortingCriteria;
 
-        new FetchUpdateTask().execute();
+        if(fetchUpdateTask.getStatus() == AsyncTask.Status.PENDING || fetchUpdateTask.getStatus() == AsyncTask.Status.FINISHED || fetchUpdateTask.isCancelled()) {
+            fetchUpdateTask = new FetchUpdateTask();
+            fetchUpdateTask.execute();
+        }
     }
 
     /**
@@ -632,7 +675,10 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
 
     public void setUpdatesLocation(int locationIdToSearch) {
         this.locationIdToSearch=locationIdToSearch;
-        new FetchUpdateTask().execute();
+        if(fetchUpdateTask.getStatus() == AsyncTask.Status.PENDING || fetchUpdateTask.getStatus() == AsyncTask.Status.FINISHED || fetchUpdateTask.isCancelled()) {
+            fetchUpdateTask = new FetchUpdateTask();
+            fetchUpdateTask.execute();
+        }
     }
 
     /**
@@ -672,8 +718,14 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
 
         @Override
         protected void onPreExecute() {
+
+            if(updateFragmentTextView == null)
+                updateFragmentTextView = new TextView(getActivity());
+            updateFragmentTextView.setClickable(false);
+
             progressLayout.setVisibility(View.VISIBLE);
             customUpdateList.setVisibility(View.GONE);
+            Utility.CurrentUser.fetchUpdateTaskRunning = true;
             super.onPreExecute();
         }
 
@@ -708,9 +760,12 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
          **/
         protected void onPostExecute (String a){
 
+            updateFragmentTextView.setClickable(true);
+
             //jsonUpdatesField=jsonUpdates;
             progressLayout.setVisibility(View.GONE);
             customUpdateList.setVisibility(View.VISIBLE);
+            Utility.CurrentUser.fetchUpdateTaskRunning = false;
 
             if(jsonUpdates == null) {
                 Utility.CurrentUser.showConnectionError(UpdateFragment.context);
@@ -719,8 +774,12 @@ public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCalling
                 // Check log cat for JSON reponse
                 Log.d("All info: ", jsonUpdates.toString());
 
-                populateUpdateList(jsonUpdates);
-                populateUpdateListView();
+                if(Utility.CurrentUser.getDisplayPage() == 1) {                 //1 implies UPDATES page
+                    synchronized (UpdateFragment.class) {
+                        populateUpdateList(jsonUpdates);
+                        populateUpdateListView();
+                    }
+                }
 
             }
         }

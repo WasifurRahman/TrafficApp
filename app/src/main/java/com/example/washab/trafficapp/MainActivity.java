@@ -2,6 +2,7 @@ package com.example.washab.trafficapp;
 
 import android.content.Intent;
 import android.content.pm.PackageInstaller;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatActivity
     public String email, password, errorMessage;
     TextView errorText;
     boolean loginError;
+    private Button loginButton;
 
 
     @Override
@@ -106,6 +109,10 @@ public class MainActivity extends AppCompatActivity
                 errorText.setText("Please enter a valid address.\n");
             } else {
                 LoginTask loginTask = new LoginTask();
+                loginButton = (Button) findViewById(R.id.loginButton);
+                loginButton.setClickable(false);
+                loginButton.getBackground().setAlpha(64);
+                loginButton.setTextColor(Color.parseColor("#7CA181"));
                 loginTask.execute();
             }
 
@@ -192,6 +199,10 @@ public class MainActivity extends AppCompatActivity
          * After completing background task Dismiss the progress dialog
          **/
         protected void onPostExecute (String a){
+
+            loginButton.setClickable(true);
+            loginButton.getBackground().setAlpha(255);
+            loginButton.setTextColor(Color.BLACK);
 
             if(jsonLogin == null) {
                 Utility.CurrentUser.showConnectionError(getApplicationContext());

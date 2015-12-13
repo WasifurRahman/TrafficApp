@@ -2,6 +2,7 @@ package com.example.washab.trafficapp;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -42,6 +43,7 @@ public class NotificationsFragment extends Fragment implements Interfaces.WhichF
     LinearLayout progressLayout;
     ListView customNotifsListView;
     int fragmentToBeLoaded;
+    private static Context context;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -79,6 +81,7 @@ public class NotificationsFragment extends Fragment implements Interfaces.WhichF
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        NotificationsFragment.context = this.getActivity();
     }
 
     /**
@@ -106,7 +109,10 @@ public class NotificationsFragment extends Fragment implements Interfaces.WhichF
         progressLayout = (LinearLayout) getActivity().findViewById(R.id.progressbar_view);
         customNotifsListView = (ListView) getActivity().findViewById(R.id.userNotifsListView);
         registerCallBack();
-        fetchNotificationsTask.execute();
+        if(fetchNotificationsTask.getStatus() == AsyncTask.Status.PENDING || fetchNotificationsTask.getStatus() == AsyncTask.Status.FINISHED || fetchNotificationsTask.isCancelled()) {
+            fetchNotificationsTask = new FetchNotificationsTask();
+            fetchNotificationsTask.execute();
+        }
 
         super.onActivityCreated(savedInstanceState);
     }
@@ -121,7 +127,13 @@ public class NotificationsFragment extends Fragment implements Interfaces.WhichF
     @Override
     public void onPause() {
         super.onPause();
-        fetchNotificationsTask.cancel(true);
+        Utility.CurrentUser.insideHomePause++;
+        if(Utility.CurrentUser.insideHomePause >= 3) {
+            Log.d("insidePause count", Utility.CurrentUser.insideHomePause+"");
+            Utility.CurrentUser.insideHomePause = 0;
+            fetchNotificationsTask.cancel(true);
+//            Utility.CurrentUser.fetchUpdateTaskRunning = false;
+        }
     }
 
     /**
@@ -156,9 +168,14 @@ public class NotificationsFragment extends Fragment implements Interfaces.WhichF
      */
 
     private void populateNotifListView() {
-        ArrayAdapter<Notification> adapter = new MyListAdapter();
-        ListView list = (ListView) getView().findViewById(R.id.userNotifsListView);
-        list.setAdapter(adapter);
+        if(allNotifsArraylist != null) {
+            ArrayAdapter<Notification> adapter = new MyListAdapter();
+            View v;
+            if((v = getView()) != null) {
+                ListView list=(ListView)v.findViewById(R.id.userNotifsListView);
+                list.setAdapter(adapter);
+            }
+        }
     }
 
     /**
@@ -167,7 +184,7 @@ public class NotificationsFragment extends Fragment implements Interfaces.WhichF
 
     private class MyListAdapter extends ArrayAdapter<Notification> {
         public MyListAdapter() {
-            super(getActivity(), R.layout.user_notif_item, allNotifsArraylist);
+            super(NotificationsFragment.context, R.layout.user_notif_item, allNotifsArraylist);
         }
 
         @Override

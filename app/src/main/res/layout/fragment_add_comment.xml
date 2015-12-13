@@ -2,7 +2,54 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:padding="10dp"
     tools:context="com.example.washab.trafficapp.AddCommentFragment">
+
+    <!--<ScrollView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingBottom="3dp"
+            android:baselineAligned="true"
+            android:layout_marginTop="6dp">
+            <EditText
+                android:id="@+id/addCommentEditText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="10"
+                android:background="@drawable/description_text_box"
+                android:paddingLeft="10dp"
+                android:paddingRight="20dp"
+                android:padding="10dp"
+                android:scrollbars="vertical"
+                android:scrollbarAlwaysDrawVerticalTrack="true"
+                android:inputType="textMultiLine"
+                android:textSize="13dp"
+                android:hint="Add a comment..."
+                android:includeFontPadding="true"
+                android:layout_gravity="fill_horizontal"
+                android:windowSoftInputMode="adjustPan">
+
+            </EditText>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/addCommentButton"
+                android:text="Comment"
+                android:textSize="12dp"
+                android:layout_gravity="right"
+                android:layout_marginBottom="10dp"
+                android:onClick="onAddCommentButtonClick"/>
+        </LinearLayout>
+
+    <!--</ScrollView>-->
 
 
     <TextView
@@ -10,19 +57,7 @@
         android:paddingBottom="15dp"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="#707070" />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/addCommentEditText"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/addCommentButton"
-        android:text="Comment"
-        android:layout_gravity="right"
-        android:onClick="onAddCommentButtonClick"/>
+        android:background="#DDEEDD" />
 
 
 </LinearLayout>
