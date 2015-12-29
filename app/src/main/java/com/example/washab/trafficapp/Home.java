@@ -9,9 +9,12 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -23,7 +26,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 
-public class Home extends AppCompatActivity implements UpdateFragment.OnFragmentInteractionListener ,AnnouncementFragment.OnFragmentInteractionListener,
+public class Home extends FragmentActivity implements UpdateFragment.OnFragmentInteractionListener ,AnnouncementFragment.OnFragmentInteractionListener,
 ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFragment.OnFragmentInteractionListener,RequestFragment.OnFragmentInteractionListener,PostTypeFragment.OnFragmentInteractionListener
 
 ,ChooseAnnouncementOptionsFragment.OnFragmentInteractionListener,Interfaces.ToWhichActivityIsTheFragmentAttached,Interfaces.WhichFragmentIsCallingDetailedActivity,ChooseDiscussionOptionsFragment.OnFragmentInteractionListener,DiscussionFragment.OnFragmentInteractionListener, NotificationsFragment.OnFragmentInteractionListener,Interfaces.WhoIsCallingUpdateInterface
@@ -72,6 +75,9 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        ViewPager pager = (ViewPager) findViewById(R.id.viewPager);
+        pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
+
 //        this.gestureDetector = new GestureDetectorCompat(this, this);               //an object from this class which would allow us to detect gestures
 
         locationChoices=Locations.getAllLocationNamesForSearch();
@@ -83,32 +89,46 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
             Utility.CurrentUser.setDisplayPage(UPDATES);
         }
 
-        switch(Utility.CurrentUser.getDisplayPage()) {
-            case UPDATES:
-//                Log.d("inside the switch", "testing");
-                ((TextView)findViewById(R.id.updatesButton)).setTextColor(Color.parseColor("#A5DF00"));
-                addUpdatesFragment();
-                addChooseUpdateOptionsFragment();
-                break;
-            case POSTS:
-                ((TextView)findViewById(R.id.postsButton)).setTextColor(Color.parseColor("#A5DF00"));
-//                addPostTypeFragment();
-//                addChoosePostTypeOptionsFragment();
-                addDiscussionFragment();
-                addChooseDiscussionOptionsFragment();
-                break;
-            case REQUESTS:
-                ((TextView)findViewById(R.id.requestsButton)).setTextColor(Color.parseColor("#A5DF00"));
-                addRequestsFragment();
-                addChooseRequestOptionsFragment();
-                break;
-            case NOTIFS:
-                ((TextView)findViewById(R.id.notifsButton)).setTextColor(Color.parseColor("#A5DF00"));
-                addNotifsFragment();
-                break;
+    }
+
+    private class MyPagerAdapter extends FragmentPagerAdapter {
+        public MyPagerAdapter(android.support.v4.app.FragmentManager fm) {
+            super(fm);
         }
 
+        @Override
+        public android.support.v4.app.Fragment getItem(int pos) {
+            switch(Utility.CurrentUser.getDisplayPage()) {
+                case UPDATES:
+//                Log.d("inside the switch", "testing");
+                    ((TextView)findViewById(R.id.updatesButton)).setTextColor(Color.parseColor("#A5DF00"));
+                    addUpdatesFragment();
+                    addChooseUpdateOptionsFragment();
+                    return UpdateFragment.newInstance("Testing", "Swipe");
+                case POSTS:
+                    ((TextView)findViewById(R.id.postsButton)).setTextColor(Color.parseColor("#A5DF00"));
+//                addPostTypeFragment();
+//                addChoosePostTypeOptionsFragment();
+                    addDiscussionFragment();
+                    addChooseDiscussionOptionsFragment();
+                    return DiscussionFragment.newInstance("Testing", "Swipe");
+//                case REQUESTS:
+//                    ((TextView)findViewById(R.id.requestsButton)).setTextColor(Color.parseColor("#A5DF00"));
+//                    addRequestsFragment();
+//                    addChooseRequestOptionsFragment();
+//                    break;
+//                case NOTIFS:
+//                    ((TextView)findViewById(R.id.notifsButton)).setTextColor(Color.parseColor("#A5DF00"));
+//                    addNotifsFragment();
+//                    break;
+            }
+            return null;
+        }
 
+        @Override
+        public int getCount() {
+            return 2;
+        }
     }
 
     public void showSearchMenu(boolean showMenu) {
@@ -138,11 +158,12 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
                     Fragment activeFragment = getFragmentManager().findFragmentByTag(activeFragmentTag);
 
                     if(activeFragment != null) {
-                        if(activeFragment.getClass()==UpdateFragment.class){
-                            Log.d("fragment alive","update fragment new");
-                            ((UpdateFragment)activeFragment).setUpdatesLocation(locationIdToSearch);
-                        }
-                        else if(activeFragment.getClass()==RequestFragment.class){
+//                        if(activeFragment.getClass()==UpdateFragment.class){
+//                            Log.d("fragment alive","update fragment new");
+//                            ((UpdateFragment)activeFragment).setUpdatesLocation(locationIdToSearch);
+//                        }
+//                        else
+                        if(activeFragment.getClass()==RequestFragment.class){
                             Log.d("fragment alive","request fragment new");
                             ((RequestFragment)activeFragment).setRequestSearchLocation(locationIdToSearch);
                         }
@@ -150,10 +171,10 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
                             Log.d("fragment alive","announcement fragment new");
                             ((AnnouncementFragment)activeFragment).setAnnouncementSearchLocation(locationIdToSearch);
                         }
-                        else if(activeFragment.getClass()==DiscussionFragment.class){
-                            Log.d("fragment alive","discussion fragment new");
-                            ((DiscussionFragment)activeFragment).setDiscussionSearchLocation(locationIdToSearch);
-                        }
+//                        else if(activeFragment.getClass()==DiscussionFragment.class){
+//                            Log.d("fragment alive","discussion fragment new");
+//                            ((DiscussionFragment)activeFragment).setDiscussionSearchLocation(locationIdToSearch);
+//                        }
                     }
 
                 }
@@ -327,8 +348,8 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     }
 
     private void addUpdatesFragment(){
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         UpdateFragment updatesFragment = new UpdateFragment();
 
         fragmentTransaction.add(R.id.dataFragmentContainer, updatesFragment,updatesFragmentTag);
@@ -355,8 +376,8 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
     }
 
     private void addDiscussionFragment(){
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         //UpdateFragment updatesFragment = new  UpdateFragment();
         DiscussionFragment discussionFragment = new DiscussionFragment();
 
@@ -608,7 +629,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
 //        discussionSortingCriteria =sortingCrietaria;
         Log.d("Srting Crieteria: ",sortingCrietaria);
 
-        DiscussionFragment discussionFragment = (DiscussionFragment) getFragmentManager().findFragmentByTag(discussionFragmentTag);
+        DiscussionFragment discussionFragment = (DiscussionFragment) getSupportFragmentManager().findFragmentByTag(discussionFragmentTag);
         if(discussionFragment!=null)discussionFragment.setDiscussionSorting(sortingCrietaria);
 
 
@@ -629,7 +650,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
         Log.d("Srting Crieteria: ",sortingCrietaria);
 
 
-        UpdateFragment updateFragment = (UpdateFragment) getFragmentManager().findFragmentByTag(updatesFragmentTag);
+        UpdateFragment updateFragment = (UpdateFragment) getSupportFragmentManager().findFragmentByTag(updatesFragmentTag);
 
 //        UpdateFragment updateFragment = (UpdateFragment) getFragmentManager().findFragmentByTag(updatesFragmentTag);
 
@@ -697,7 +718,7 @@ ChooseUpdateOptionsFragment.OnFragmentInteractionListener,ChooseRequestOptionsFr
 //        updatesSortingCriteria =sortingCrietaria;
         Log.d("Srting Crieteria: ",sortingCrietaria);
 
-        UpdateFragment updateFragment = (UpdateFragment) getFragmentManager().findFragmentByTag(updatesFragmentTag);
+        UpdateFragment updateFragment = (UpdateFragment) getSupportFragmentManager().findFragmentByTag(updatesFragmentTag);
         if(updateFragment!=null)updateFragment.setUpdateSorting(sortingCrietaria);
 
     }
