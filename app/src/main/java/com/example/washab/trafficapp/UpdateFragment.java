@@ -36,7 +36,7 @@ import java.util.List;
  * Use the {@link UpdateFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class UpdateFragment extends android.support.v4.app.Fragment implements  Interfaces.WhoIsCallingUpdateInterface,Interfaces.ToWhichActivityIsTheFragmentAttached{
+public class UpdateFragment extends Fragment implements  Interfaces.WhoIsCallingUpdateInterface,Interfaces.ToWhichActivityIsTheFragmentAttached{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";

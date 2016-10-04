@@ -329,7 +329,7 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
             if (curRequest.hasTHeUserFollowedTheRequest(curFollower)) {
 
                 Log.d("InsidefollowButton Color", "Yes");
-                followButton.setText("Followed");
+                followButton.setText("Following");
                 followButton.setBackgroundColor(Color.CYAN);
                 followButton.setWidth(50);
 
@@ -361,7 +361,7 @@ public class RequestFragment extends Fragment implements  Interfaces.WhoIsCallin
             curRequest.addFollower(curFollower);
            // curRequest.re(curFollower);
             //Log.d("yes liked ", "for the first time");
-            followButton.setText("Followed");
+            followButton.setText("Following");
             followButton.setBackgroundColor(Color.CYAN);
             //now increase the likeCount by one
             int curFollowCount=curRequest.getFollowerCount();

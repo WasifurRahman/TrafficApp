@@ -160,8 +160,8 @@ public class DetailActivity extends AppCompatActivity implements  AddCommentFrag
     }
 
     private UpdateFragment addUpdatesFragment() {
-        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-        android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         UpdateFragment updatesFragment = new UpdateFragment();
 
         fragmentTransaction.add(R.id.infoAndLikeFragmentContainer, updatesFragment, updatesFragmentTag);
@@ -180,8 +180,8 @@ public class DetailActivity extends AppCompatActivity implements  AddCommentFrag
     }
 
     private void addDiscussionFragment(){
-        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-        android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         //UpdateFragment updatesFragment = new  UpdateFragment();
         DiscussionFragment discussionFragment = new DiscussionFragment();
 
